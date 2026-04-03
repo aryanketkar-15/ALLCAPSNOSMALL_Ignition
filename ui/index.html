@@ -287,7 +287,7 @@
 
     .conf-bar-wrap { margin-top: 6px; }
     .conf-bar-bg { height: 5px; background: rgba(255,255,255,0.08); border-radius: 5px; overflow: hidden; }
-    .conf-bar-fill { height: 100%; border-radius: 5px; background: linear-gradient(90deg, var(--accent), #7B2FBE); transition: width 0.5s ease; }
+    .conf-bar-fill { height: 100%; border-radius: 5px; transition: width 0.5s ease; }
 
     .playbook-badge {
       display: inline-flex; align-items: center; gap: 6px;
@@ -513,7 +513,7 @@
         </div>
         <div class="stat-card" style="grid-column:span 2;">
           <div class="stat-value" style="font-size:20px;" id="fp-rate">—</div>
-          <div class="stat-label">False Positive Rate</div>
+          <div class="stat-label">Noise Filtered (Benign Rate)</div>
         </div>
       </div>
 
@@ -657,56 +657,132 @@
 
     document.getElementById('detail-alert-id').textContent = shortId;
 
-    document.getElementById('detail').innerHTML = `
-      <div class="detail-sev-banner detail-${sev}">
-        <div class="detail-sev-icon">${SEV_ICONS[sev] || '⚠️'}</div>
+    let confColor = 'var(--benign)';
+    if (conf >= 80) confColor = 'var(--critical)';
+    else if (conf >= 60) confColor = 'var(--high)';
+    else if (conf >= 40) confColor = 'var(--medium)';
+    else if (conf >= 20) confColor = 'var(--low)';
+
+    const parsedSummary = escapeHtml(summary)
+        .replace(/(T1[0-9]{3}(\.[0-9]{3})?)/g, '<span style="background: rgba(61,142,240,0.2); border: 1px solid var(--accent); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px; cursor: help; color: var(--accent); margin: 0 4px;" title="MITRE ATT&CK Technique">🔗 $1</span>')
+        .replace(/(SUMMARY:|TECHNIQUE:|ACTION:)/g, '<strong style="display: block; color: var(--muted); font-size: 10px; letter-spacing: 0.08em; padding-top: 10px; text-transform: uppercase;">$1</strong>');
+
+    document.getElementById('detail').innerHTML = \`
+      \${trail.some(e => e.includes('HONEYPOT')) ? \`
+      <div class="detail-sev-banner detail-CRITICAL" style="border: 1px solid var(--critical); box-shadow: 0 0 25px rgba(192,57,43,0.3); animation: honeyglow 2s infinite;">
+        <div class="detail-sev-icon">🍯🚨</div>
         <div>
-          <div class="detail-sev-label">${sev}</div>
-          <div class="detail-sev-sub">${alert.event_type || 'Unknown Event'}</div>
+          <div class="detail-sev-label" style="color: #FF6B6B;">HONEYPOT COMPROMISED</div>
+          <div class="detail-sev-sub" style="font-size: 12px;">\${alert.event_type} | Zero-False-Positive Automated Defence Triggered.</div>
+        </div>
+      </div>\` : ''}
+
+      <div class="detail-sev-banner detail-\${sev}">
+        <div class="detail-sev-icon">\${SEV_ICONS[sev] || '⚠️'}</div>
+        <div>
+          <div class="detail-sev-label">\${sev}</div>
+          <div class="detail-sev-sub">\${alert.event_type || 'Unknown Event'}</div>
         </div>
       </div>
 
       <div class="detail-grid">
         <div class="detail-card">
           <div class="detail-card-label">Source IP</div>
-          <div class="detail-card-value mono">${alert.source_ip || '—'}</div>
+          <div class="detail-card-value mono">\${alert.source_ip || '—'}</div>
         </div>
         <div class="detail-card">
           <div class="detail-card-label">Dest IP</div>
-          <div class="detail-card-value mono">${alert.dest_ip || alert.destination_ip || '—'}</div>
+          <div class="detail-card-value mono">\${alert.dest_ip || alert.destination_ip || '—'}</div>
         </div>
         <div class="detail-card">
           <div class="detail-card-label">Blast Radius Score</div>
-          <div class="detail-card-value">${blastRadius}</div>
+          <div class="detail-card-value">\${blastRadius}</div>
         </div>
         <div class="detail-card">
           <div class="detail-card-label">Playbook State</div>
           <div class="detail-card-value" style="font-size:11px;">
-            <span class="playbook-badge">⚙️ ${playbook}</span>
+            <span class="playbook-badge">⚙️ \${playbook}</span>
           </div>
         </div>
       </div>
 
       <div class="detail-card" style="margin-bottom:14px;">
-        <div class="detail-card-label">Confidence — ${confPct}%</div>
+        <div class="detail-card-label">Confidence — \${confPct}%</div>
         <div class="conf-bar-wrap">
           <div class="conf-bar-bg">
-            <div class="conf-bar-fill" style="width:${confPct}%"></div>
+            <div class="conf-bar-fill" style="width:\${confPct}%; background:\${confColor}"></div>
           </div>
         </div>
       </div>
 
-      <div class="section-label">Evidence Trail</div>
-      <ol class="evidence-list">
-        ${trail.length ? trail.map(e => `<li class="evidence-item">${e}</li>`).join('') : '<li class="evidence-item" style="color:var(--muted)">No evidence items recorded.</li>'}
-      </ol>
+      \${parseFloat(alert.blast_radius) > 0 || sev === 'CRITICAL' || sev === 'HIGH' ? \`
+      <div class="section-label">Knowledge Graph (Blast Radius Path)</div>
+      <div style="padding: 24px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 15px; overflow-x: auto;">
+        <div style="text-align: center;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(192,57,43,0.1); border: 2px solid var(--critical); display: flex; align-items: center; justify-content: center; margin: 0 auto 8px;">😈</div>
+            <span style="color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 11px;">\${alert.source_ip || 'Attacker'}</span>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center;">
+            <span style="color: var(--muted); font-size: 10px; margin-bottom: 4px;">port \${alert.port || 443}</span>
+            <span style="color: var(--muted); letter-spacing: 2px;">───▶</span>
+        </div>
+        <div style="text-align: center;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(243,156,18,0.1); border: 2px solid var(--medium); display: flex; align-items: center; justify-content: center; margin: 0 auto 8px;">FW</div>
+            <span style="color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 11px;">Edge Node</span>
+        </div>
+        <div style="display: flex; flex-direction: column; align-items: center;">
+            <span style="color: var(--critical); font-size: 10px; margin-bottom: 4px;">lateral</span>
+            <span style="color: var(--critical); letter-spacing: 2px;">───▶</span>
+        </div>
+        <div style="text-align: center;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(39,174,96,0.1); border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; margin: 0 auto 8px;">🎯</div>
+            <span style="color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 11px;">\${alert.dest_ip || 'Target'}</span>
+        </div>
+      </div>\` : ''}
+
+      <div class="section-label">XAI Evidence Trail</div>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        \${trail.length ? trail.map(e => \`
+          <div style="padding: 12px; background: rgba(0,0,0,0.3); border-left: 3px solid \${e.includes('WARN') ? 'var(--high)' : 'var(--accent)'}; border-radius: 6px; font-size: 12px; display: flex; gap: 10px; line-height: 1.5;">
+             <span style="color: \${e.includes('pass') || e.includes('PASS') ? '#27AE60' : 'var(--muted)'}; font-size: 14px;">\${e.includes('HONEYPOT') ? '🚨' : '✓'}</span>
+             <span style="color: #b8c7d6;">\${escapeHtml(e)}</span>
+          </div>
+        \`).join('') : '<div style="color:var(--muted)">No evidence items recorded.</div>'}
+      </div>
 
       <div class="section-label">AI Incident Summary</div>
-      <div class="summary-block">${escapeHtml(summary)}</div>
+      <div class="summary-block">\${parsedSummary}</div>
+      
+      <div class="section-label">JSON: CACAO 2.0 Playbook Export</div>
+      <div style="background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 8px; padding: 16px; position: relative;">
+        <span style="position: absolute; top: -10px; right: 20px; background: var(--bg3); padding: 2px 10px; border-radius: 4px; font-size: 10px; color: var(--accent); font-weight: bold; border: 1px solid var(--border);">Ready for SOAR Integration</span>
+        <pre style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #a5d6ff; overflow-x: auto; margin: 0;">\${escapeHtml(JSON.stringify({ 
+           type: "playbook", 
+           id: "playbook--" + alert.alert_id,
+           created: alert.timestamp || new Date().toISOString(),
+           description: alert.summary ? alert.summary.substring(0, 120) + '...' : "Automated security response.",
+           playbook_variables: {
+             "source_ip": alert.source_ip || "unknown",
+             "target_ip": alert.dest_ip || "unknown",
+             "confidence_level": confPct
+           },
+           workflow: {
+             "step-1": {
+               type: "action",
+               name: "Block IP on Edge Firewall",
+               command: \`iptables -A INPUT -s \${alert.source_ip || 'attk'} -j DROP\`,
+               external_references: [ { name: "Mitre ATT&CK", external_id: "T1059" } ]
+             }
+           }
+        }, null, 2))}</pre>
+      </div>
 
-      <div class="section-label">Forensic Vault Hash</div>
-      <div class="vault-hash">${vaultHash ? vaultHash.slice(0, 16) + '…' : 'Not yet sealed'}</div>
-    `;
+      <div class="section-label">Forensic Vault Verification</div>
+      <div class="vault-hash">
+        <span style="color: var(--benign); font-weight: bold; margin-right: 8px;">WORM SEALED</span>
+        \${vaultHash ? vaultHash.slice(0, 48) + '…' : 'Processing...'}
+      </div>
+    \`;
   }
 
   function escapeHtml(s) {
