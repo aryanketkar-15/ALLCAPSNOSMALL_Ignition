@@ -66,12 +66,14 @@ def block_ip(ctx: PlaybookContext) -> PlaybookContext:
 def block_asn(ctx: PlaybookContext) -> PlaybookContext:
     ip = ctx.get('src_ip', '')
     subnet = extract_asn_block(ip)
-    return _record_action(
+    ctx = _record_action(
         ctx, 
         PlaybookState.ASN_BLOCKED, 
-        f"Blocked ASN/subnet: {subnet}", 
+        f"Expanded block to subnet {subnet} \u2014 attacker switched IPs", 
         "Attacker rotating IPs inside the same ASN block."
     )
+    ctx['actions_log'][-1]['asn_block'] = subnet
+    return ctx
 
 def isolate_host(ctx: PlaybookContext) -> PlaybookContext:
     return _record_action(
@@ -98,9 +100,34 @@ def resolve(ctx: PlaybookContext) -> PlaybookContext:
     )
 
 def failed_defence(ctx: PlaybookContext) -> PlaybookContext:
-    return _record_action(
+    ctx = _record_action(
         ctx, 
         PlaybookState.FAILED_DEFENCE, 
-        "Automated defense failed - triggering immediate L2 PagerDuty alert", 
+        "FAILED_DEFENCE \u2014 3 automated remediation attempts failed. Escalating to L2.", 
         "Failed to remediate threat within allowed attempts/parameters."
     )
+    ctx = _record_action(
+        ctx,
+        PlaybookState.FAILED_DEFENCE,
+        "L2 analyst notified via alert queue.",
+        "Automatic notification."
+    )
+    return ctx
+
+def test_three_strikes():
+    from playbooks.fsm import PlaybookStateMachine
+    m = PlaybookStateMachine()
+    
+    ctx = {
+        'alert_id': 'test-1',
+        'severity': 'HIGH',
+        'src_ip': '10.0.0.1',
+        'blast_radius': 50,
+        'current_state': PlaybookState.ALERT_RECEIVED,
+        'actions_log': [],
+        'failed_attempts': 0,
+        'remediation_attempts': 3
+    }
+    
+    ctx = m.run(ctx)
+    assert ctx['current_state'] == PlaybookState.FAILED_DEFENCE
