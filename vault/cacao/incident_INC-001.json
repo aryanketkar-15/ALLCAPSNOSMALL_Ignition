@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--88d67f4e-b24c-425e-bdc7-15c9a230065d",
+  "name": "SOC Response Playbook — Incident INC-001",
+  "description": "Alert resolved.",
+  "created": "2026-04-03T11:27:01.176858+00:00",
+  "modified": "2026-04-03T11:27:01.176876+00:00",
+  "created_by": "identity--44786201-44c8-43ba-b8ca-df1c8c6a04b9",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Initial triage started",
+      "description": "HIGH severity",
+      "executed_at": "2024-01-01T00:00:00Z",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}
