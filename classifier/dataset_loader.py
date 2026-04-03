@@ -4,12 +4,12 @@ import pandas as pd
 
 DATASET_CONFIGS = {
     "beth": {
-        "path": "data/beth/processed_alerts.csv",
+        "path": "data/beth/processed_training_data.csv",
         "feature_cols": [
-            "eventId", "argsNum", "returnValue",
-            "userId", "parentProcessId", "mountNamespace",
+            "severity_raw",
+            "event_type", "processName",
         ],
-        "cat_cols": ["mountNamespace"],
+        "cat_cols": ["event_type", "processName"],
         "target": "label",
     },
     "unsw": {

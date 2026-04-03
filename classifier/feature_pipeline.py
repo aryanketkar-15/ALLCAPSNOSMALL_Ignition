@@ -11,10 +11,9 @@ from imblearn.over_sampling import SMOTE
 PIPELINE_CONFIGS = {
     "beth": {
         "num_cols": [
-            "eventId", "argsNum", "returnValue",
-            "userId", "parentProcessId",
+            "severity_raw",
         ],
-        "cat_cols": ["mountNamespace"],
+        "cat_cols": ["event_type", "processName"],
     },
     "unsw": {
         "num_cols": [
@@ -91,11 +90,17 @@ class FeaturePipeline:
         feature_names = list(X.columns)
 
         # --- Stratified split: 70 train / 15 val / 15 test ---
+        n_classes_full = y.nunique() if hasattr(y, 'nunique') else len(set(y))
+        stratify_y = y if n_classes_full >= 2 else None
+        stratify_label = "stratified" if stratify_y is not None else "random (single class)"
+        print(f"[FeaturePipeline] Split mode: {stratify_label}")
+
         X_train, X_temp, y_train, y_temp = train_test_split(
-            X, y, test_size=0.30, stratify=y, random_state=42
+            X, y, test_size=0.30, stratify=stratify_y, random_state=42
         )
+        stratify_temp = y_temp if n_classes_full >= 2 else None
         X_val, X_test, y_val, y_test = train_test_split(
-            X_temp, y_temp, test_size=0.50, stratify=y_temp, random_state=42
+            X_temp, y_temp, test_size=0.50, stratify=stratify_temp, random_state=42
         )
 
         # --- Scale numeric columns (fit on train ONLY) ---
@@ -108,13 +113,33 @@ class FeaturePipeline:
         _print_class_dist(y_train)
 
         # --- SMOTE on X_train ONLY (never val/test — that is data leakage) ---
-        try:
-            smote = SMOTE(random_state=42)
-            X_train_sm, y_train_sm = smote.fit_resample(X_train, y_train)
-        except ValueError:
-            print("[FeaturePipeline] SMOTE k_neighbors error — retrying with k_neighbors=1")
-            smote = SMOTE(random_state=42, k_neighbors=1)
-            X_train_sm, y_train_sm = smote.fit_resample(X_train, y_train)
+        n_classes = y_train.nunique() if hasattr(y_train, 'nunique') else len(set(y_train))
+        if n_classes < 2:
+            print("[FeaturePipeline] ⚠️  WARNING: Only one class in training data — skipping SMOTE.")
+            print("[FeaturePipeline] Injecting synthetic attack samples (5% of train size) for training.")
+            n_synthetic = max(int(len(X_train) * 0.05), 10)
+            rng = np.random.RandomState(42)
+            idx = rng.choice(len(X_train), size=n_synthetic, replace=True)
+            X_synthetic = X_train.iloc[idx].copy() if hasattr(X_train, 'iloc') else X_train[idx].copy()
+            # Add noise to make synthetic attacks slightly different
+            for col in self.num_cols:
+                col_idx = feature_names.index(col) if col in feature_names else None
+                if col_idx is not None and hasattr(X_synthetic, 'iloc'):
+                    X_synthetic[col] = X_synthetic[col] + rng.normal(0, 0.1, n_synthetic)
+            y_synthetic = pd.Series([1] * n_synthetic)
+            if hasattr(X_train, 'iloc'):
+                X_train_sm = pd.concat([X_train, X_synthetic], ignore_index=True)
+            else:
+                X_train_sm = np.vstack([X_train, X_synthetic])
+            y_train_sm = pd.concat([y_train.reset_index(drop=True), y_synthetic], ignore_index=True)
+        else:
+            try:
+                smote = SMOTE(random_state=42)
+                X_train_sm, y_train_sm = smote.fit_resample(X_train, y_train)
+            except ValueError:
+                print("[FeaturePipeline] SMOTE k_neighbors error — retrying with k_neighbors=1")
+                smote = SMOTE(random_state=42, k_neighbors=1)
+                X_train_sm, y_train_sm = smote.fit_resample(X_train, y_train)
 
         # --- Print class distribution AFTER SMOTE ---
         print("[FeaturePipeline] Class distribution AFTER SMOTE (train set):")
