@@ -86,8 +86,8 @@ class LLMSummariser:
             "You are a senior cybersecurity analyst in a Security Operations Centre.\n"
             "Analyse this security alert and provide exactly three things:\n"
             "1. SUMMARY: One sentence describing what happened.\n"
-            "2. TECHNIQUE: The most likely MITRE ATT&CK technique name (e.g., T1059 Command Execution).\n"
-            "3. ACTION: One immediate recommended response action.\n"
+            "2. TECHNIQUE: The most likely MITRE ATT&CK technique name and exactly one ID flag (e.g., T1059 Command Execution).\n"
+            "3. ACTION: Exactly one uppercase immediate recommended action tag (e.g., BLOCK_IP, ISOLATE_HOST, QUARANTINE_FILE, SUSPEND_USER).\n"
             "Keep your total response under 120 words. Do not repeat the alert data.\n"
             f"Alert: {json.dumps(trimmed_context)}"
         )
@@ -120,7 +120,7 @@ class LLMSummariser:
         fallback = (
             f"SUMMARY: A {severity}-severity {event_type} alert was triggered\n"
             f"from {src_ip} with {conf_str}% confidence.\n"
-            f"TECHNIQUE: Suspicious activity detected via {top_feature} pattern.\n"
-            f"ACTION: Escalate to L2 analyst immediately and isolate the source host."
+            f"TECHNIQUE: Suspicious activity detected via {top_feature} pattern (T1059).\n"
+            f"ACTION: ISOLATE_HOST"
         )
         return fallback
