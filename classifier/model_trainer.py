@@ -15,10 +15,10 @@ class ModelTrainer:
                 n_estimators=100, n_jobs=-1, random_state=42
             ),
             "GradientBoosting": GradientBoostingClassifier(
-                n_estimators=100, random_state=42
+                n_estimators=30, max_depth=4, random_state=42
             ),
             "LogisticRegression": LogisticRegression(
-                max_iter=1000, random_state=42
+                solver="saga", max_iter=3000, random_state=42
             ),
         }
         # results[name] = {model, time_sec, val_report}
