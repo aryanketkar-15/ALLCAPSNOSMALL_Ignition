@@ -1,0 +1,33 @@
+{
+    "type": "playbook",
+    "spec_version": "cacao-2.0",
+    "id": "playbook--f70f7cd5-e84d-44c3-a6e1-b198fe12b6f2",
+    "name": "Incident Response Playbook - TEST-INCIDENT-001",
+    "description": "Automated Incident Response Playbook",
+    "created": "2026-04-03T07:06:16.736137Z",
+    "modified": "2026-04-03T07:06:16.736137Z",
+    "workflow_start": "step--0",
+    "workflow": {
+        "step--0": {
+            "type": "action",
+            "name": "INITIAL_TRIAGE",
+            "description": "High severity alert detected",
+            "on_completion": "step--1"
+        },
+        "step--1": {
+            "type": "action",
+            "name": "IP_BLOCKED",
+            "description": "Blocked malicious source IP 185.220.101.1",
+            "on_completion": "step--2"
+        },
+        "step--2": {
+            "type": "action",
+            "name": "RESOLVED",
+            "description": "No further malicious activity detected",
+            "on_completion": "step--end"
+        },
+        "step--end": {
+            "type": "end"
+        }
+    }
+}
