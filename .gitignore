@@ -1,0 +1,7 @@
+soc_env/
+__pycache__/
+*.pkl
+*.pyc
+.env
+data/beth/
+data/unsw/
