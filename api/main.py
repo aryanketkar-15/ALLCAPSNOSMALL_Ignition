@@ -231,6 +231,9 @@ async def classify_alert(request: AlertRequest):
 
     # Enforce the demo payload's exact event_type so the Classifier Demo Heuristic evaluates flawlessly
     alert['event_type'] = request.event_type
+    alert['source_ip'] = request.source_ip
+    alert['dest_ip'] = request.dest_ip
+    alert['port'] = request.port
 
     # Step 4: Classification
     classification = services['classifier'].predict(alert)

@@ -742,12 +742,12 @@
 
       <div class="section-label">XAI Evidence Trail</div>
       <div style="display: flex; flex-direction: column; gap: 8px;">
-        ${trail.length ? trail.map(e => `
-          <div style="padding: 12px; background: rgba(0,0,0,0.3); border-left: 3px solid ${e.includes('WARN') ? 'var(--high)' : 'var(--accent)'}; border-radius: 6px; font-size: 12px; display: flex; gap: 10px; line-height: 1.5;">
-             <span style="color: ${e.includes('pass') || e.includes('PASS') ? '#27AE60' : 'var(--muted)'}; font-size: 14px;">${e.includes('HONEYPOT') ? '🚨' : '✓'}</span>
-             <span style="color: #b8c7d6;">${escapeHtml(e)}</span>
+        \${trail.length ? trail.map(e => \`
+          <div style="padding: 12px; background: rgba(0,0,0,0.3); border-left: 3px solid \${e.includes('WARN') ? 'var(--medium)' : 'var(--accent)'}; border-radius: 6px; font-size: 12px; display: flex; gap: 10px; line-height: 1.5;">
+             <span style="color: \${e.includes('HONEYPOT') ? 'var(--critical)' : (e.includes('WARN') ? 'var(--medium)' : (e.includes('pass') || e.includes('PASS') ? '#27AE60' : 'var(--muted)'))}; font-size: 14px;">\${e.includes('HONEYPOT') ? '🚨' : (e.includes('WARN') ? '⚠' : '✓')}</span>
+             <span style="color: #b8c7d6;">\${escapeHtml(e)}</span>
           </div>
-        `).join('') : '<div style="color:var(--muted)">No evidence items recorded.</div>'}
+        \`).join('') : '<div style="color:var(--muted)">No evidence items recorded.</div>'}
       </div>
 
       <div class="section-label">AI Incident Summary</div>
@@ -760,7 +760,7 @@
            type: "playbook", 
            id: "playbook--" + alert.alert_id,
            created: alert.timestamp || new Date().toISOString(),
-           description: alert.summary ? alert.summary.substring(0, 120) + '...' : "Automated security response.",
+           description: alert.summary ? alert.summary.split('TECHNIQUE:')[0].replace('SUMMARY:', '').trim() : "Automated security response.",
            playbook_variables: {
              "source_ip": alert.source_ip || "unknown",
              "target_ip": alert.dest_ip || "unknown",
