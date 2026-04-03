@@ -4,6 +4,9 @@ from pydantic import BaseModel
 from typing import Optional, List
 import time, datetime
 
+# Track API startup time for uptime calculation
+startup_time = time.time()
+
 # STEP 1 — Corrected imports mapped to exactly what Aryan, Shanteshwar, and Ajaya deployed:
 from ingestion.parser import LogParser
 from ingestion.ioc_extractor import IOCExtractor
@@ -102,7 +105,10 @@ class AlertRequest(BaseModel):
     source_ip: str
     dest_ip: str
     port: int
-    timestamp: str
+    timestamp: str = ''
+    event_type: str = ''
+    accessed_path: str = ''
+    protocol: str = ''
 
 class AlertResponse(BaseModel):
     alert_id: str
@@ -114,6 +120,14 @@ class AlertResponse(BaseModel):
     summary: str
     vault_hash: str
 
+class StatsResponse(BaseModel):
+    total_alerts_processed: int
+    severity_distribution: dict
+    honeypots_triggered: int
+    false_positive_rate: float
+    average_processing_time_ms: float
+    uptime_seconds: int
+
 # STEP 6 — Health endpoint
 @app.get('/health')
 async def health():
@@ -122,3 +136,92 @@ async def health():
         'services_loaded': list(services.keys()), 
         'time': datetime.datetime.utcnow().isoformat()
     }
+
+# ══════════════════════════════════════════════════════════════
+# STEP 7 — Shanteshwar's Phase 6 endpoints (Prompts 6 & 7)
+# ══════════════════════════════════════════════════════════════
+
+@app.get('/api/v1/stats', response_model=StatsResponse)
+async def get_stats():
+    """Live system statistics — powers the dashboard right panel."""
+    total = stats['total']
+    sev = stats['severity']
+    benign_count = sev.get('BENIGN', 0)
+    fp_rate = round((benign_count / total * 100), 1) if total > 0 else 0.0
+    avg_time = round(stats['total_time_ms'] / total, 2) if total > 0 else 0.0
+
+    return StatsResponse(
+        total_alerts_processed=total,
+        severity_distribution={
+            'BENIGN': sev.get('BENIGN', 0),
+            'LOW': sev.get('LOW', 0),
+            'MEDIUM': sev.get('MEDIUM', 0),
+            'HIGH': sev.get('HIGH', 0),
+            'CRITICAL': sev.get('CRITICAL', 0),
+        },
+        honeypots_triggered=stats['honeypots_triggered'],
+        false_positive_rate=fp_rate,
+        average_processing_time_ms=avg_time,
+        uptime_seconds=int(time.time() - startup_time),
+    )
+
+
+@app.get('/api/v1/vault/{alert_id}')
+async def get_vault(alert_id: str):
+    """Forensic vault — chain of custody report for a processed alert."""
+    vault_svc = services.get('vault')
+    if vault_svc is None:
+        raise HTTPException(status_code=503, detail='ForensicVault service not loaded')
+
+    # Check if snapshot exists
+    try:
+        integrity_ok = vault_svc.verify_integrity(alert_id)
+    except (FileNotFoundError, KeyError, Exception):
+        raise HTTPException(status_code=404, detail={
+            'error': 'SNAPSHOT_NOT_FOUND',
+            'alert_id': alert_id,
+        })
+
+    if not integrity_ok:
+        raise HTTPException(status_code=409, detail={
+            'error': 'VAULT_TAMPERED',
+            'alert_id': alert_id,
+            'message': 'Snapshot integrity check failed — file may have been modified',
+        })
+
+    try:
+        report = vault_svc.generate_chain_of_custody(alert_id)
+        from fastapi.responses import PlainTextResponse
+        return PlainTextResponse(content=report, media_type='text/plain')
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get('/api/v1/graph/blast-radius/{node_id}')
+async def get_blast_radius(node_id: str, include_paths: bool = True):
+    """Blast radius query for a given infrastructure node."""
+    blast_svc = services.get('blast')
+    if blast_svc is None:
+        raise HTTPException(status_code=503, detail='BlastRadiusAnalyser service not loaded')
+
+    # Unknown node check
+    if node_id not in blast_svc.graph:
+        raise HTTPException(status_code=404, detail={
+            'error': 'NODE_NOT_FOUND',
+            'node_id': node_id,
+            'available_nodes': list(blast_svc.graph.nodes()),
+        })
+
+    result = blast_svc.calculate(node_id)
+
+    if not include_paths:
+        result.pop('affected_nodes', None)
+        result.pop('path_to_nearest_critical', None)
+
+    return result
+
+
+@app.get('/api/v1/alerts')
+async def get_alerts():
+    """Return the last 50 processed alerts."""
+    return alert_history[-50:]
