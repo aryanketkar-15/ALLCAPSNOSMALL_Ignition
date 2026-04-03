@@ -128,6 +128,7 @@ class AlertResponse(BaseModel):
     blast_radius: float
     playbook_state: str
     summary: str
+    narrative: str
     vault_hash: str
 
 # STEP 6 — Health endpoint
@@ -225,18 +226,23 @@ async def classify_alert(request: AlertRequest):
     vault_filename, vault_hash = services['vault'].capture_snapshot(alert)
     alert['vault_hash'] = vault_hash
 
-    # Step 9: LLM Summary (non-blocking — use asyncio.wait_for with 30s timeout)
+    # Step 9: LLM Summary & Narrative (non-blocking — use asyncio.wait_for with 30s timeout)
     import asyncio
+    
+    async def run_llm_tasks():
+        loop = asyncio.get_event_loop()
+        t1 = loop.run_in_executor(None, services['llm'].summarise, alert, alert.get('playbook_actions', []))
+        t2 = loop.run_in_executor(None, services['llm'].generate_playbook_narrative, alert.get('playbook_actions', []))
+        return await asyncio.gather(t1, t2)
+
     try:
-        # Adjusted to match Ajaya's two-argument signature
-        summary = await asyncio.wait_for(
-            asyncio.get_event_loop().run_in_executor(None, services['llm'].summarise, alert, alert.get('playbook_actions', [])),
-            timeout=30.0
-        )
+        summary, narrative = await asyncio.wait_for(run_llm_tasks(), timeout=30.0)
     except asyncio.TimeoutError:
         summary = f'[Template] {alert["severity"]} severity alert — event: {alert.get("event_type", "unknown")} from {alert.get("source_ip","unknown")}'
+        narrative = '[Template] Playbook narrative timed out.'
     except Exception as e:
         summary = f"LLM Summariser failed: {e}"
+        narrative = f"Narrative failed: {e}"
 
     # Step 10: CACAO Export (fire and forget — non-blocking)
     try:
@@ -254,6 +260,7 @@ async def classify_alert(request: AlertRequest):
 
     # Store in history (keep last 50)
     alert['summary'] = summary
+    alert['narrative'] = narrative
     alert_history.append(alert)
     if len(alert_history) > 50: alert_history.pop(0)
 
@@ -265,6 +272,7 @@ async def classify_alert(request: AlertRequest):
         blast_radius=alert.get('blast_radius', 0.0),
         playbook_state=alert.get('playbook_state', 'ALERT_RECEIVED'),
         summary=summary,
+        narrative=narrative,
         vault_hash=alert.get('vault_hash', ''),
     )
 
