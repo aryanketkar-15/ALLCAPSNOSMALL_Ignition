@@ -1,0 +1,73 @@
+
+# ============================================================
+#  API INTEGRATION SNIPPETS — Ready to inject into Rishi's API
+#  Author: Ajay (Response & Docs Pipeline)
+#  Date: 2026-04-03
+# ============================================================
+
+
+# ============================================================
+# SNIPPET 1: SERVICE INJECTION (Startup Logic)
+# Paste into Rishi's api/main.py
+# ============================================================
+
+# --- ADD THIS TO Rishi's api/main.py IMPORTS ---
+from vault.forensics import ForensicVault
+from vault.cacao_exporter import CacaoExporter
+from playbooks.state_machine import PlaybookStateMachine
+
+# --- ADD THIS TO Rishi's lifespan / startup event ---
+# Initialize Response & Docs Services
+vault_service = ForensicVault()
+cacao_service = CacaoExporter()
+fsm_service = PlaybookStateMachine()
+
+
+# ============================================================
+# SNIPPET 2: CLASSIFICATION PIPELINE HAND-OFF
+# Paste at the BOTTOM of Rishi's POST /api/v1/classify route,
+# after Aryan's ML model and Shanteshwar's Threat Intel finish.
+# ============================================================
+
+        # --- PHASE 4 & 5: RESPONSE & DOCS PIPELINE ---
+        # 1. Run the LangGraph Playbook
+        fsm_state = {**final_alert_dict, "current_state": "ALERT_RECEIVED", "actions_log": []}
+        playbook_result = fsm_service.graph.invoke(fsm_state)
+        
+        # 2. Add playbook results to the final alert dict
+        final_alert_dict["playbook_state"] = playbook_result["current_state"].value
+        final_alert_dict["actions_log"] = playbook_result["actions_log"]
+
+        # 3. Cryptographically seal the incident in the Vault
+        snap_id, sha256_seal = vault_service.capture_snapshot(final_alert_dict)
+        final_alert_dict["vault_snapshot_id"] = snap_id
+        final_alert_dict["sha256_hash"] = sha256_seal
+
+        # 4. Generate the CACAO 2.0 JSON
+        cacao_service.export(final_alert_dict["alert_id"], playbook_result["actions_log"])
+
+
+# ============================================================
+# SNIPPET 3: VAULT API ENDPOINT
+# Paste into the FastAPI router for Shanteshwar's dashboard.
+# GET /api/v1/vault/{alert_id}
+# ============================================================
+
+# --- ADD THIS TO THE FASTAPI ROUTER ---
+from fastapi import APIRouter, HTTPException
+
+@app.get("/api/v1/vault/{alert_id}")
+async def get_vault_record(alert_id: str):
+    """
+    Returns the cryptographically sealed Chain of Custody report for legal/compliance.
+    """
+    try:
+        # Reconstruct the snapshot filename convention
+        # Note: In production, you'd query a DB for the exact filename, 
+        # but for the hackathon, we can use a standard prefix or search the dir.
+        snapshot_filename = f"vault_20260403_{alert_id}" # Adjust timestamp logic as needed
+        
+        report = vault_service.generate_chain_of_custody(snapshot_filename, alert_id)
+        return {"status": "success", "chain_of_custody_report": report}
+    except Exception as e:
+        raise HTTPException(status_code=404, detail="Forensic record not found or tampered.")
