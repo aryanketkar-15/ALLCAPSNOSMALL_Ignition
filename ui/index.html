@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AI-Powered SOC Alert Classification & Prioritization Dashboard" />
+  <title>SOC AI Dashboard — Team SY-A9</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ── HEADER ─────────────────────────────────────────────── -->
+  <header id="app-header">
+    <div class="header-left">
+      <div class="logo-icon">🛡️</div>
+      <div>
+        <h1>SOC AI <span class="accent">Dashboard</span></h1>
+        <p class="subtitle">AI-Powered Alert Classification & Prioritization</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="status-pill" id="api-status">
+        <span class="pulse"></span>
+        <span id="status-text">Connecting...</span>
+      </div>
+      <div class="uptime" id="uptime-display">Uptime: --</div>
+    </div>
+  </header>
+
+  <!-- ── MAIN GRID ──────────────────────────────────────────── -->
+  <main id="dashboard">
+
+    <!-- LEFT: Live Alert Feed -->
+    <section class="panel" id="alert-feed-panel">
+      <div class="panel-header">
+        <h2>🔔 Live Alert Feed</h2>
+        <span class="badge" id="alert-count">0</span>
+      </div>
+      <div class="alert-list" id="alert-list">
+        <div class="empty-state">Waiting for alerts...</div>
+      </div>
+    </section>
+
+    <!-- CENTER: Alert Detail -->
+    <section class="panel" id="detail-panel">
+      <div class="panel-header">
+        <h2>📋 Alert Detail</h2>
+      </div>
+      <div id="alert-detail" class="detail-content">
+        <div class="empty-state">Select an alert to view details</div>
+      </div>
+    </section>
+
+    <!-- RIGHT: Stats + Controls -->
+    <section class="panel" id="stats-panel">
+      <div class="panel-header">
+        <h2>📊 System Stats</h2>
+      </div>
+
+      <!-- Stat Cards -->
+      <div class="stat-grid">
+        <div class="stat-card">
+          <span class="stat-label">Total Alerts</span>
+          <span class="stat-value" id="stat-total">0</span>
+        </div>
+        <div class="stat-card honeypot-card">
+          <span class="stat-label">🍯 Honeypots Triggered</span>
+          <span class="stat-value" id="stat-honeypots">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">False Positive Rate</span>
+          <span class="stat-value" id="stat-fpr">0%</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Avg Processing</span>
+          <span class="stat-value" id="stat-avg-time">0ms</span>
+        </div>
+      </div>
+
+      <!-- Severity Distribution -->
+      <div class="severity-chart">
+        <h3>Severity Distribution</h3>
+        <div class="bar-chart" id="severity-bars">
+          <div class="bar-row"><span class="bar-label">CRITICAL</span><div class="bar-track"><div class="bar-fill critical" id="bar-critical" style="width:0%"></div></div><span class="bar-count" id="count-critical">0</span></div>
+          <div class="bar-row"><span class="bar-label">HIGH</span><div class="bar-track"><div class="bar-fill high" id="bar-high" style="width:0%"></div></div><span class="bar-count" id="count-high">0</span></div>
+          <div class="bar-row"><span class="bar-label">MEDIUM</span><div class="bar-track"><div class="bar-fill medium" id="bar-medium" style="width:0%"></div></div><span class="bar-count" id="count-medium">0</span></div>
+          <div class="bar-row"><span class="bar-label">LOW</span><div class="bar-track"><div class="bar-fill low" id="bar-low" style="width:0%"></div></div><span class="bar-count" id="count-low">0</span></div>
+          <div class="bar-row"><span class="bar-label">BENIGN</span><div class="bar-track"><div class="bar-fill benign" id="bar-benign" style="width:0%"></div></div><span class="bar-count" id="count-benign">0</span></div>
+        </div>
+      </div>
+
+      <!-- Submit Alert -->
+      <div class="submit-section">
+        <h3>⚡ Submit Alert</h3>
+        <form id="alert-form">
+          <textarea id="input-raw-log" placeholder="Paste raw log line..." rows="3"></textarea>
+          <div class="form-row">
+            <input id="input-src-ip" placeholder="Source IP" />
+            <input id="input-dst-ip" placeholder="Dest IP" />
+          </div>
+          <div class="form-row">
+            <input id="input-port" type="number" placeholder="Port" />
+            <input id="input-event-type" placeholder="Event Type" />
+          </div>
+          <button type="submit" id="submit-btn">Classify Alert</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>Team SY-A9 · Prof. Vidya Gaikwad · Vidhit Technologies · PS0202</span>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
