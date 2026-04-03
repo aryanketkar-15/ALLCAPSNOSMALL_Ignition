@@ -67,3 +67,60 @@ class LLMSummariser:
         if len(text.strip()) <= 20:
             return False
         return True
+
+    def summarise(self, alert_context: dict) -> str:
+        """
+        Takes raw alert context, trims it, and queries Ollama for a tactical SOC summary.
+        If Ollama fails or the response is invalid, falls back to a template string.
+        """
+        # Trim alert context to top 5 key fields to save token space
+        trimmed_context = {
+            "severity": alert_context.get("severity", "UNKNOWN"),
+            "event_type": alert_context.get("event_type", "unknown_event"),
+            "src_ip": alert_context.get("src_ip", "N/A"),
+            "confidence": alert_context.get("confidence", 0.0),
+            "top_features": alert_context.get("top_features", ["unknown"]),
+        }
+        
+        prompt = (
+            "You are a senior cybersecurity analyst in a Security Operations Centre.\n"
+            "Analyse this security alert and provide exactly three things:\n"
+            "1. SUMMARY: One sentence describing what happened.\n"
+            "2. TECHNIQUE: The most likely MITRE ATT&CK technique name (e.g., T1059 Command Execution).\n"
+            "3. ACTION: One immediate recommended response action.\n"
+            "Keep your total response under 120 words. Do not repeat the alert data.\n"
+            f"Alert: {json.dumps(trimmed_context)}"
+        )
+
+        result = self._call_ollama(prompt)
+        
+        if self._is_valid_response(result):
+            return result
+        return self._template_summary(trimmed_context)
+
+    def _template_summary(self, alert_context: dict) -> str:
+        """
+        Resilient hardcoded fallback summary in case Ollama fails to respond.
+        Returns a string natively mimicking the Prompt template.
+        """
+        severity = alert_context.get("severity", "UNKNOWN")
+        event_type = alert_context.get("event_type", "unknown_event")
+        src_ip = alert_context.get("src_ip", "N/A")
+        
+        # safely handle confidence (convert back to percentage out of 100)
+        conf_val = alert_context.get("confidence", 0.0)
+        try:
+            conf_str = f"{float(conf_val) * 100:.0f}"
+        except (ValueError, TypeError):
+            conf_str = "0"
+            
+        top_feats = alert_context.get("top_features", ["unknown_pattern"])
+        top_feature = top_feats[0] if isinstance(top_feats, list) and len(top_feats) > 0 else "unknown_pattern"
+
+        fallback = (
+            f"SUMMARY: A {severity}-severity {event_type} alert was triggered\n"
+            f"from {src_ip} with {conf_str}% confidence.\n"
+            f"TECHNIQUE: Suspicious activity detected via {top_feature} pattern.\n"
+            f"ACTION: Escalate to L2 analyst immediately and isolate the source host."
+        )
+        return fallback
