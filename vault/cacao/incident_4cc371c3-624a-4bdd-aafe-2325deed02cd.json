@@ -1,0 +1,27 @@
+{
+    "type": "playbook",
+    "spec_version": "cacao-2.0",
+    "id": "playbook--dd5288c5-bada-4d5c-ace5-0ad28d20b5ec",
+    "name": "Incident Response Playbook - 4cc371c3-624a-4bdd-aafe-2325deed02cd",
+    "description": "SUMMARY: A CRITICAL-severity normal alert was triggered\nfrom None with 100% confidence.\nTECHNIQUE: Suspicious activity detected via unknown pattern (T1059).\nACTION: ISOLATE_HOST",
+    "created": "2026-04-03T11:11:30.412488Z",
+    "modified": "2026-04-03T11:11:30.412488Z",
+    "workflow_start": "step--0",
+    "workflow": {
+        "step--0": {
+            "type": "action",
+            "name": "Alert Ingestion",
+            "description": "System received new raw SIEM log",
+            "on_completion": "step--1"
+        },
+        "step--1": {
+            "type": "action",
+            "name": "Blocked IP None",
+            "description": "High severity threat detected",
+            "on_completion": "step--end"
+        },
+        "step--end": {
+            "type": "end"
+        }
+    }
+}
