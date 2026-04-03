@@ -335,3 +335,38 @@ async def get_blast_radius(node_id: str):
         raise HTTPException(status_code=400, detail=str(ve))
     except Exception as e:
         raise HTTPException(status_code=400, detail=f'Blast radius calculation failed: {str(e)}')
+
+
+# ═══════════════════════════════════════════════════════════════
+# Shanteshwar — Vault & CACAO Dashboard Endpoints
+# ═══════════════════════════════════════════════════════════════
+
+@app.get('/api/v1/vault/list')
+async def list_vault_snapshots():
+    """List all forensic vault snapshots with integrity status."""
+    import os
+    vault_dir = getattr(services.get('vault'), 'storage_path', 'vault/snapshots/')
+    snapshots = []
+    if os.path.exists(vault_dir):
+        for f in sorted(os.listdir(vault_dir)):
+            if f.endswith('.json'):
+                snap_id = f.replace('.json', '')
+                verified = services['vault'].verify_integrity(snap_id)
+                snapshots.append({
+                    'snapshot_id': snap_id,
+                    'verified': verified,
+                    'filename': f,
+                })
+    return {'snapshots': snapshots, 'total': len(snapshots)}
+
+
+@app.get('/api/v1/cacao/{alert_id}')
+async def get_cacao(alert_id: str):
+    """Fetch CACAO 2.0 workflow JSON for an incident."""
+    import os, json as jsonlib
+    cacao_dir = 'vault/cacao/'
+    filepath = os.path.join(cacao_dir, f'incident_{alert_id}.json')
+    if not os.path.exists(filepath):
+        raise HTTPException(status_code=404, detail=f'CACAO file not found for {alert_id}')
+    with open(filepath, 'r', encoding='utf-8') as f:
+        return jsonlib.load(f)

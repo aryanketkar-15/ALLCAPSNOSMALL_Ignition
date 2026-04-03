@@ -89,7 +89,7 @@ class KnowledgeGraph:
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
-
+ 
     def get_critical_nodes(self) -> list:
         """Return a list of node IDs where critical_asset=True."""
         return [
