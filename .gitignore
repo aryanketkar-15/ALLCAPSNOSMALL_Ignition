@@ -5,3 +5,5 @@ __pycache__/
 .env
 data/beth/
 data/unsw/
+verify_*.py
+verify_output.txt
