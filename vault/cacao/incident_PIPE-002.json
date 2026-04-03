@@ -1,0 +1,59 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--ed122e83-0316-4b4e-a243-810c03159900",
+  "name": "SOC Response Playbook — Incident PIPE-002",
+  "description": "Incident PIPE-002: Automated response initiated at 2026-04-03T11:34:09.096186+00:00.\nSystem executed 5 response actions.\nFinal state: PlaybookState.RESOLVED at 2026-04-03T11:34:09.097476+00:00.",
+  "created": "2026-04-03T11:34:09.117597+00:00",
+  "modified": "2026-04-03T11:34:09.117606+00:00",
+  "created_by": "identity--c0e9821c-c325-4836-b3f3-36db7fd3e964",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert received and parsed",
+      "description": "Initial ingestion of alert data.",
+      "executed_at": "2026-04-03T11:34:09.096186+00:00",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Automated triage assessment completed",
+      "description": "Severity is CRITICAL.",
+      "executed_at": "2026-04-03T11:34:09.096521+00:00",
+      "on_completion": "action--3"
+    },
+    "action--3": {
+      "type": "action",
+      "name": "Blocked individual IP: 172.16.0.5",
+      "description": "Isolation mandated by playbook rules.",
+      "executed_at": "2026-04-03T11:34:09.096874+00:00",
+      "on_completion": "action--4"
+    },
+    "action--4": {
+      "type": "action",
+      "name": "Expanded block to subnet 172.16.0.0/16 — attacker switched IPs",
+      "description": "Attacker rotating IPs inside the same ASN block.",
+      "executed_at": "2026-04-03T11:34:09.097238+00:00",
+      "on_completion": "action--5"
+    },
+    "action--5": {
+      "type": "action",
+      "name": "Incident closed",
+      "description": "Threat mitigated successfully or marked as false positive.",
+      "executed_at": "2026-04-03T11:34:09.097476+00:00",
+      "on_completion": "end--5"
+    },
+    "end--5": {
+      "type": "end"
+    }
+  }
+}

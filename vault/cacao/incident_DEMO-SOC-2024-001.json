@@ -1,0 +1,59 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--4a5d4d35-ba83-4f5c-bc14-ad9537b3cc38",
+  "name": "SOC Response Playbook — Incident DEMO-SOC-2024-001",
+  "description": "Incident DEMO-SOC-2024-001: Automated response initiated at 2026-04-03T11:34:59.255999+00:00.\nSystem executed 5 response actions.\nFinal state: PlaybookState.RESOLVED at 2026-04-03T11:34:59.257260+00:00.",
+  "created": "2026-04-03T11:34:59.258426+00:00",
+  "modified": "2026-04-03T11:34:59.258431+00:00",
+  "created_by": "identity--f01c3b64-a179-43b5-bbc0-08c341a76ae0",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert received and parsed",
+      "description": "Initial ingestion of alert data.",
+      "executed_at": "2026-04-03T11:34:59.255999+00:00",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Automated triage assessment completed",
+      "description": "Severity is CRITICAL.",
+      "executed_at": "2026-04-03T11:34:59.256323+00:00",
+      "on_completion": "action--3"
+    },
+    "action--3": {
+      "type": "action",
+      "name": "Blocked individual IP: 192.168.1.100",
+      "description": "Isolation mandated by playbook rules.",
+      "executed_at": "2026-04-03T11:34:59.256651+00:00",
+      "on_completion": "action--4"
+    },
+    "action--4": {
+      "type": "action",
+      "name": "Expanded block to subnet 192.168.0.0/16 — attacker switched IPs",
+      "description": "Attacker rotating IPs inside the same ASN block.",
+      "executed_at": "2026-04-03T11:34:59.257002+00:00",
+      "on_completion": "action--5"
+    },
+    "action--5": {
+      "type": "action",
+      "name": "Incident closed",
+      "description": "Threat mitigated successfully or marked as false positive.",
+      "executed_at": "2026-04-03T11:34:59.257260+00:00",
+      "on_completion": "end--5"
+    },
+    "end--5": {
+      "type": "end"
+    }
+  }
+}
