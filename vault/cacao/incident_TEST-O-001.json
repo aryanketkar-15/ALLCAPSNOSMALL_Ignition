@@ -1,0 +1,52 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--817198c1-3a2b-4d3a-9f03-ed3612d1f102",
+  "name": "SOC Response Playbook — Incident TEST-O-001",
+  "description": "Incident TEST-O-001: Automated response initiated at 2026-04-03T11:38:00.606520+00:00.\nSystem executed 4 response actions.\nFinal state: PlaybookState.RESOLVED at 2026-04-03T11:38:00.607475+00:00.",
+  "created": "2026-04-03T11:38:00.625527+00:00",
+  "modified": "2026-04-03T11:38:00.625535+00:00",
+  "created_by": "identity--ad8cb0c3-9053-473d-894e-52b3576c9184",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert received and parsed",
+      "description": "Initial ingestion of alert data.",
+      "executed_at": "2026-04-03T11:38:00.606520+00:00",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Automated triage assessment completed",
+      "description": "Severity is HIGH.",
+      "executed_at": "2026-04-03T11:38:00.606840+00:00",
+      "on_completion": "action--3"
+    },
+    "action--3": {
+      "type": "action",
+      "name": "Blocked individual IP: 10.50.0.9",
+      "description": "Isolation mandated by playbook rules.",
+      "executed_at": "2026-04-03T11:38:00.607171+00:00",
+      "on_completion": "action--4"
+    },
+    "action--4": {
+      "type": "action",
+      "name": "Incident closed",
+      "description": "Threat mitigated successfully or marked as false positive.",
+      "executed_at": "2026-04-03T11:38:00.607475+00:00",
+      "on_completion": "end--4"
+    },
+    "end--4": {
+      "type": "end"
+    }
+  }
+}

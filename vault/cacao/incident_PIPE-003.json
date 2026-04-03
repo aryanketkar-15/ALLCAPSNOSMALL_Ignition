@@ -1,0 +1,45 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--f4f5186b-351f-4285-8d44-4e791895e83f",
+  "name": "SOC Response Playbook — Incident PIPE-003",
+  "description": "Incident PIPE-003: Automated response initiated at 2026-04-03T11:34:10.018911+00:00.\nSystem executed 3 response actions.\nFinal state: PlaybookState.RESOLVED at 2026-04-03T11:34:10.019562+00:00.",
+  "created": "2026-04-03T11:34:10.036500+00:00",
+  "modified": "2026-04-03T11:34:10.036508+00:00",
+  "created_by": "identity--7e6a6b78-d2fb-4bc8-aa2d-73ec0f31dee2",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert received and parsed",
+      "description": "Initial ingestion of alert data.",
+      "executed_at": "2026-04-03T11:34:10.018911+00:00",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Automated triage assessment completed",
+      "description": "Severity LOW does not require immediate blocking.",
+      "executed_at": "2026-04-03T11:34:10.019230+00:00",
+      "on_completion": "action--3"
+    },
+    "action--3": {
+      "type": "action",
+      "name": "Incident closed",
+      "description": "Threat mitigated successfully or marked as false positive.",
+      "executed_at": "2026-04-03T11:34:10.019562+00:00",
+      "on_completion": "end--3"
+    },
+    "end--3": {
+      "type": "end"
+    }
+  }
+}
