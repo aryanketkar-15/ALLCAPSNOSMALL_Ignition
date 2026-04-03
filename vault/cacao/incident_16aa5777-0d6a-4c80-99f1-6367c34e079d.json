@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--95c7918b-8e91-4b2f-bda0-d01e7fbc9422",
+  "name": "SOC Response Playbook — Incident 16aa5777-0d6a-4c80-99f1-6367c34e079d",
+  "description": "Here is the analysis:\n\n**SUMMARY**: A benign file copy event occurred on 192.168.1.50.\n\n**TECHNIQUE**: T1059: Command Execution (due to unknown top features)\n\n**ACTION**: IGNORE_EVENT",
+  "created": "2026-04-03T17:02:54.354583+00:00",
+  "modified": "2026-04-03T17:02:54.354583+00:00",
+  "created_by": "identity--0e907ee0-bfb6-4bb8-a5be-f92e7eb24b4d",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T17:02:47.882061",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

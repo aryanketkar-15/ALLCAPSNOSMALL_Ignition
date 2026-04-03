@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--19c01cbe-3f78-4e13-bb7e-5b0eb8a90200",
+  "name": "SOC Response Playbook — Incident 8f0ce94a-a446-4719-9a79-c68119462858",
+  "description": "Here is the analysis:\n\nSUMMARY: A critical C2 callback event was detected from an unknown source at IP address 192.168.1.25.\n\nTECHNIQUE: T1047 - Remote System Discovery/Command Execution\n\nACTION: BLOCK_IP",
+  "created": "2026-04-03T14:32:36.535853+00:00",
+  "modified": "2026-04-03T14:32:36.535853+00:00",
+  "created_by": "identity--9e5d1902-923e-4cba-bf3e-491b3d46f8d4",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T14:32:28.747630",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 192.168.1.25",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T14:32:28.748630",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

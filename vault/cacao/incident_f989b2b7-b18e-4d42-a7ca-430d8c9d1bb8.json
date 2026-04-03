@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--dd0a8328-0b5e-454a-a84d-341bc531a9c2",
+  "name": "SOC Response Playbook — Incident f989b2b7-b18e-4d42-a7ca-430d8c9d1bb8",
+  "description": "Here is the analysis:\n\nSUMMARY: A high-severity threat was detected and an attacker's beaconing activity was blocked.\n\nTECHNIQUE: T1047 Beacons\n\nACTION: BLOCK_IP",
+  "created": "2026-04-03T14:32:49.098976+00:00",
+  "modified": "2026-04-03T14:32:49.098976+00:00",
+  "created_by": "identity--4b9c6674-63ef-4761-b7b7-5142d9182220",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T14:32:41.622878",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 91.108.56.100",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T14:32:41.622878",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

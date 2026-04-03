@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--0cc934b5-e920-4db7-a45e-3333f9c11084",
+  "name": "SOC Response Playbook — Incident f0d0d71e-f5ca-45f5-b8df-56c1fc884802",
+  "description": "Here's the analysis:\n\n**SUMMARY**: A VPN connection failed, indicating potential unauthorized access attempt.\n\n**TECHNIQUE**: T1045: Network Share Discovery (ID flag: T1045)\n\n**ACTION**: QUARANTINE_HOST (immediately quarantine any hosts attempting to establish a VPN connection)",
+  "created": "2026-04-03T13:05:38.424839+00:00",
+  "modified": "2026-04-03T13:05:38.424839+00:00",
+  "created_by": "identity--80fa4419-94c5-43cc-bd47-f9cc30ce5845",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:05:20.802481",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

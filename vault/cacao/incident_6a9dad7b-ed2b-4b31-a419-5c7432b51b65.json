@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--5805b940-02be-4f27-bdc6-5afe7558949c",
+  "name": "SOC Response Playbook — Incident 6a9dad7b-ed2b-4b31-a419-5c7432b51b65",
+  "description": "Here is the analysis:\n\n1. SUMMARY: A critical file read event was detected, indicating a potential high-severity threat.\n2. TECHNIQUE: T1003 Data from Central Log Server\n3. ACTION: BLOCK_IP",
+  "created": "2026-04-03T13:08:08.037434+00:00",
+  "modified": "2026-04-03T13:08:08.037434+00:00",
+  "created_by": "identity--fd15835b-1dd1-4ac9-87a1-3b9357c40894",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:07:51.420949",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP None",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T13:07:51.420949",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

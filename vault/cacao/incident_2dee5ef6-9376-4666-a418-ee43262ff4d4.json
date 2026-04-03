@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--dbbeba45-c1bf-4d68-a354-79d9951474df",
+  "name": "SOC Response Playbook — Incident 2dee5ef6-9376-4666-a418-ee43262ff4d4",
+  "description": "Here's the analysis:\n\n**SUMMARY**: A high-severity Kerberos-based authentication attack was detected from an unknown source at IP address 192.168.1.31.\n\n**TECHNIQUE**: T1222: Domain Name System (DNS) Cache Poisoning and T1557: Kerberoasting\n\n**ACTION**: BLOCK_IP",
+  "created": "2026-04-03T18:46:44.208371+00:00",
+  "modified": "2026-04-03T18:46:44.208371+00:00",
+  "created_by": "identity--b4b22f9e-f682-4404-afa4-d53a85681958",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T18:46:36.171715",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 192.168.1.31",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T18:46:36.172737",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

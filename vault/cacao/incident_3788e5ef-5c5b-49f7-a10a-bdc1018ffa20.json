@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--d7e67fff-f79d-4623-9b89-0418033663a5",
+  "name": "SOC Response Playbook — Incident 3788e5ef-5c5b-49f7-a10a-bdc1018ffa20",
+  "description": "Here is the analysis:\n\nSUMMARY: A critical C2 callback event was detected, indicating a high-severity threat.\n\nTECHNIQUE: T1047: Network Traffic Analysis\n\nACTION: BLOCK_IP",
+  "created": "2026-04-03T13:07:24.603925+00:00",
+  "modified": "2026-04-03T13:07:24.603925+00:00",
+  "created_by": "identity--e71ab1d2-efec-437d-a4db-a6f6ce7c1214",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:07:11.692145",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP None",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T13:07:11.693144",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

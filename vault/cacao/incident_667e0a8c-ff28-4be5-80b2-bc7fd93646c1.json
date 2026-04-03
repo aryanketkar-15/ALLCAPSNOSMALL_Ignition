@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--819854d2-a2c5-480d-99ec-0083b91cda66",
+  "name": "SOC Response Playbook — Incident 667e0a8c-ff28-4be5-80b2-bc7fd93646c1",
+  "description": "Here is the analysis:\n\nSUMMARY: A high-severity data exfiltration event occurred, with a null source IP.\n\nTECHNIQUE: T1059 - Command Execution\n\nACTION: BLOCK_IP",
+  "created": "2026-04-03T13:09:31.696209+00:00",
+  "modified": "2026-04-03T13:09:31.696209+00:00",
+  "created_by": "identity--bc83c970-7ba6-4f1f-be73-eac2d6630526",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:09:06.669854",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP None",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T13:09:06.670868",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

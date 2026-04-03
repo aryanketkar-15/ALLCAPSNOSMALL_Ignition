@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--2ac340b3-8748-4245-9091-9c3732e20587",
+  "name": "SOC Response Playbook — Incident 5ece0484-7fe0-475c-966e-a9b346e37753",
+  "description": "Here is the analysis:\n\nSUMMARY: A benign DNS query was detected, indicating a normal network activity.\n\nTECHNIQUE: T1059 Command Execution (specifically, this alert does not indicate command execution, but rather a similar technique name is used to categorize the benign event).\n\nACTION: NO_ACTION",
+  "created": "2026-04-03T13:21:17.065092+00:00",
+  "modified": "2026-04-03T13:21:17.065092+00:00",
+  "created_by": "identity--fa452454-d54d-4208-bb84-1907589e9b6a",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:20:54.098026",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

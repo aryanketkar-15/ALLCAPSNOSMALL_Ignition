@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--6c1b53f1-dc15-4ddf-9433-8bf817448236",
+  "name": "SOC Response Playbook — Incident 4d5b90ce-2aec-4ec8-8838-8c4068490b12",
+  "description": "Here is the analysis:\n\n**SUMMARY**: High-severity Kerberos-based authentication exploitation detected on a sensitive system.\n\n**TECHNIQUE**: T1556: Use of Leaked Credentials (ID flag).\n\n**ACTION**: BLOCK_IP",
+  "created": "2026-04-03T17:04:44.157614+00:00",
+  "modified": "2026-04-03T17:04:44.157614+00:00",
+  "created_by": "identity--e41ceaeb-5c04-46f7-9bb4-93a33bc36be7",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T17:04:37.839685",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 192.168.1.31",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T17:04:37.839685",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

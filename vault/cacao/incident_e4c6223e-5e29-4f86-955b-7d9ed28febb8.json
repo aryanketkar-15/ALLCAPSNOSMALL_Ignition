@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--680cefa8-f1a4-4487-8672-e9469db82c00",
+  "name": "SOC Response Playbook — Incident e4c6223e-5e29-4f86-955b-7d9ed28febb8",
+  "description": "Here's the analysis:\n\n**SUMMARY**: A high-severity Kerberos-based authentication attack was detected against a system, originating from IP address 192.168.1.31.\n\n**TECHNIQUE**: T1190 Kerberos Credential Theft (ID: T1190)\n\n**ACTION**: BLOCK_IP",
+  "created": "2026-04-03T13:34:14.609839+00:00",
+  "modified": "2026-04-03T13:34:14.609839+00:00",
+  "created_by": "identity--346c44f8-6b68-4c1b-a69c-890a70b3ab83",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:34:06.751733",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 192.168.1.31",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T13:34:06.752745",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--b277cedb-44af-4aec-9b37-e8942ebd37eb",
+  "name": "SOC Response Playbook — Incident 73b837f0-744d-4395-8553-54849343ea28",
+  "description": "Here is the analysis:\n\n**SUMMARY**: A medium-severity RDP brute-force attack attempt was detected on a system.\n\n**TECHNIQUE**: T1190 Exploit Public-Facing Application (ID: T1059 Command Execution)\n\n**ACTION**: BLOCK_IP",
+  "created": "2026-04-03T13:23:24.223668+00:00",
+  "modified": "2026-04-03T13:23:24.223668+00:00",
+  "created_by": "identity--a8d27325-cdb8-4d12-b103-9c4e9ee4b80f",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:23:17.205094",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--a1e78290-df2c-4983-bde4-21e21d748505",
+  "name": "SOC Response Playbook — Incident 451a6a35-18e6-4484-b0d7-9b358510313d",
+  "description": "Here is the analysis:\n\n**SUMMARY**: A high-severity Kerberos-based authentication attack was detected on a system.\n\n**TECHNIQUE**: The most likely MITRE ATT&CK technique name is T1557: Kerberoasting.\n\n**ACTION**: BLOCK_IP",
+  "created": "2026-04-03T13:07:06.614822+00:00",
+  "modified": "2026-04-03T13:07:06.614822+00:00",
+  "created_by": "identity--7bc54bc5-f52b-4655-9cec-bce287f66830",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:06:50.764061",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP None",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T13:06:50.765087",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

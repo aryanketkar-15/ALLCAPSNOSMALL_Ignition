@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--dd46925b-23a3-4bfa-8cb4-5fdfb94335d3",
+  "name": "SOC Response Playbook — Incident 48b7b664-deb4-4919-9b28-3148073868d6",
+  "description": "Here is the analysis:\n\n**SUMMARY**: A benign DNS query was made from an IP address on the network.\n\n**TECHNIQUE**: T1189: System Network Configuration Discovery (ID flag)\n\n**ACTION**: MONITOR_NETWORK",
+  "created": "2026-04-03T17:02:42.790262+00:00",
+  "modified": "2026-04-03T17:02:42.790262+00:00",
+  "created_by": "identity--145ef9d7-9929-4d5c-b2f2-0e09044fa2ed",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T17:02:35.361906",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

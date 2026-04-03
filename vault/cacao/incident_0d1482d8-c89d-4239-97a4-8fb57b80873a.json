@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--983a7e9e-afae-492d-a869-737af9585e17",
+  "name": "SOC Response Playbook — Incident 0d1482d8-c89d-4239-97a4-8fb57b80873a",
+  "description": "Here is the analysis:\n\nSUMMARY: An unknown HTTP OPTIONS request was detected from an unidentified source IP.\n\nTECHNIQUE: T1059 - Command Execution\n\nACTION: QUARANTINE_FILE",
+  "created": "2026-04-03T13:22:48.028312+00:00",
+  "modified": "2026-04-03T13:22:48.028312+00:00",
+  "created_by": "identity--24de6a2b-5208-43d2-9919-38a25e4d2e99",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:22:40.190179",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--06fcb459-0ba0-4926-9ed9-811c986de421",
+  "name": "SOC Response Playbook — Incident 4ae55845-3197-448a-af75-605bf2104b6a",
+  "description": "Here is the analysis:\n\n**SUMMARY**: An authentication failure occurred.\n\n**TECHNIQUE**: T1071.001 - Authentication Bypass using Weak Password\n\n**ACTION**: QUARANTINE_USER",
+  "created": "2026-04-03T13:22:59.917087+00:00",
+  "modified": "2026-04-03T13:22:59.917087+00:00",
+  "created_by": "identity--26ae5fad-f6fe-4594-8591-dfee9cd590d9",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:22:53.113090",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

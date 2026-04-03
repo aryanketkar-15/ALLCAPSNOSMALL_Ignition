@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--75fb75b1-1ab5-4fb8-bd67-17fe67ef4c27",
+  "name": "SOC Response Playbook — Incident 906af018-a24c-4f38-9e34-fe2ed2c6172c",
+  "description": "Here's the analysis:\n\n1. SUMMARY: The Security Information and Event Management (SIEM) system ingested a benign DNS query from an unknown source.\n2. TECHNIQUE: T1408: Domain Name System (DNS) Resolution\n3. ACTION: NO_ACTIONS_NEEDED",
+  "created": "2026-04-03T18:44:44.091246+00:00",
+  "modified": "2026-04-03T18:44:44.091246+00:00",
+  "created_by": "identity--6125a3d7-8668-4274-8d22-eb170af1bfcd",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T18:44:37.235394",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

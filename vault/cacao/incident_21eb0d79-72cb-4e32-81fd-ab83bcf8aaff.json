@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--b6d7c291-f315-4df8-af5b-f4412075bb16",
+  "name": "SOC Response Playbook — Incident 21eb0d79-72cb-4e32-81fd-ab83bcf8aaff",
+  "description": "Here is the analysis:\n\nSUMMARY: A low-severity port scan was detected, but the source IP address is unknown.\n\nTECHNIQUE: T1576 Port Scanning\n\nACTION: MONITOR_NETWORK",
+  "created": "2026-04-03T13:22:07.519447+00:00",
+  "modified": "2026-04-03T13:22:07.519447+00:00",
+  "created_by": "identity--72702304-4569-4702-aaf5-ffbf5efcd0d7",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:21:46.849059",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

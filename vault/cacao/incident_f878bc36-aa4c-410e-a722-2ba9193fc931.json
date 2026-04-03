@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--7e58ba3b-4544-495e-b919-935588fa7417",
+  "name": "SOC Response Playbook — Incident f878bc36-aa4c-410e-a722-2ba9193fc931",
+  "description": "Here is the analysis:\n\n**SUMMARY**: An RDP brute-force attack was detected attempting to gain unauthorized access to a system.\n\n**TECHNIQUE**: T1110 - Brute Force\n\n**ACTION**: BLOCK_IP",
+  "created": "2026-04-03T13:05:58.160765+00:00",
+  "modified": "2026-04-03T13:05:58.160765+00:00",
+  "created_by": "identity--d127dfd5-d978-4b96-9cf0-62255633c83a",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:05:43.517740",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

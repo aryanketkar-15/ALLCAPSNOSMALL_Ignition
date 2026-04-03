@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--0dd01222-69a7-46fc-b003-2b9230c9a70d",
+  "name": "SOC Response Playbook — Incident fb619a1f-c887-41a2-9df6-a0b82877e9e3",
+  "description": "Here is the analysis:\n\nSUMMARY: A benign file copy event was detected from IP address 192.168.1.50.\n\nTECHNIQUE: T1078: Custom Content Stopping (ID flag only)\n\nACTION: IGNORE_ALERT",
+  "created": "2026-04-03T14:30:32.938695+00:00",
+  "modified": "2026-04-03T14:30:32.938695+00:00",
+  "created_by": "identity--47bc87a4-5929-4d16-a955-916c36835dd1",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T14:30:26.275886",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--798815eb-870b-48e9-abb9-15482c03920a",
+  "name": "SOC Response Playbook — Incident 695f1a39-4303-4aa5-9719-d9b2df079b96",
+  "description": "Here is the analysis:\n\n**SUMMARY**: An unknown SMB lateral movement threat was detected from IP address 192.168.1.33.\n\n**TECHNIQUE**: T1572: Lateral Movement via SMB/RSAT\n\n**ACTION**: BLOCK_IP",
+  "created": "2026-04-03T17:04:20.825545+00:00",
+  "modified": "2026-04-03T17:04:20.825545+00:00",
+  "created_by": "identity--6d727202-5f99-4965-9902-73dc6688e365",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T17:04:13.538639",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 192.168.1.33",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T17:04:13.539639",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

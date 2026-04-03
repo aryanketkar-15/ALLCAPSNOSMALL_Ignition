@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--d76f6983-faeb-44f8-8018-4bd7c01bcc2c",
+  "name": "SOC Response Playbook — Incident 0a6332d7-4b00-47b4-8f46-d12a9550a6c5",
+  "description": "Here is the analysis:\n\n**SUMMARY**: A benign HTTP request was made from IP address 192.168.1.10.\n\n**TECHNIQUE**: T1090: Proxy, Reverse Proxy or Hidden Channels.\n\n**ACTION**: IGNORE_ALERT",
+  "created": "2026-04-03T13:31:57.635472+00:00",
+  "modified": "2026-04-03T13:31:57.635472+00:00",
+  "created_by": "identity--e696b316-0e06-4dfd-8e3c-e7a502d74f96",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:31:40.968419",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

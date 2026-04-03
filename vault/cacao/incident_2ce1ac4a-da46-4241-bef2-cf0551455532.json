@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--f982c469-5e72-4b41-afdd-987601c6fbf9",
+  "name": "SOC Response Playbook — Incident 2ce1ac4a-da46-4241-bef2-cf0551455532",
+  "description": "Here is the analysis:\n\nSUMMARY: A critical C2 beacon was detected originating from IP address 91.108.56.100.\n\nTECHNIQUE: T1043 Network Traffic Analysis (NTA) - unknown command execution.\n\nACTION: BLOCK_IP",
+  "created": "2026-04-03T13:34:38.481793+00:00",
+  "modified": "2026-04-03T13:34:38.481793+00:00",
+  "created_by": "identity--9d82b80b-8c3e-4290-9c20-db3e719bdaa7",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:34:31.198531",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 91.108.56.100",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T13:34:31.199529",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

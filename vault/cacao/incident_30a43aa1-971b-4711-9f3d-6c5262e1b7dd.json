@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--31f60b24-8e6c-4517-b9d4-91a3f037fb30",
+  "name": "SOC Response Playbook — Incident 30a43aa1-971b-4711-9f3d-6c5262e1b7dd",
+  "description": "Here is the analysis:\n\n**SUMMARY**: An unknown SMB lateral movement threat was detected, resulting in blocking an IP address.\n\n**TECHNIQUE**: T1059: Command Execution\n\n**ACTION**: BLOCK_IP",
+  "created": "2026-04-03T13:24:52.633396+00:00",
+  "modified": "2026-04-03T13:24:52.633396+00:00",
+  "created_by": "identity--2184214f-1cb2-4a55-9bee-cf0044d00ee4",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:24:45.759281",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP None",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T13:24:45.760290",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

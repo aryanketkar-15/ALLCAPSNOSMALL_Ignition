@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--6d1f0dea-5cb1-46af-b324-bb88e7f85bc5",
+  "name": "SOC Response Playbook — Incident da20ed09-f29c-47fc-bc00-0d29b5443571",
+  "description": "Based on the alert data, here are three things:\n\n1. SUMMARY: A high-severity threat was detected and an unknown IP address was blocked.\n2. TECHNIQUE: The most likely MITRE ATT&CK technique is T1204 Logon Scripts, with ID flag T1204.\n3. ACTION: BLOCK_IP",
+  "created": "2026-04-03T12:45:25.738212+00:00",
+  "modified": "2026-04-03T12:45:25.738212+00:00",
+  "created_by": "identity--cb69cc0c-08eb-4328-baec-780b61b50a31",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T12:45:15.595830",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP None",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T12:45:15.597361",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--3e9dcc1e-4602-4189-b096-093aa9a96990",
+  "name": "SOC Response Playbook — Incident d130290a-0d0b-4548-a282-9ff8be344dd0",
+  "description": "Here is the analysis:\n\nSUMMARY: A potentially suspicious HTTP OPTIONS request was received from an unknown source.\n\nTECHNIQUE: T1090: Remote System Discovery/Information Gathering, specifically ID flag T1059: Command Execution.\n\nACTION: BLOCK_IP",
+  "created": "2026-04-03T14:31:09.755268+00:00",
+  "modified": "2026-04-03T14:31:09.755268+00:00",
+  "created_by": "identity--65f98a6e-b7fa-46bf-9f95-af4e05d75e77",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T14:31:02.884345",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

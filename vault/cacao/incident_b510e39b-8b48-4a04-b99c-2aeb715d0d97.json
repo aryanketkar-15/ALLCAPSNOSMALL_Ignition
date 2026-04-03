@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--9146bfb5-790f-4657-8c17-b789b14eb5a4",
+  "name": "SOC Response Playbook — Incident b510e39b-8b48-4a04-b99c-2aeb715d0d97",
+  "description": "Here is the analysis:\n\nSUMMARY: A high-severity threat was detected, resulting in an unknown credential dump.\n\nTECHNIQUE: T1555: Credentials Dumping via API or Service\n\nACTION: BLOCK_IP",
+  "created": "2026-04-03T13:25:04.649800+00:00",
+  "modified": "2026-04-03T13:25:04.649800+00:00",
+  "created_by": "identity--08cc712e-5205-4418-9ccf-675a4c09c949",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:24:57.701085",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP None",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T13:24:57.701721",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

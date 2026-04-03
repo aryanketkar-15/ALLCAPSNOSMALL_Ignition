@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--2f30f180-4cde-40f3-b932-2feac20d330c",
+  "name": "SOC Response Playbook — Incident fe985a39-5d79-4612-9643-cc0abb1f32df",
+  "description": "Here is the analysis:\n\n**SUMMARY**: The Security Information and Event Management (SIEM) system ingested a new log.\n\n**TECHNIQUE**: T1078: Custom Line of Code Injection (no specific ID flag mentioned)\n\n**ACTION**: NO_ACTION_REQUIRED",
+  "created": "2026-04-03T13:02:03.463734+00:00",
+  "modified": "2026-04-03T13:02:03.463734+00:00",
+  "created_by": "identity--ee7e0444-8421-4f98-9e50-6ecc8d75ca3e",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:01:47.953057",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

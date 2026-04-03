@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--5f4a8044-61c8-4566-b4ae-cbc8874fa7df",
+  "name": "SOC Response Playbook — Incident 11d37305-acdf-4d06-b60e-b90a6a1f6583",
+  "description": "Here is the analysis:\n\n**SUMMARY**: A medium-severity VPN failure occurred, potentially indicating a compromised connection from an unknown source (91.108.4.1).\n\n**TECHNIQUE**: T1075: Remote Services Abuse (specifically, VPN Fail)\n\n**ACTION**: ISOLATE_HOST",
+  "created": "2026-04-03T13:33:24.691401+00:00",
+  "modified": "2026-04-03T13:33:24.691401+00:00",
+  "created_by": "identity--bba04655-2f23-4c08-8248-bc2fc4f7d780",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:33:17.602867",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

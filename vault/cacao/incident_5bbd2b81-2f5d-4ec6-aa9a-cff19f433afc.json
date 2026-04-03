@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--b8cf016b-abb9-4867-8975-e66c246424b5",
+  "name": "SOC Response Playbook — Incident 5bbd2b81-2f5d-4ec6-aa9a-cff19f433afc",
+  "description": "Based on the alert, here are my analysis results:\n\n1. SUMMARY: An authentication failure occurred, indicating an attempt to gain unauthorized access.\n2. TECHNIQUE: The most likely MITRE ATT&CK technique is T1075: Authentication Bypass using Alternate Authentication Protocol.\n3. ACTION: BLOCK_IP",
+  "created": "2026-04-03T13:05:15.713277+00:00",
+  "modified": "2026-04-03T13:05:15.713277+00:00",
+  "created_by": "identity--1577f274-26d8-4241-b028-80e5da5cc317",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:05:01.685806",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

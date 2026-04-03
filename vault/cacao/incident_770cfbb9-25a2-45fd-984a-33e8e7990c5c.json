@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--0665e2f1-0585-45f2-96e3-3ce5f5da0c7e",
+  "name": "SOC Response Playbook — Incident 770cfbb9-25a2-45fd-984a-33e8e7990c5c",
+  "description": "Here is the analysis:\n\n1. SUMMARY: A benign system event occurred, likely related to normal alert ingestion.\n2. TECHNIQUE: T1358 - External Knowledge Representation\n3. ACTION: NO_ACTION_REQUIRED",
+  "created": "2026-04-03T13:01:03.675697+00:00",
+  "modified": "2026-04-03T13:01:03.675697+00:00",
+  "created_by": "identity--95fb033e-9aa3-43ae-853a-0951b1a8caba",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:00:47.543864",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

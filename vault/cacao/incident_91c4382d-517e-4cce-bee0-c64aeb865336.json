@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--64514e86-ef6d-4940-bc3e-8fd3a252a95c",
+  "name": "SOC Response Playbook — Incident 91c4382d-517e-4cce-bee0-c64aeb865336",
+  "description": "Here is the analysis:\n\n**SUMMARY**: A VPN connection failed, potentially indicating unauthorized access attempt.\n\n**TECHNIQUE**: T1047: Network Sniffing (ID flag: None)\n\n**ACTION**: BLOCK_IP",
+  "created": "2026-04-03T18:45:54.979130+00:00",
+  "modified": "2026-04-03T18:45:54.979130+00:00",
+  "created_by": "identity--24a03346-aecd-4e31-8818-cb9b8b88a3c9",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T18:45:48.868951",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

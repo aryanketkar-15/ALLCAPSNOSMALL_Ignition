@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--ca22e9b0-a8eb-4d11-a924-0e88da13ed6d",
+  "name": "SOC Response Playbook — Incident 9bc3a142-1d62-4e80-84b2-db79d93ec5a6",
+  "description": "Here's the analysis:\n\n**SUMMARY**: A benign DNS query was made from IP address 192.168.1.11.\n\n**TECHNIQUE**: T1059 - Command Execution (note: this is an unusual technique to detect in a DNS query alert, so it may not be accurate).\n\n**ACTION**: ISOLATE_HOST",
+  "created": "2026-04-03T14:30:21.157071+00:00",
+  "modified": "2026-04-03T14:30:21.157071+00:00",
+  "created_by": "identity--50c98f7d-0a07-4db2-b762-05e5a126086c",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T14:30:14.070859",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}
