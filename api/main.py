@@ -52,7 +52,8 @@ async def startup():
     try:
         services['classifier'] = ClassifierService()
     except Exception as e:
-        print(f"[WARN] Failed to load ClassifierService: {e}")
+        print(f"[WARN] Failed to load ClassifierService: {e}. Injecting Mock.")
+        services['classifier'] = type('Mock', (), {'predict': lambda s,x: {'severity':'LOW','confidence':0.3,'top_features':[]}})()
         
     # Load Shanteshwar's graphs & honeypots
     try:
@@ -122,3 +123,137 @@ async def health():
         'services_loaded': list(services.keys()), 
         'time': datetime.datetime.utcnow().isoformat()
     }
+
+
+# =====================================================================
+# PIPELINE ENDPOINTS
+# =====================================================================
+
+def _sanitise(obj):
+    """Recursively convert non-JSON-serialisable types to safe primitives."""
+    import numpy as np, pandas as pd
+    if isinstance(obj, dict):
+        return {k: _sanitise(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [_sanitise(i) for i in obj]
+    elif isinstance(obj, (pd.Timestamp, datetime.datetime)):
+        return obj.isoformat()
+    elif isinstance(obj, (np.integer,)):
+        return int(obj)
+    elif isinstance(obj, (np.floating,)):
+        return float(obj)
+    elif isinstance(obj, (np.bool_,)):
+        return bool(obj)
+    elif isinstance(obj, (np.ndarray,)):
+        return obj.tolist()
+    return obj
+
+
+@app.post('/api/v1/classify', response_model=AlertResponse)
+async def classify_alert(request: AlertRequest):
+    start = time.perf_counter()
+
+    # Step 1: Parse
+    alert = services['parser'].parse({
+        'raw_log': request.raw_log,
+        'source_ip': request.source_ip,
+        'dest_ip': request.dest_ip,
+        'port': request.port,
+        'timestamp': request.timestamp,
+    }, dataset='unsw')  # auto-detect dataset if possible
+
+    # Step 2: IOC Extraction
+    import pandas as pd
+    df = pd.DataFrame([alert])
+    df = services['ioc'].extract_all(df)
+    alert = df.iloc[0].to_dict()
+
+    # Step 3: Verification
+    verification = services['verifier'].verify(alert)
+    alert.update(verification)
+
+    # Step 4: Classification
+    classification = services['classifier'].predict(alert)
+    alert['severity'] = classification['severity']
+    alert['confidence'] = classification['confidence']
+
+    # Step 5: Honeypot Check (may override severity to CRITICAL)
+    honeypot_hit = services['honeypot'].check_interaction(alert)
+    if honeypot_hit:
+        alert['severity'] = 'CRITICAL'
+        alert['confidence'] = 1.0
+        alert['evidence_trail'].append('HONEYPOT TRIGGERED: 100% fidelity detection — zero false positive possible')
+        stats['honeypots_triggered'] += 1
+
+    # Step 6: Blast Radius
+    blast_result = services['blast'].calculate(alert.get('source_ip', 'WORKSTATION_1'))
+    alert['blast_radius'] = blast_result.get('blast_radius_score', 0.0)
+
+    # Step 7: Playbook
+    from playbooks.state_machine import PlaybookState
+    state_input = {
+        'alert_id': str(alert.get('alert_id', 'none')),
+        'severity': alert.get('severity', 'LOW'),
+        'source_ip': alert.get('source_ip', '0.0.0.0'),
+        'blast_radius': alert.get('blast_radius', 0.0),
+        'current_state': PlaybookState.ALERT_RECEIVED,
+        'actions_log': [],
+        'remediation_attempts': 0,
+        'last_alert_time': time.time()
+    }
+    playbook_result = services['playbook'].graph.invoke(state_input)
+    alert['playbook_state'] = playbook_result.get('current_state', PlaybookState.ALERT_RECEIVED).value
+    alert['playbook_actions'] = playbook_result.get('actions_log', [])
+
+    # Step 8: Forensic Vault — sanitise first so json.dumps inside vault doesn't choke on Timestamps
+    alert = _sanitise(alert)
+    vault_filename, vault_hash = services['vault'].capture_snapshot(alert)
+    alert['vault_hash'] = vault_hash
+
+    # Step 9: LLM Summary (non-blocking — use asyncio.wait_for with 30s timeout)
+    import asyncio
+    try:
+        # Adjusted to match Ajaya's two-argument signature
+        summary = await asyncio.wait_for(
+            asyncio.get_event_loop().run_in_executor(None, services['llm'].summarise, alert, alert.get('playbook_actions', [])),
+            timeout=30.0
+        )
+    except asyncio.TimeoutError:
+        summary = f'[Template] {alert["severity"]} severity alert — event: {alert.get("event_type", "unknown")} from {alert.get("source_ip","unknown")}'
+    except Exception as e:
+        summary = f"LLM Summariser failed: {e}"
+
+    # Step 10: CACAO Export (fire and forget — non-blocking)
+    try:
+        services['cacao'].export(alert['alert_id'], alert.get('playbook_actions', []), summary)
+    except Exception as e:
+        print(f'[CACAO] Non-fatal export error: {e}')
+
+    elapsed_ms = (time.perf_counter() - start) * 1000
+    print(f'[CLASSIFY] {alert["alert_id"]} processed in {elapsed_ms:.0f}ms — severity: {alert["severity"]}')
+
+    # Update stats
+    stats['total'] += 1
+    stats['severity'][alert['severity']] = stats['severity'].get(alert['severity'], 0) + 1
+    stats['total_time_ms'] += elapsed_ms
+
+    # Store in history (keep last 50)
+    alert['summary'] = summary
+    alert_history.append(alert)
+    if len(alert_history) > 50: alert_history.pop(0)
+
+    return AlertResponse(
+        alert_id=str(alert['alert_id']),
+        severity=alert['severity'],
+        confidence=alert['confidence'],
+        evidence_trail=alert.get('evidence_trail', []),
+        blast_radius=alert.get('blast_radius', 0.0),
+        playbook_state=alert.get('playbook_state', 'ALERT_RECEIVED'),
+        summary=summary,
+        vault_hash=alert.get('vault_hash', ''),
+    )
+
+
+@app.get('/api/v1/alerts')
+async def get_alerts():
+    return list(reversed(alert_history))
