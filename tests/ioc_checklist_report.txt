@@ -1,0 +1,33 @@
+============================================================
+CHECK 1: extract_all() on 1,000 rows completes under 500ms
+============================================================
+Elapsed: 0.168s
+✅ PASS
+
+============================================================
+CHECK 2: iocs column is a dict per row
+============================================================
+Type: <class 'dict'>
+✅ PASS
+
+============================================================
+CHECK 3: RFC 1918 filter strips private IPs to lateral_movement key
+============================================================
+Result: {'ipv4': ['185.220.101.1'], 'lateral_movement': ['192.168.1.50']}
+✅ PASS
+
+============================================================
+CHECK 4: Known external IP stays in ipv4 bucket
+============================================================
+Result lateral_movement: clean
+✅ PASS
+
+============================================================
+CHECK 5: Benchmark prints result under 3s on 10k rows
+============================================================
+Benchmark output:
+  > IOC extraction: 1.56s for 10,000 rows
+  > PASS: Under 2s target
+✅ PASS: Under 3s and no warning
+
+All checks complete.

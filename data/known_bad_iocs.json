@@ -1,0 +1,19 @@
+{
+    "bad_ips": [
+        "185.220.101.0/24",
+        "194.165.16.0/24",
+        "45.33.32.0/24"
+    ],
+    "bad_cves": [
+        "CVE-2021-44228",
+        "CVE-2017-0144",
+        "CVE-2019-0708"
+    ],
+    "bad_processes": [
+        "mimikatz",
+        "psexec",
+        "cobalt_strike",
+        "meterpreter",
+        "netcat"
+    ]
+}

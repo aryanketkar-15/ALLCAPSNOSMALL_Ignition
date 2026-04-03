@@ -1,0 +1,18 @@
+Columns: ['timestamp', 'processId', 'threadId', 'parentProcessId', 'userId', 'mountNamespace', 'processName', 'hostName', 'eventId', 'eventName', 'stackAddresses', 'argsNum', 'returnValue', 'args', 'sus', 'evil']
+
+timestamp: dtype=float64  sample=np.float64(1809.495787)
+processId: dtype=int64  sample=np.int64(381)
+threadId: dtype=int64  sample=np.int64(7337)
+parentProcessId: dtype=int64  sample=np.int64(1)
+userId: dtype=int64  sample=np.int64(100)
+mountNamespace: dtype=int64  sample=np.int64(4026532231)
+processName: dtype=str  sample='close'
+hostName: dtype=str  sample='ip-10-100-1-120'
+eventId: dtype=int64  sample=np.int64(157)
+eventName: dtype=str  sample='prctl'
+stackAddresses: dtype=str  sample='[140662171848350, 11649800180280676]'
+argsNum: dtype=int64  sample=np.int64(5)
+returnValue: dtype=int64  sample=np.int64(0)
+args: dtype=str  sample="[{'name': 'option', 'type': 'int', 'value': 'PR_SET_NAME'}, {'name': 'arg2', 'type': 'unsigned long', 'value': 94819493392601}, {'name': 'arg3', 'type': 'unsigned long', 'value': 94819493392601}, {'name': 'arg4', 'type': 'unsigned long', 'value': 140662171848350}, {'name': 'arg5', 'type': 'unsigned long', 'value': 140662156379904}]"
+sus: dtype=int64  sample=np.int64(1)
+evil: dtype=int64  sample=np.int64(0)
