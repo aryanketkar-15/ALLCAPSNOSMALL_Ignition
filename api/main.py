@@ -1,8 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from typing import Optional, List
-import time, datetime
+import time, datetime, re
 
 # STEP 1 — Corrected imports mapped to exactly what Aryan, Shanteshwar, and Ajaya deployed:
 from ingestion.parser import LogParser
@@ -14,7 +14,7 @@ from classifier.classifier_service import ClassifierService
 # (Assuming graph, blast_radius exist in knowledge_graph and honeypot_manager exists in honeypot)
 # We handle import errors dynamically below if Shanteshwar hasn't fully pushed the classes yet
 from playbooks.state_machine import PlaybookStateMachine
-from playbooks.llm_summariser import LLMSummariser
+from llm.llm_summariser import LLMSummariser
 from vault.forensics import ForensicVault
 from vault.cacao_exporter import CacaoExporter
 
@@ -104,6 +104,21 @@ class AlertRequest(BaseModel):
     dest_ip: str
     port: int
     timestamp: str
+
+    @field_validator('source_ip', 'dest_ip')
+    @classmethod
+    def validate_ip(cls, v):
+        ip_re = re.compile(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$')
+        if not ip_re.match(v):
+            raise ValueError(f'{v} is not a valid IPv4 address')
+        return v
+
+    @field_validator('port')
+    @classmethod
+    def validate_port(cls, v):
+        if not 1 <= v <= 65535:
+            raise ValueError(f'port {v} out of range 1-65535')
+        return v
 
 class AlertResponse(BaseModel):
     alert_id: str
@@ -257,3 +272,51 @@ async def classify_alert(request: AlertRequest):
 @app.get('/api/v1/alerts')
 async def get_alerts():
     return list(reversed(alert_history))
+
+
+@app.get('/api/v1/stats')
+async def get_stats():
+    avg_time = stats['total_time_ms'] / max(stats['total'], 1)
+    fp_count = sum(1 for a in alert_history if a.get('verification_status') == 'FALSE_POSITIVE')
+    fp_rate = fp_count / max(len(alert_history), 1)
+    return {
+        'total_alerts_processed': stats['total'],
+        'severity_distribution': stats['severity'],
+        'honeypots_triggered': stats['honeypots_triggered'],
+        'false_positive_rate': round(fp_rate, 3),
+        'average_processing_time_ms': round(avg_time, 1),
+    }
+
+
+@app.get('/api/v1/vault/{alert_id}')
+async def get_vault(alert_id: str):
+    import os
+    try:
+        vault_dir = getattr(services['vault'], 'storage_path', 'vault/snapshots/')
+        snapshot_filename = None
+        if os.path.exists(vault_dir):
+            for f in os.listdir(vault_dir):
+                if f.endswith(f"_{alert_id}.sha256"):
+                    snapshot_filename = f.replace('.sha256', '')
+                    break
+                    
+        if not snapshot_filename:
+            raise FileNotFoundError(f"No snapshot found for {alert_id}")
+            
+        report = services['vault'].generate_chain_of_custody(snapshot_filename, alert_id)
+        return {'report': report}
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail=f'Vault record not found for alert {alert_id}')
+
+
+@app.get('/api/v1/graph/blast-radius/{node_id}')
+async def get_blast_radius(node_id: str):
+    try:
+        if hasattr(services['blast'], 'graph') and node_id not in services['blast'].graph.nodes:
+            raise ValueError(f'Node {node_id} not in infrastructure graph')
+        result = services['blast'].calculate(node_id)
+        return result
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail=str(ve))
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f'Blast radius calculation failed: {str(e)}')

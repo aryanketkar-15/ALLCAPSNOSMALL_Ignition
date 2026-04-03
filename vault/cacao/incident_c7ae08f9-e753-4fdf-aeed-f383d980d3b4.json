@@ -1,0 +1,27 @@
+{
+    "type": "playbook",
+    "spec_version": "cacao-2.0",
+    "id": "playbook--9193301e-dd12-4002-bc8b-a1bf87c9639d",
+    "name": "Incident Response Playbook - c7ae08f9-e753-4fdf-aeed-f383d980d3b4",
+    "description": "LLM Summariser failed: name 'src_ip' is not defined",
+    "created": "2026-04-03T10:08:59.455533Z",
+    "modified": "2026-04-03T10:08:59.455533Z",
+    "workflow_start": "step--0",
+    "workflow": {
+        "step--0": {
+            "type": "action",
+            "name": "Alert Ingestion",
+            "description": "System received new raw SIEM log",
+            "on_completion": "step--1"
+        },
+        "step--1": {
+            "type": "action",
+            "name": "Blocked IP None",
+            "description": "High severity threat detected",
+            "on_completion": "step--end"
+        },
+        "step--end": {
+            "type": "end"
+        }
+    }
+}
