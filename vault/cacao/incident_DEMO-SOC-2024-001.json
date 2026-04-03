@@ -1,12 +1,12 @@
 {
   "type": "playbook",
   "spec_version": "cacao-2.0",
-  "id": "playbook--595cb08c-4dce-4a53-8952-0bf153e55238",
+  "id": "playbook--5294fb4e-1b4e-4f7f-8cc6-f1c2d399ea81",
   "name": "SOC Response Playbook — Incident DEMO-SOC-2024-001",
-  "description": "Incident DEMO-SOC-2024-001: Automated response initiated at 2026-04-03T11:29:01.392111+00:00.\nSystem executed 5 response actions.\nFinal state: PlaybookState.RESOLVED at 2026-04-03T11:29:01.393378+00:00.",
-  "created": "2026-04-03T11:29:01.394468+00:00",
-  "modified": "2026-04-03T11:29:01.394474+00:00",
-  "created_by": "identity--7f11f0df-249a-483d-9070-68a87f99c2be",
+  "description": "Incident DEMO-SOC-2024-001: Automated response initiated at 2026-04-03T11:30:08.586055+00:00.\nSystem executed 5 response actions.\nFinal state: PlaybookState.RESOLVED at 2026-04-03T11:30:08.587278+00:00.",
+  "created": "2026-04-03T11:30:08.588300+00:00",
+  "modified": "2026-04-03T11:30:08.588305+00:00",
+  "created_by": "identity--eb6e4558-7eb8-49e0-9f27-4e434f7c794f",
   "playbook_types": [
     "investigation",
     "remediation"
@@ -21,35 +21,35 @@
       "type": "action",
       "name": "Alert received and parsed",
       "description": "Initial ingestion of alert data.",
-      "executed_at": "2026-04-03T11:29:01.392111+00:00",
+      "executed_at": "2026-04-03T11:30:08.586055+00:00",
       "on_completion": "action--2"
     },
     "action--2": {
       "type": "action",
       "name": "Automated triage assessment completed",
       "description": "Severity is CRITICAL.",
-      "executed_at": "2026-04-03T11:29:01.392440+00:00",
+      "executed_at": "2026-04-03T11:30:08.586369+00:00",
       "on_completion": "action--3"
     },
     "action--3": {
       "type": "action",
       "name": "Blocked individual IP: 192.168.1.100",
       "description": "Isolation mandated by playbook rules.",
-      "executed_at": "2026-04-03T11:29:01.392782+00:00",
+      "executed_at": "2026-04-03T11:30:08.586704+00:00",
       "on_completion": "action--4"
     },
     "action--4": {
       "type": "action",
       "name": "Expanded block to subnet 192.168.0.0/16 — attacker switched IPs",
       "description": "Attacker rotating IPs inside the same ASN block.",
-      "executed_at": "2026-04-03T11:29:01.393141+00:00",
+      "executed_at": "2026-04-03T11:30:08.587051+00:00",
       "on_completion": "action--5"
     },
     "action--5": {
       "type": "action",
       "name": "Incident closed",
       "description": "Threat mitigated successfully or marked as false positive.",
-      "executed_at": "2026-04-03T11:29:01.393378+00:00",
+      "executed_at": "2026-04-03T11:30:08.587278+00:00",
       "on_completion": "end--5"
     },
     "end--5": {
