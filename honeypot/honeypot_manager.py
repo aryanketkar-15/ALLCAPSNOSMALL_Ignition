@@ -6,7 +6,10 @@ Zero-false-positive detection: any interaction with a decoy asset is
 guaranteed malicious — no legitimate user would ever touch these files.
 """
 
+import os
 from datetime import datetime, timezone
+
+import requests
 
 
 class HoneypotManager:
@@ -131,6 +134,64 @@ class HoneypotManager:
             "asset_id": asset_id,
             "description": asset["description"],
         }
+
+    # ------------------------------------------------------------------
+    # CRITICAL override (Prompt 4)
+    # ------------------------------------------------------------------
+
+    def apply_honeypot_override(self, alert_result: dict, triggered_asset: dict) -> dict:
+        """
+        Force-override classification to CRITICAL with 1.0 confidence.
+        Appends a zero-false-positive evidence trail entry.
+
+        Parameters
+        ----------
+        alert_result : dict   — the full classification result dict
+        triggered_asset : dict — output from check_interaction()
+
+        Returns
+        -------
+        dict — the modified alert_result (also mutated in-place)
+        """
+        alert_result["severity"] = "CRITICAL"
+        alert_result["confidence"] = 1.0
+        alert_result["honeypot_triggered"] = True
+        alert_result["triggered_asset_id"] = triggered_asset["asset_id"]
+
+        # Ensure evidence_trail exists
+        if "evidence_trail" not in alert_result:
+            alert_result["evidence_trail"] = []
+
+        alert_result["evidence_trail"].append(
+            f"HONEYPOT TRIGGERED: {triggered_asset['description']} accessed. "
+            f"Zero false positive \u2014 100% fidelity detection. "
+            f"Asset: {triggered_asset['asset_id']}"
+        )
+
+        return alert_result
+
+    def send_webhook_notification(self, alert_result: dict) -> None:
+        """
+        Fire an HTTP POST to HONEYPOT_WEBHOOK_URL (env var).
+        CRITICAL: failures are logged but NEVER raised.
+        """
+        url = os.environ.get(
+            "HONEYPOT_WEBHOOK_URL", "http://localhost:9999/dummy"
+        )
+
+        payload = {
+            "event": "HONEYPOT_TRIGGERED",
+            "severity": "CRITICAL",
+            "asset_id": alert_result.get("triggered_asset_id", "unknown"),
+            "alert_id": alert_result.get("alert_id", "unknown"),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+
+        try:
+            requests.post(url, json=payload, timeout=5)
+            print(f"[HONEYPOT] Webhook sent to {url}")
+        except Exception as err:
+            print(f"[HONEYPOT] Webhook failed (non-fatal): {err}")
 
     # ------------------------------------------------------------------
     # Query helpers
