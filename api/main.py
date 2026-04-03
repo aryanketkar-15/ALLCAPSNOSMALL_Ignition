@@ -4,6 +4,9 @@ from pydantic import BaseModel, field_validator
 from typing import Optional, List
 import time, datetime, re
 
+# Track API startup for uptime calculation
+startup_time = time.time()
+
 # STEP 1 — Corrected imports mapped to exactly what Aryan, Shanteshwar, and Ajaya deployed:
 from ingestion.parser import LogParser
 from ingestion.ioc_extractor import IOCExtractor
@@ -103,7 +106,10 @@ class AlertRequest(BaseModel):
     source_ip: str
     dest_ip: str
     port: int
-    timestamp: str
+    timestamp: str = ''
+    event_type: str = ''
+    accessed_path: str = ''
+    protocol: str = ''
 
     @field_validator('source_ip', 'dest_ip')
     @classmethod
@@ -116,8 +122,8 @@ class AlertRequest(BaseModel):
     @field_validator('port')
     @classmethod
     def validate_port(cls, v):
-        if not 1 <= v <= 65535:
-            raise ValueError(f'port {v} out of range 1-65535')
+        if not 0 <= v <= 65535:
+            raise ValueError(f'port {v} out of range 0-65535')
         return v
 
 class AlertResponse(BaseModel):
@@ -293,6 +299,7 @@ async def get_stats():
         'honeypots_triggered': stats['honeypots_triggered'],
         'false_positive_rate': round(fp_rate, 3),
         'average_processing_time_ms': round(avg_time, 1),
+        'uptime_seconds': int(time.time() - startup_time),
     }
 
 
