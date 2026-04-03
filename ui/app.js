@@ -7,7 +7,7 @@
  * Submits alerts via POST /api/v1/classify.
  */
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = window.location.origin;
 const POLL_INTERVAL = 5000;
 
 let allAlerts = [];
