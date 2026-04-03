@@ -48,8 +48,18 @@ class DatasetLoader:
         try:
             df = pd.read_csv(self.path)
         except UnicodeDecodeError:
-            print("[DatasetLoader] UTF-8 failed — retrying with latin-1 encoding.")
-            df = pd.read_csv(self.path, encoding="latin-1")
+            try:
+                print("[DatasetLoader] UTF-8 failed — retrying with latin-1 encoding.")
+                df = pd.read_csv(self.path, encoding="latin-1")
+            except UnicodeDecodeError:
+                print("[DatasetLoader] latin-1 failed — retrying with cp1252 encoding.")
+                df = pd.read_csv(self.path, encoding="cp1252")
+
+        if 'label' not in df.columns:
+            if 'evil' in df.columns:
+                df['label'] = df['evil'].astype(int)
+            elif 'sus' in df.columns:
+                df['label'] = df['sus'].astype(int)
 
         before = len(df)
         df = df.dropna(subset=[self.target])
