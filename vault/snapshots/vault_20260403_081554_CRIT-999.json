@@ -1,0 +1,1 @@
+{"alert_id": "CRIT-999", "blast_radius": 9.5, "evidence_trail": ["Malicious hash detected", "Unauthorized sensitive file access"], "severity": "CRITICAL", "source_ip": "10.0.0.5"}
