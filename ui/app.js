@@ -60,11 +60,10 @@ function renderAlertFeed(prevCount) {
     return;
   }
 
-  // Render newest first
-  const reversed = [...allAlerts].reverse();
-  list.innerHTML = reversed.map((a, i) => {
+  // Rishi's API already returns newest-first
+  list.innerHTML = allAlerts.map((a, i) => {
     const sev = (a.severity || 'UNKNOWN').toLowerCase();
-    const isNew = allAlerts.length - i > prevCount;
+    const isNew = i >= prevCount;
     const isHoneypot = a.honeypot_triggered;
     const isSelected = a.alert_id === selectedAlertId;
 
@@ -188,6 +187,12 @@ function renderDetail(a) {
     <div class="detail-section">
       <h3>LLM Summary</h3>
       <div class="evidence-item">${a.summary}</div>
+    </div>` : ''}
+
+    ${a.narrative ? `
+    <div class="detail-section">
+      <h3>📖 Playbook Narrative</h3>
+      <div class="evidence-item">${a.narrative}</div>
     </div>` : ''}
 
     ${a.vault_hash ? `
