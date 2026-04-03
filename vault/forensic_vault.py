@@ -15,6 +15,7 @@ class ForensicVault:
             raise ValueError("Incident missing 'alert_id' key")
             
         timestamp = datetime.now(timezone.utc).isoformat()
+        incident['captured_at'] = timestamp
         # Replace ':' for filename safety
         safe_timestamp = timestamp.replace(":", "-")
         alert_id = incident['alert_id']
@@ -67,3 +68,36 @@ class ForensicVault:
                 snapshots.append(snapshot_id)
                 
         return sorted(snapshots)
+
+    def generate_chain_of_custody(self, snapshot_id: str) -> str:
+        json_path = self.vault_dir / f"vault_{snapshot_id}.json"
+        hash_path = self.vault_dir / f"vault_{snapshot_id}.sha256"
+        
+        if not json_path.exists() or not hash_path.exists():
+            return f"ERROR: Snapshot {snapshot_id} not found."
+            
+        try:
+            with open(json_path, 'r', encoding='utf-8') as f:
+                incident = json.load(f)
+        except Exception:
+            incident = {'alert_id': 'UNKNOWN (CORRUPTED)', 'captured_at': 'UNKNOWN'}
+            
+        with open(hash_path, 'r', encoding='utf-8') as f:
+            stored_hash = f.read().strip()
+            
+        integrity_status = self.verify_integrity(snapshot_id)
+        integrity_str = '✅ VERIFIED' if integrity_status else '❌ TAMPERED'
+        
+        return f"""══════════════════════════════════════════════
+CHAIN OF CUSTODY REPORT
+══════════════════════════════════════════════
+Incident ID   : {incident.get('alert_id', incident.get('alert_id'))}
+Capture Time  : {incident.get('captured_at', 'N/A')}
+SHA-256 Hash  : {stored_hash}
+System Host   : {socket.gethostname()}
+Captured By   : SOC-AI Automated System
+Integrity     : {integrity_str}
+──────────────────────────────────────────────
+This record is cryptographically sealed and
+legally admissible as forensic evidence.
+══════════════════════════════════════════════"""
