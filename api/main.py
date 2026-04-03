@@ -194,6 +194,16 @@ async def classify_alert(request: AlertRequest):
     verification = services['verifier'].verify(alert)
     alert.update(verification)
 
+    # Bridge: map VerificationEngine confidence_score → severity_raw (primary BETH model feature).
+    # confidence_score is 0–100 from VerificationEngine; severity_raw expected 0.0–1.0 by ML model.
+    # Lower confidence = lower threat probability = keeps benign alerts as BENIGN/LOW.
+    verification_confidence = alert.get('confidence_score', 50)
+    alert['severity_raw'] = round(verification_confidence / 100.0, 4)
+
+    # Also populate event_type if not already set by the parser
+    if not alert.get('event_type'):
+        alert['event_type'] = request.event_type or 'UNKNOWN'
+
     # Step 4: Classification
     classification = services['classifier'].predict(alert)
     alert['severity'] = classification['severity']
