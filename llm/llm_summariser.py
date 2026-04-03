@@ -124,7 +124,7 @@ class LLMSummariser:
 
         fallback = (
             f"SUMMARY: A {severity}-severity {event_type} alert was triggered\n"
-            f"from {src_ip} with {conf_str}% confidence.\n"
+            f"from {source_ip} with {conf_str}% confidence.\n"
             f"TECHNIQUE: Suspicious activity detected via {top_feature} pattern (T1059).\n"
             f"ACTION: ISOLATE_HOST"
         )
