@@ -175,8 +175,15 @@ class FeaturePipeline:
             self._artifacts_loaded = True
 
         feature_cols = self.num_cols + self.cat_cols
-        row = {col: alert_dict.get(col, 0) for col in feature_cols}
+        row = {}
+        for col in feature_cols:
+            val = alert_dict.get(col)
+            row[col] = 0 if val is None or pd.isna(val) else val
         df = pd.DataFrame([row])
+        
+        for col in self.num_cols:
+            df[col] = pd.to_numeric(df[col], errors='coerce')
+        df.fillna(0, inplace=True)
 
         # Encode categoricals
         for col in self.cat_cols:

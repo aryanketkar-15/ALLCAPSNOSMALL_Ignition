@@ -115,7 +115,12 @@ class ClassifierService:
         # ── Build single-row DataFrame in correct column order ──────────
         row = {}
         for col in self.num_cols:
-            row[col] = alert_dict.get(col, 0)
+            val = alert_dict.get(col, 0)
+            # Coerce None / NaN to 0 so sklearn never sees a NaN input
+            try:
+                row[col] = 0 if (val is None or pd.isna(val)) else float(val)
+            except (TypeError, ValueError):
+                row[col] = 0
         for col in self.cat_cols:
             row[col] = alert_dict.get(col, "unknown")
 
@@ -133,6 +138,7 @@ class ClassifierService:
                     df[col] = 0
 
         # ── Scale numeric columns using saved scaler ────────────────────
+        df[self.num_cols] = pd.to_numeric(df[self.num_cols].stack(), errors='coerce').unstack().fillna(0)
         df[self.num_cols] = self.scaler.transform(df[self.num_cols])
 
         # ── Predict ─────────────────────────────────────────────────────
@@ -145,13 +151,13 @@ class ClassifierService:
         severity = self._probability_to_severity(p_attack)
         ts = datetime.now(timezone.utc).isoformat()
 
-        return ClassificationResult(
-            alert_id=alert_id,
-            severity=severity,
-            confidence=round(p_attack, 4),
-            top_features=self.top_features,
-            timestamp=ts,
-        )
+        return {
+            "alert_id": alert_id,
+            "severity": severity,
+            "confidence": round(p_attack, 4),
+            "top_features": self.top_features,
+            "timestamp": ts,
+        }
 
     # ------------------------------------------------------------------ #
     #  SEVERITY MAPPING

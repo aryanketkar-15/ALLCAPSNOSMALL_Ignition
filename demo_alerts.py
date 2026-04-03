@@ -189,6 +189,8 @@ def main():
 
     for i, alert in enumerate(ALERTS, start=1):
         try:
+            if "timestamp" not in alert:
+                alert["timestamp"] = "2024-12-15T10:00:00Z"
             resp = requests.post(BASE_URL, json=alert, timeout=60)
             data = resp.json() if resp.ok else {}
             severity = data.get("severity", "???")
