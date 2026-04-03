@@ -1,8 +1,11 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, field_validator
 from typing import Optional, List
 import time, datetime, re
+
+START_TIME = time.time()
 
 # STEP 1 — Corrected imports mapped to exactly what Aryan, Shanteshwar, and Ajaya deployed:
 from ingestion.parser import LogParser
@@ -104,6 +107,9 @@ class AlertRequest(BaseModel):
     dest_ip: str
     port: int
     timestamp: str
+    event_type: Optional[str] = None
+    accessed_path: Optional[str] = None
+    protocol: Optional[str] = None
 
     @field_validator('source_ip', 'dest_ip')
     @classmethod
@@ -116,8 +122,8 @@ class AlertRequest(BaseModel):
     @field_validator('port')
     @classmethod
     def validate_port(cls, v):
-        if not 1 <= v <= 65535:
-            raise ValueError(f'port {v} out of range 1-65535')
+        if not 0 <= v <= 65535:
+            raise ValueError(f'port {v} out of range 0-65535')
         return v
 
 class AlertResponse(BaseModel):
@@ -293,6 +299,7 @@ async def get_stats():
         'honeypots_triggered': stats['honeypots_triggered'],
         'false_positive_rate': round(fp_rate, 3),
         'average_processing_time_ms': round(avg_time, 1),
+        'uptime_seconds': int(time.time() - START_TIME),
     }
 
 
@@ -328,3 +335,7 @@ async def get_blast_radius(node_id: str):
         raise HTTPException(status_code=400, detail=str(ve))
     except Exception as e:
         raise HTTPException(status_code=400, detail=f'Blast radius calculation failed: {str(e)}')
+
+
+# STEP 9 — Mount UI Frontend correctly to bypass CORS/origin file policies
+app.mount("/", StaticFiles(directory="ui", html=True), name="ui")
