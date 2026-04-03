@@ -5,6 +5,10 @@ __pycache__/
 .env
 data/beth/
 data/unsw/
+<<<<<<< HEAD
 verify_*.py
 verify_output.txt
+=======
+
 env/
+>>>>>>> origin/ajaya/response-docs
