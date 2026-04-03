@@ -76,20 +76,13 @@ class PlaybookStateMachine:
         )
 
         try:
-            from llm.summariser import LLMSummariser
-            
-            prompt_string = (
-                "You are a SOC analyst writing an incident report in professional past tense. "
-                "Summarise these automated response actions into a 3-sentence narrative. "
-                f"Actions: {json.dumps(actions_log, indent=2)}\n"
-                "Respond with ONLY the narrative, no headings."
-            )
-            
+            from llm.llm_summariser import LLMSummariser
+
             result_container = []
-            
+
             def _call_llm():
                 try:
-                    res = LLMSummariser().summarise({'prompt': prompt_string})
+                    res = LLMSummariser().generate_playbook_narrative(actions_log)
                     result_container.append(res)
                 except Exception:
                     pass
@@ -97,12 +90,12 @@ class PlaybookStateMachine:
             t = threading.Thread(target=_call_llm)
             t.start()
             t.join(30.0)
-            
+
             if t.is_alive() or not result_container:
                 return fallback_narrative
-                
+
             return result_container[0]
-            
+
         except ImportError:
             return fallback_narrative
         except Exception:
