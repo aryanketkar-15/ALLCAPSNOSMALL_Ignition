@@ -1,4 +1,7 @@
 from langgraph.graph import StateGraph, END
+import json
+import threading
+from datetime import datetime, timezone
 from playbooks.states import PlaybookState, PlaybookContext
 from playbooks.actions import (
     receive_alert, triage, block_ip, block_asn,
@@ -57,3 +60,50 @@ class PlaybookStateMachine:
     def run(self, ctx: PlaybookContext) -> PlaybookContext:
         """Invoke the compiled graph with the provided state."""
         return self.graph.invoke(ctx)
+
+    def generate_playbook_narrative(self, actions_log: list, alert_id: str) -> str:
+        if not actions_log:
+            return f"Incident {alert_id}: No response actions log."
+
+        start_time = actions_log[0].get('timestamp', 'unknown')
+        end_time = actions_log[-1].get('timestamp', 'unknown')
+        final_state = actions_log[-1].get('to_state', 'UNKNOWN')
+
+        fallback_narrative = (
+            f"Incident {alert_id}: Automated response initiated at {start_time}.\n"
+            f"System executed {len(actions_log)} response actions.\n"
+            f"Final state: {final_state} at {end_time}."
+        )
+
+        try:
+            from llm.summariser import LLMSummariser
+            
+            prompt_string = (
+                "You are a SOC analyst writing an incident report in professional past tense. "
+                "Summarise these automated response actions into a 3-sentence narrative. "
+                f"Actions: {json.dumps(actions_log, indent=2)}\n"
+                "Respond with ONLY the narrative, no headings."
+            )
+            
+            result_container = []
+            
+            def _call_llm():
+                try:
+                    res = LLMSummariser().summarise({'prompt': prompt_string})
+                    result_container.append(res)
+                except Exception:
+                    pass
+
+            t = threading.Thread(target=_call_llm)
+            t.start()
+            t.join(30.0)
+            
+            if t.is_alive() or not result_container:
+                return fallback_narrative
+                
+            return result_container[0]
+            
+        except ImportError:
+            return fallback_narrative
+        except Exception:
+            return fallback_narrative
