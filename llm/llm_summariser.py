@@ -129,3 +129,46 @@ class LLMSummariser:
             f"ACTION: ISOLATE_HOST"
         )
         return fallback
+
+    def generate_playbook_narrative(self, actions_log: list) -> str:
+        """
+        Takes the FSM actions log, feeds it to Ollama, and explicitly asks for
+        a CISO-level past-tense narrative paragraph.
+        """
+        if not actions_log:
+            actions_log = []
+
+        prompt = (
+            "You are a cybersecurity incident reporter writing for a CISO-level audience.\n"
+            "Write a professional incident narrative in PAST TENSE based on these automated\n"
+            "SOC response actions. Use formal language. Maximum 180 words.\n"
+            "Do not add information not present in the actions log.\n"
+            f"Automated response actions: {json.dumps(actions_log)}"
+        )
+
+        result = self._call_ollama(prompt)
+        
+        if self._is_valid_response(result):
+            return result
+        return self._template_narrative(actions_log)
+
+    def _template_narrative(self, actions_log: list) -> str:
+        """
+        Fallback loop ensuring we don't return None if Llama3 goes offline during the demo.
+        """
+        if not actions_log:
+            return "INCIDENT NARRATIVE: No playbook actions were logged. The incident was closed and logged per SOC protocol."
+
+        actions_taken = [
+            action.get('action_taken', str(action)) for action in actions_log if isinstance(action, dict)
+        ]
+        
+        if not actions_taken:
+            return "INCIDENT NARRATIVE: The alert was processed successfully. The incident was closed and logged per SOC protocol."
+
+        narrative = "INCIDENT NARRATIVE:\n"
+        for action_item in actions_taken:
+            narrative += f"- {action_item}\n"
+            
+        narrative += "The incident was closed and logged per SOC protocol."
+        return narrative
