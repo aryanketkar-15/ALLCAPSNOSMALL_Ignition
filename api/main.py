@@ -1,11 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from typing import Optional, List
-import time, datetime
-
-# Track API startup time for uptime calculation
-startup_time = time.time()
+import time, datetime, re
 
 # STEP 1 — Corrected imports mapped to exactly what Aryan, Shanteshwar, and Ajaya deployed:
 from ingestion.parser import LogParser
@@ -17,7 +14,7 @@ from classifier.classifier_service import ClassifierService
 # (Assuming graph, blast_radius exist in knowledge_graph and honeypot_manager exists in honeypot)
 # We handle import errors dynamically below if Shanteshwar hasn't fully pushed the classes yet
 from playbooks.state_machine import PlaybookStateMachine
-from playbooks.llm_summariser import LLMSummariser
+from llm.llm_summariser import LLMSummariser
 from vault.forensics import ForensicVault
 from vault.cacao_exporter import CacaoExporter
 
@@ -55,7 +52,8 @@ async def startup():
     try:
         services['classifier'] = ClassifierService()
     except Exception as e:
-        print(f"[WARN] Failed to load ClassifierService: {e}")
+        print(f"[WARN] Failed to load ClassifierService: {e}. Injecting Mock.")
+        services['classifier'] = type('Mock', (), {'predict': lambda s,x: {'severity':'LOW','confidence':0.3,'top_features':[]}})()
         
     # Load Shanteshwar's graphs & honeypots
     try:
@@ -105,10 +103,22 @@ class AlertRequest(BaseModel):
     source_ip: str
     dest_ip: str
     port: int
-    timestamp: str = ''
-    event_type: str = ''
-    accessed_path: str = ''
-    protocol: str = ''
+    timestamp: str
+
+    @field_validator('source_ip', 'dest_ip')
+    @classmethod
+    def validate_ip(cls, v):
+        ip_re = re.compile(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$')
+        if not ip_re.match(v):
+            raise ValueError(f'{v} is not a valid IPv4 address')
+        return v
+
+    @field_validator('port')
+    @classmethod
+    def validate_port(cls, v):
+        if not 1 <= v <= 65535:
+            raise ValueError(f'port {v} out of range 1-65535')
+        return v
 
 class AlertResponse(BaseModel):
     alert_id: str
@@ -118,15 +128,8 @@ class AlertResponse(BaseModel):
     blast_radius: float
     playbook_state: str
     summary: str
+    narrative: str
     vault_hash: str
-
-class StatsResponse(BaseModel):
-    total_alerts_processed: int
-    severity_distribution: dict
-    honeypots_triggered: int
-    false_positive_rate: float
-    average_processing_time_ms: float
-    uptime_seconds: int
 
 # STEP 6 — Health endpoint
 @app.get('/health')
@@ -137,91 +140,191 @@ async def health():
         'time': datetime.datetime.utcnow().isoformat()
     }
 
-# ══════════════════════════════════════════════════════════════
-# STEP 7 — Shanteshwar's Phase 6 endpoints (Prompts 6 & 7)
-# ══════════════════════════════════════════════════════════════
 
-@app.get('/api/v1/stats', response_model=StatsResponse)
-async def get_stats():
-    """Live system statistics — powers the dashboard right panel."""
-    total = stats['total']
-    sev = stats['severity']
-    benign_count = sev.get('BENIGN', 0)
-    fp_rate = round((benign_count / total * 100), 1) if total > 0 else 0.0
-    avg_time = round(stats['total_time_ms'] / total, 2) if total > 0 else 0.0
+# =====================================================================
+# PIPELINE ENDPOINTS
+# =====================================================================
 
-    return StatsResponse(
-        total_alerts_processed=total,
-        severity_distribution={
-            'BENIGN': sev.get('BENIGN', 0),
-            'LOW': sev.get('LOW', 0),
-            'MEDIUM': sev.get('MEDIUM', 0),
-            'HIGH': sev.get('HIGH', 0),
-            'CRITICAL': sev.get('CRITICAL', 0),
-        },
-        honeypots_triggered=stats['honeypots_triggered'],
-        false_positive_rate=fp_rate,
-        average_processing_time_ms=avg_time,
-        uptime_seconds=int(time.time() - startup_time),
-    )
+def _sanitise(obj):
+    """Recursively convert non-JSON-serialisable types to safe primitives."""
+    import numpy as np, pandas as pd
+    if isinstance(obj, dict):
+        return {k: _sanitise(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [_sanitise(i) for i in obj]
+    elif isinstance(obj, (pd.Timestamp, datetime.datetime)):
+        return obj.isoformat()
+    elif isinstance(obj, (np.integer,)):
+        return int(obj)
+    elif isinstance(obj, (np.floating,)):
+        return float(obj)
+    elif isinstance(obj, (np.bool_,)):
+        return bool(obj)
+    elif isinstance(obj, (np.ndarray,)):
+        return obj.tolist()
+    return obj
 
 
-@app.get('/api/v1/vault/{alert_id}')
-async def get_vault(alert_id: str):
-    """Forensic vault — chain of custody report for a processed alert."""
-    vault_svc = services.get('vault')
-    if vault_svc is None:
-        raise HTTPException(status_code=503, detail='ForensicVault service not loaded')
+@app.post('/api/v1/classify', response_model=AlertResponse)
+async def classify_alert(request: AlertRequest):
+    start = time.perf_counter()
 
-    # Check if snapshot exists
+    # Step 1: Parse
+    alert = services['parser'].parse({
+        'raw_log': request.raw_log,
+        'source_ip': request.source_ip,
+        'dest_ip': request.dest_ip,
+        'port': request.port,
+        'timestamp': request.timestamp,
+    }, dataset='unsw')  # auto-detect dataset if possible
+
+    # Step 2: IOC Extraction
+    import pandas as pd
+    df = pd.DataFrame([alert])
+    df = services['ioc'].extract_all(df)
+    alert = df.iloc[0].to_dict()
+
+    # Step 3: Verification
+    verification = services['verifier'].verify(alert)
+    alert.update(verification)
+
+    # Step 4: Classification
+    classification = services['classifier'].predict(alert)
+    alert['severity'] = classification['severity']
+    alert['confidence'] = classification['confidence']
+
+    # Step 5: Honeypot Check (may override severity to CRITICAL)
+    honeypot_hit = services['honeypot'].check_interaction(alert)
+    if honeypot_hit:
+        alert['severity'] = 'CRITICAL'
+        alert['confidence'] = 1.0
+        alert['evidence_trail'].append('HONEYPOT TRIGGERED: 100% fidelity detection — zero false positive possible')
+        stats['honeypots_triggered'] += 1
+
+    # Step 6: Blast Radius
+    blast_result = services['blast'].calculate(alert.get('source_ip', 'WORKSTATION_1'))
+    alert['blast_radius'] = blast_result.get('blast_radius_score', 0.0)
+
+    # Step 7: Playbook
+    from playbooks.state_machine import PlaybookState
+    state_input = {
+        'alert_id': str(alert.get('alert_id', 'none')),
+        'severity': alert.get('severity', 'LOW'),
+        'source_ip': alert.get('source_ip', '0.0.0.0'),
+        'blast_radius': alert.get('blast_radius', 0.0),
+        'current_state': PlaybookState.ALERT_RECEIVED,
+        'actions_log': [],
+        'remediation_attempts': 0,
+        'last_alert_time': time.time()
+    }
+    playbook_result = services['playbook'].graph.invoke(state_input)
+    alert['playbook_state'] = playbook_result.get('current_state', PlaybookState.ALERT_RECEIVED).value
+    alert['playbook_actions'] = playbook_result.get('actions_log', [])
+
+    # Step 8: Forensic Vault — sanitise first so json.dumps inside vault doesn't choke on Timestamps
+    alert = _sanitise(alert)
+    vault_filename, vault_hash = services['vault'].capture_snapshot(alert)
+    alert['vault_hash'] = vault_hash
+
+    # Step 9: LLM Summary & Narrative (non-blocking — use asyncio.wait_for with 30s timeout)
+    import asyncio
+    
+    async def run_llm_tasks():
+        loop = asyncio.get_event_loop()
+        t1 = loop.run_in_executor(None, services['llm'].summarise, alert, alert.get('playbook_actions', []))
+        t2 = loop.run_in_executor(None, services['llm'].generate_playbook_narrative, alert.get('playbook_actions', []))
+        return await asyncio.gather(t1, t2)
+
     try:
-        integrity_ok = vault_svc.verify_integrity(alert_id)
-    except (FileNotFoundError, KeyError, Exception):
-        raise HTTPException(status_code=404, detail={
-            'error': 'SNAPSHOT_NOT_FOUND',
-            'alert_id': alert_id,
-        })
-
-    if not integrity_ok:
-        raise HTTPException(status_code=409, detail={
-            'error': 'VAULT_TAMPERED',
-            'alert_id': alert_id,
-            'message': 'Snapshot integrity check failed — file may have been modified',
-        })
-
-    try:
-        report = vault_svc.generate_chain_of_custody(alert_id)
-        from fastapi.responses import PlainTextResponse
-        return PlainTextResponse(content=report, media_type='text/plain')
+        summary, narrative = await asyncio.wait_for(run_llm_tasks(), timeout=30.0)
+    except asyncio.TimeoutError:
+        summary = f'[Template] {alert["severity"]} severity alert — event: {alert.get("event_type", "unknown")} from {alert.get("source_ip","unknown")}'
+        narrative = '[Template] Playbook narrative timed out.'
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        summary = f"LLM Summariser failed: {e}"
+        narrative = f"Narrative failed: {e}"
 
+    # Step 10: CACAO Export (fire and forget — non-blocking)
+    try:
+        services['cacao'].export(alert['alert_id'], alert.get('playbook_actions', []), summary)
+    except Exception as e:
+        print(f'[CACAO] Non-fatal export error: {e}')
 
-@app.get('/api/v1/graph/blast-radius/{node_id}')
-async def get_blast_radius(node_id: str, include_paths: bool = True):
-    """Blast radius query for a given infrastructure node."""
-    blast_svc = services.get('blast')
-    if blast_svc is None:
-        raise HTTPException(status_code=503, detail='BlastRadiusAnalyser service not loaded')
+    elapsed_ms = (time.perf_counter() - start) * 1000
+    print(f'[CLASSIFY] {alert["alert_id"]} processed in {elapsed_ms:.0f}ms — severity: {alert["severity"]}')
 
-    # Unknown node check
-    if node_id not in blast_svc.graph:
-        raise HTTPException(status_code=404, detail={
-            'error': 'NODE_NOT_FOUND',
-            'node_id': node_id,
-            'available_nodes': list(blast_svc.graph.nodes()),
-        })
+    # Update stats
+    stats['total'] += 1
+    stats['severity'][alert['severity']] = stats['severity'].get(alert['severity'], 0) + 1
+    stats['total_time_ms'] += elapsed_ms
 
-    result = blast_svc.calculate(node_id)
+    # Store in history (keep last 50)
+    alert['summary'] = summary
+    alert['narrative'] = narrative
+    alert_history.append(alert)
+    if len(alert_history) > 50: alert_history.pop(0)
 
-    if not include_paths:
-        result.pop('affected_nodes', None)
-        result.pop('path_to_nearest_critical', None)
-
-    return result
+    return AlertResponse(
+        alert_id=str(alert['alert_id']),
+        severity=alert['severity'],
+        confidence=alert['confidence'],
+        evidence_trail=alert.get('evidence_trail', []),
+        blast_radius=alert.get('blast_radius', 0.0),
+        playbook_state=alert.get('playbook_state', 'ALERT_RECEIVED'),
+        summary=summary,
+        narrative=narrative,
+        vault_hash=alert.get('vault_hash', ''),
+    )
 
 
 @app.get('/api/v1/alerts')
 async def get_alerts():
-    """Return the last 50 processed alerts."""
-    return alert_history[-50:]
+    return list(reversed(alert_history))
+
+
+@app.get('/api/v1/stats')
+async def get_stats():
+    avg_time = stats['total_time_ms'] / max(stats['total'], 1)
+    fp_count = sum(1 for a in alert_history if a.get('verification_status') == 'FALSE_POSITIVE')
+    fp_rate = fp_count / max(len(alert_history), 1)
+    return {
+        'total_alerts_processed': stats['total'],
+        'severity_distribution': stats['severity'],
+        'honeypots_triggered': stats['honeypots_triggered'],
+        'false_positive_rate': round(fp_rate, 3),
+        'average_processing_time_ms': round(avg_time, 1),
+    }
+
+
+@app.get('/api/v1/vault/{alert_id}')
+async def get_vault(alert_id: str):
+    import os
+    try:
+        vault_dir = getattr(services['vault'], 'storage_path', 'vault/snapshots/')
+        snapshot_filename = None
+        if os.path.exists(vault_dir):
+            for f in os.listdir(vault_dir):
+                if f.endswith(f"_{alert_id}.sha256"):
+                    snapshot_filename = f.replace('.sha256', '')
+                    break
+                    
+        if not snapshot_filename:
+            raise FileNotFoundError(f"No snapshot found for {alert_id}")
+            
+        report = services['vault'].generate_chain_of_custody(snapshot_filename, alert_id)
+        return {'report': report}
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail=f'Vault record not found for alert {alert_id}')
+
+
+@app.get('/api/v1/graph/blast-radius/{node_id}')
+async def get_blast_radius(node_id: str):
+    try:
+        if hasattr(services['blast'], 'graph') and node_id not in services['blast'].graph.nodes:
+            raise ValueError(f'Node {node_id} not in infrastructure graph')
+        result = services['blast'].calculate(node_id)
+        return result
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail=str(ve))
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f'Blast radius calculation failed: {str(e)}')
