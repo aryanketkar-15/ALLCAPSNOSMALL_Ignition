@@ -1,0 +1,115 @@
+RISHI
+DATA PIPELINE LEAD
+CURSOR / SOC HACKATHON PROMPT GUIDE
+Python  ·  FastAPI  ·  Pandas  ·  Regex  ·  React/HTML  ·  BETH / UNSW-NB15
+
+
+
+
+Two prompts. After this section, you have a fully functional LogParser that reads raw BETH or UNSW-NB15 CSV files in chunks, normalises every field to UTC, and returns a clean Pandas DataFrame ready for IOC extraction. Aryan cannot start feature engineering until your DataFrame is confirmed. Finish these two prompts before 1:00 PM.
+
+
+
+
+✅  VERIFY — Run all checks before moving to Prompt 2
+
+
+🔴  COMMON ERRORS & FIXES
+
+
+
+
+
+
+✅  VERIFY — Run all checks before moving to Prompt 3
+
+
+🔴  COMMON ERRORS & FIXES
+
+
+
+
+One prompt. Builds the 3-pass VerificationEngine that produces a confidence score and a human-readable evidence trail per alert. The evidence trail IS the XAI output — judges will see it directly in the UI. Get this right: a clear, well-worded evidence trail is one of the strongest demo moments.
+
+
+
+
+✅  VERIFY — Run all checks before Checkpoint 1
+
+
+🔴  COMMON ERRORS & FIXES
+
+
+
+⛳  CHECKPOINT 1 — DATA PIPELINE COMPLETE  (Hour: 2:30 PM)
+Stop here. All rows must pass before handing the cleaned DataFrame to Aryan and moving to Phase 6 work later.
+
+
+
+Three prompts. All modules from Phases 1–5 are now wired through a single FastAPI app. Load models once at startup. Take one endpoint at a time. Do not attempt to wire everything in a single prompt — Cursor will generate incorrect import paths and service instantiation order.
+
+
+
+
+✅  VERIFY — Run all checks before Prompt 5
+
+
+🔴  COMMON ERRORS & FIXES
+
+
+
+
+
+
+✅  VERIFY — Run all checks before Prompt 6
+
+
+🔴  COMMON ERRORS & FIXES
+
+
+
+
+
+✅  VERIFY — Run all checks before Checkpoint 2
+
+
+🔴  COMMON ERRORS & FIXES
+
+
+
+⛳  CHECKPOINT 2 — API LAYER COMPLETE  (Hour: ~5:00 AM)
+Run this with Shanteshwar on the stats/vault endpoints. All rows must pass before moving to the dashboard.
+
+
+
+One prompt. The dashboard polls the API and shows live alerts in a colour-coded feed. Vanilla HTML + JavaScript is recommended — no build step, no Node modules, deploys as a single file. React only if the team is very comfortable and has 3 hours to spare. The goal is a working demo, not a portfolio piece.
+
+
+
+
+✅  VERIFY — Run all checks before final end-to-end test
+
+
+🔴  COMMON ERRORS & FIXES
+
+
+
+⛳  FINAL CHECKPOINT — RISHI'S WORK COMPLETE  (Hour: 7:30 AM)
+Run this table with the full team before presentation prep. All rows must pass. Rishi runs the demo_alerts.py script during the presentation — confirm it works cleanly here first.
+
+
+
+Scenario 1: Dataset Download Fails Completely
+Generate a synthetic DataFrame using numpy. 1,000 rows, random feature values. Assign labels: if source_ip starts with '185.' → attack (1), else benign (0). This is enough to feed the classifier. Talking point: 'We designed the ingestion layer to be dataset-agnostic — it normalises any log format to our internal schema.'
+
+Scenario 2: IOC Extraction Exceeds 5 Seconds on Full Dataset
+Switch to ProcessPoolExecutor(max_workers=4) as specified in the prompt. If that also fails (pickle error on lambdas), fall back to a stripped version: only extract IPv4 addresses and CVE IDs (the two most visually impactful IOC types). Drop domain/hash/URL extraction for time. The demo still shows IOCs being pulled.
+
+Scenario 3: FastAPI Keeps Crashing on Import of One Module
+Remove the broken module from the services dict. The API can return partial results. Replace the broken service with a stub: services['blast'] = type('Stub',(),{'calculate': lambda s,x: {'blast_radius_score': 0.5, 'affected_nodes': [], 'path_to_nearest_critical': []}})() — and still demonstrate the core classification flow. Never let one module take down the entire API.
+
+Scenario 4: Less Than 2 Hours Left and Dashboard Not Done
+Priority 1 (non-negotiable): POST /api/v1/classify must work and return severity + evidence trail. Priority 2: A plain HTML table showing the last 10 alerts from GET /api/v1/alerts is enough for a working demo. Priority 3: Drop CACAO export display and vault hash display — show them as static JSON files directly if needed. The classifier + evidence trail IS the minimum viable demo.
+
+
+Good luck Rishi. The pipeline you build is the spine that everything else plugs into. When your DataFrame comes out clean and your verification engine produces a sharp evidence trail — the whole system sings.

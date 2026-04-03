@@ -1,0 +1,31 @@
+============================================================
+CHECK 1: verify() returns dict with all 3 required keys
+============================================================
+Keys returned: ['verification_status', 'confidence_score', 'evidence_trail']
+✅ PASS
+
+============================================================
+CHECK 2: Known-bad IP returns confidence >= 70 (VERIFIED)
+============================================================
+Confidence: 50, Status: UNVERIFIED
+❌ FAIL
+
+============================================================
+CHECK 3: evidence_trail is non-empty list of strings
+============================================================
+Evidence trail: ['PASS 1: Structural check passed — all required fields present']
+✅ PASS
+
+============================================================
+CHECK 4: Private-IP-only benign alert returns FALSE_POSITIVE
+============================================================
+Status: FALSE_POSITIVE (Score: 20)
+✅ PASS
+
+============================================================
+CHECK 5: honeypot_boost param correctly elevates confidence
+============================================================
+Score with boost: 70
+✅ PASS
+
+All checks complete.

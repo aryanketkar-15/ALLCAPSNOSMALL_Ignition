@@ -1,0 +1,33 @@
+============================================================
+CHECK 1: Schema imports without error
+============================================================
+PASS: AlertSchema imported ok
+
+============================================================
+CHECK 2: AlertSchema creates valid instance
+============================================================
+PASS: alert_id = 0ed3c2c1-17fb-4563-b042-66d8ff2a7858
+
+============================================================
+CHECK 3: batch_parse() on BETH returns DataFrame (first 10k rows)
+============================================================
+Shape: (763144, 11)
+timestamp dtype: datetime64[us, UTC]
+PASS: DataFrame returned with rows
+
+============================================================
+CHECK 4: No NaN in event_type or raw_log columns
+============================================================
+event_type NaN: 0
+raw_log NaN: 0
+PASS: 0 NaN in event_type and raw_log
+
+============================================================
+CHECK 5: All timestamps are timezone-aware UTC
+============================================================
+First timestamp: 1970-01-01 00:30:09.495787+00:00
+tzinfo: UTC
+PASS: Timestamp is timezone-aware
+
+============================================================
+All checks complete.
