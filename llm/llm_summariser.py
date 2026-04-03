@@ -68,18 +68,22 @@ class LLMSummariser:
             return False
         return True
 
-    def summarise(self, alert_context: dict) -> str:
+    def summarise(self, alert_context: dict, actions_log: list = None) -> str:
         """
         Takes raw alert context, trims it, and queries Ollama for a tactical SOC summary.
         If Ollama fails or the response is invalid, falls back to a template string.
         """
+        if actions_log is None:
+            actions_log = []
+            
         # Trim alert context to top 5 key fields to save token space
         trimmed_context = {
             "severity": alert_context.get("severity", "UNKNOWN"),
             "event_type": alert_context.get("event_type", "unknown_event"),
-            "src_ip": alert_context.get("src_ip", "N/A"),
+            "source_ip": alert_context.get("source_ip", alert_context.get("src_ip", "N/A")),
             "confidence": alert_context.get("confidence", 0.0),
             "top_features": alert_context.get("top_features", ["unknown"]),
+            "playbook_actions": actions_log
         }
         
         prompt = (
@@ -105,7 +109,7 @@ class LLMSummariser:
         """
         severity = alert_context.get("severity", "UNKNOWN")
         event_type = alert_context.get("event_type", "unknown_event")
-        src_ip = alert_context.get("src_ip", "N/A")
+        source_ip = alert_context.get("source_ip", alert_context.get("src_ip", "N/A"))
         
         # safely handle confidence (convert back to percentage out of 100)
         conf_val = alert_context.get("confidence", 0.0)
@@ -115,6 +119,7 @@ class LLMSummariser:
             conf_str = "0"
             
         top_feats = alert_context.get("top_features", ["unknown_pattern"])
+
         top_feature = top_feats[0] if isinstance(top_feats, list) and len(top_feats) > 0 else "unknown_pattern"
 
         fallback = (
