@@ -36,3 +36,34 @@ class ForensicVault:
             f.write(sha256)
             
         return snapshot_id
+
+    def verify_integrity(self, snapshot_id: str) -> bool:
+        json_path = self.vault_dir / f"vault_{snapshot_id}.json"
+        hash_path = self.vault_dir / f"vault_{snapshot_id}.sha256"
+        
+        if not json_path.exists() or not hash_path.exists():
+            return False
+            
+        with open(json_path, 'rb') as f:
+            raw_bytes = f.read()
+            
+        computed_hash = hashlib.sha256(raw_bytes).hexdigest()
+        
+        with open(hash_path, 'r', encoding='utf-8') as f:
+            stored_hash = f.read().strip()
+            
+        return computed_hash == stored_hash
+
+    def list_snapshots(self) -> list[str]:
+        snapshots = []
+        if not self.vault_dir.exists():
+            return snapshots
+            
+        for path in self.vault_dir.glob("vault_*.json"):
+            # filename is vault_alertID_safeTimestamp.json
+            name = path.name
+            if name.startswith("vault_") and name.endswith(".json"):
+                snapshot_id = name[len("vault_"):-len(".json")]
+                snapshots.append(snapshot_id)
+                
+        return sorted(snapshots)
