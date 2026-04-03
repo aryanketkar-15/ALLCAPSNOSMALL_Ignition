@@ -1,0 +1,335 @@
+AI-POWERED SOC ALERT CLASSIFICATION
+& PRIORITIZATION SYSTEM
+24-Hour Hackathon Master Playbook
+Sponsored by Vidhit Technologies  |  Problem Statement PS0202
+Team SY-A9  |  Prof. Vidya Gaikwad
+TEAM ROLE ASSIGNMENTS
+
+Dataset Selection & Strategy
+
+PRIMARY: BETH Dataset
+Source: Elastic / Kaggle — already structured like real SIEM log lines (process creation, network events, file access). Best choice for a demo because judges can immediately recognise the format as real-world.
+Download: kaggle datasets download -d katehighnam/beth-dataset (approx 1.1 GB). Requires Kaggle API key.
+Contains: host-level audit logs with labels for benign vs malicious activity. Perfect for showing realistic SOC alert flow.
+Benign:Attack ratio is approximately 95:5 — SMOTE must be applied during training (see Phase 2).
+
+BACKUP 1: UNSW-NB15 (~100 MB)
+49 network features, clean normal vs attack labels. Small enough to iterate fast. Best if BETH download fails during setup.
+Download from: research.unsw.edu.au/projects/unsw-nb15-dataset
+
+BACKUP 2: CICIDS 2017 (~2.8 GB CSVs)
+Gold standard with labelled DoS, DDoS, brute force, botnet, web attack categories. Use only if you have fast internet and time — large size can cost you 30 minutes.
+Download from: unb.ca/cic/datasets/ids-2017.html
+
+24-Hour Timeline at a Glance
+
+Git Commit Strategy (Monitored by Evaluators)
+
+Commit every 20–30 minutes minimum — set a phone alarm as a hard reminder.
+Each commit must be atomic (one logical change only). Never batch multiple features in one push.
+Use Conventional Commit format: feat(scope): description / fix(scope): description / chore: description
+All four team members must appear in the commit history. Avoid one person doing all commits.
+If a feature breaks — commit the broken state with a descriptive message, then fix in a subsequent commit. Do not hide failures.
+
+Example Good Commit Messages
+feat(ingestion): add raw log parser for BETH CSV format
+feat(ioc): implement vectorised IOC regex extraction — 4x speedup
+fix(ioc): resolve unicode decode error on log line 4471
+feat(ml): train RandomForest classifier on UNSW-NB15 features
+feat(graph): add NetworkX blast-radius A* pathfinding
+feat(honeypot): deploy dynamic decoy salary-PDF asset
+feat(playbook): implement LangGraph FSM escalation state machine
+feat(llm): integrate Ollama Llama3 for offline alert summarisation
+feat(vault): SHA-256 hash + WORM storage for forensic snapshots
+feat(cacao): generate CACAO JSON export from incident record
+feat(api): expose /classify and /prioritize REST endpoints
+feat(ui): build real-time alert dashboard with risk score display
+chore: integrate all modules, run end-to-end smoke test
+
+
+
+This phase lays the foundation. Nothing gets built until the environment is clean, the repo is structured, and the dataset is confirmed. Every minute lost here cascades. Move fast but do not skip verification.
+
+Step 0.1: Repository Structure & Branch Strategy  [Aryan]
+Create a new GitHub repository named soc-ai-system. Initialise with a README, .gitignore (Python + Node), and MIT licence.
+Create the following folder skeleton immediately: /ingestion, /classifier, /knowledge_graph, /honeypot, /playbooks, /llm, /vault, /api, /ui, /data, /tests, /docs.
+Create a main branch (production-ready only) and a dev branch (active development). Each team member branches off dev: aryan/ml-engine, rishi/pipeline, shanteshwar/threat-intel, ajaya/response-docs.
+Push the skeleton structure with commit: chore: init repo with folder structure and branch strategy.
+Share the repo link in your team WhatsApp/Discord immediately. Confirm all four members have push access before proceeding.
+
+
+
+
+Step 0.2: Python & Dependency Environment  [Aryan]
+On Aryan's GPU machine, create a Python 3.10+ virtual environment: python -m venv soc_env. Activate it.
+Create requirements.txt with: pandas, numpy, scikit-learn, imbalanced-learn (for SMOTE), joblib, regex, watchdog, networkx, scipy, langchain, langgraph, ollama, fastapi, uvicorn, pydantic, cryptography, pytest, httpx.
+Install via pip install -r requirements.txt. Capture frozen versions: pip freeze > requirements-lock.txt. Commit both.
+Verify GPU: python -c 'import torch; print(torch.cuda.is_available())'. If False, scikit-learn CPU is the fallback.
+Install Node.js (v18+) for frontend tooling. Verify: node --version.
+
+
+
+
+Step 0.3: Dataset Download & Validation  [Rishi]
+Attempt BETH Dataset download first: kaggle datasets download -d katehighnam/beth-dataset -p ./data/. Unzip into ./data/beth/.
+Start a 10-minute timer the moment the download begins. If BETH is not complete when the timer ends, cancel and immediately switch to UNSW-NB15.
+UNSW-NB15 fallback: download UNSW_NB15_training-set.csv and UNSW_NB15_testing-set.csv from the UNSW website into ./data/unsw/.
+Perform a quick data sanity check — load the CSV, print shape, print head(5), print value_counts() on the label column. Document in /docs/dataset-notes.md.
+BETH key columns: processId, threadId, parentProcessId, userId, mountNamespace, eventId, argsNum, returnValue, sus, evil. Note the ~95:5 benign:attack skew — SMOTE is required in Phase 2.
+UNSW-NB15 key columns: srcip, sport, dstip, dsport, proto, state, dur, sbytes, dbytes, label, attack_cat.
+Commit the dataset notes file and the validation script output.
+
+
+
+
+Step 0.4: Ollama + Llama 3 Setup  [Aryan]
+On Aryan's GPU machine, install Ollama: curl -fsSL https://ollama.com/install.sh | sh.
+Pull the Llama 3 8B model: ollama pull llama3:8b. This takes 5–10 minutes. Start in background while other steps proceed.
+Verify: ollama run llama3:8b 'Summarise a security alert in one sentence.' Confirm a coherent response.
+Note the Ollama API endpoint: http://localhost:11434. This will be the LLM base URL for Phase 4.
+If GPU VRAM is insufficient for llama3:8b (needs ~6 GB), fall back to llama3:3b (needs ~3 GB). Document the chosen model in README.
+
+
+
+
+This phase builds the ingestion spine of the system. Raw SIEM logs must be parsed, normalised, and stripped of IOCs before the classifier can work. The 4x faster extraction claim comes from vectorised Pandas operations instead of loop-based regex.
+
+Step 1.1: Log Normalisation & Schema Definition  [Rishi]
+Define a standard internal alert schema as a Pydantic model: alert_id (UUID), timestamp (ISO 8601), source_ip, dest_ip, port, protocol, event_type, raw_log (original line), iocs (dict), severity_raw, label.
+Write a LogParser class with a parse(raw_line: str) method. For BETH: map eventId → event_type, userId → source context, sus/evil → severity_raw. For UNSW-NB15: map srcip/dstip/proto/attack_cat directly.
+Normalise all timestamps to UTC using Python's datetime module. Handle both Unix epoch integers (BETH) and human-readable strings (UNSW).
+Write a batch_parse(filepath) method that reads the CSV in chunks of 10,000 rows using pd.read_csv(chunksize=10000) to avoid OOM on large files.
+Output: a normalised Pandas DataFrame with the standard schema columns, ready for IOC extraction.
+
+
+
+
+Step 1.2: High-Speed IOC Extraction (4x Speedup via Vectorised Pandas)  [Rishi]
+
+IOCs to extract: IPv4 addresses, IPv6 addresses, domain names, file hashes (MD5/SHA-256), CVE IDs, URL patterns, port numbers, process names.
+Compile all regex patterns into a single named-group pattern using the alternation operator |. Apply vectorised using df['raw_log'].str.extractall(compiled_pattern).
+For BETH: process names and file paths are in structured columns — no regex needed. Directly assign from DataFrame columns. Reserve regex only for free-text fields.
+Build an IOCExtractor class with an extract_all(df) method that returns the original DataFrame with a new iocs column containing a dict of found IOC types and values per alert.
+Benchmark: time the extraction on 10,000 rows. Target is under 2 seconds. If exceeding 5 seconds, switch to concurrent.futures.ProcessPoolExecutor with max_workers=4.
+Add a false_positive_filter(iocs) method that checks IPs against RFC 1918 private ranges (10.x, 172.16–31.x, 192.168.x) and strips them from external threat IOCs. Internal IPs can still be flagged as lateral movement indicators separately.
+
+
+
+
+Step 1.3: Iterative Alert Verification Engine  [Rishi + Aryan]
+Design a VerificationEngine class that takes a parsed alert and runs it through multiple validation passes.
+Pass 1 — Structural check: Does the alert have all required fields? Is the timestamp within a valid range? Is the protocol a known value?
+Pass 2 — IOC consistency check: If a destination IP is flagged as external but the port is a standard internal service port (445/SMB, 3389/RDP, 1433/MSSQL), flag as HIGH confidence lateral movement attempt.
+Pass 3 — Authority-weighted knowledge base lookup: Maintain a JSON knowledge base at /data/known_bad_iocs.json containing known-bad IP ranges, CVE IDs, and known malware process names. Hits get a +30 confidence boost.
+The engine runs these three passes sequentially. If any pass returns high confidence, stop and mark alert as verified. This is the iterative loop mechanism.
+Output per alert: verification_status (VERIFIED/UNVERIFIED/FALSE_POSITIVE), confidence_score (0–100), evidence_trail (list of strings explaining each pass result).
+The evidence_trail IS the XAI output — e.g., "alert was flagged because: IOC 185.220.x.x matches known Tor exit node range (Pass 3) + destination port 3389 indicates RDP brute force (Pass 2)".
+
+
+
+
+This is where the system's intelligence core is built. The goal is a trained model that classifies alerts as BENIGN / LOW / MEDIUM / HIGH / CRITICAL and generates explainable confidence scores.
+
+Step 2.1: Feature Engineering & Data Preparation (with SMOTE)  [Aryan]
+
+Take the normalised DataFrame from Phase 1. Feature selection strategy differs by dataset.
+For UNSW-NB15: Use these features — dur, sbytes, dbytes, sttl, dttl, sloss, dloss, sload, dload, spkts, dpkts, smeansz, dmeansz, ct_srv_src, ct_state_ttl, ct_dst_ltm, ct_src_dport_ltm, ct_dst_sport_ltm, ct_dst_src_ltm, proto (encoded), service (encoded), state (encoded).
+For BETH: Use eventId, argsNum, returnValue, mountNamespace (hash-encoded), userId, parentProcessId, and engineered features like child_process_count (number of child processes spawned in a 60-second window for the same userId).
+Apply LabelEncoder to categorical columns. Apply StandardScaler to numeric columns. Fit the scaler on training data ONLY — never on the test set.
+Split: 70% train, 15% validation, 15% test. Use stratified split to preserve class balance.
+For BETH: apply SMOTE on the training set only to balance the 95:5 skew. Import from imblearn.over_sampling.
+Save the fitted scaler and encoder using joblib.dump() into /classifier/artifacts/ — required at inference time.
+
+
+
+
+Step 2.2: Model Training & Selection  [Aryan]
+Train three candidate models: RandomForestClassifier(n_estimators=100, n_jobs=-1), GradientBoostingClassifier(n_estimators=100), and LogisticRegression(max_iter=1000) as baseline.
+Evaluate all three on the validation set using: accuracy, F1-score (macro), precision, recall, and confusion matrix via sklearn.metrics.classification_report.
+The key metric for a SOC system is recall on the attack class — a missed attack is worse than a false positive. Choose the model with highest attack-class recall among those with F1 > 0.85.
+RandomForest is expected to be the best performer. If training time exceeds 5 minutes, reduce n_estimators to 50.
+Map output probability into 5-tier severity: P(attack) < 0.2 = BENIGN, 0.2–0.4 = LOW, 0.4–0.6 = MEDIUM, 0.6–0.8 = HIGH, > 0.8 = CRITICAL.
+Save with joblib.dump(model, '/classifier/artifacts/model.pkl').
+Generate feature importance: model.feature_importances_ — save as /classifier/artifacts/feature_importance.json for display in the UI.
+
+
+
+
+Step 2.3: Classifier Service Wrapper  [Aryan]
+Build a ClassifierService class with a predict(alert_dict: dict) method that loads model.pkl and scaler.pkl ONCE at class initialisation (not on every call).
+The ClassificationResult should contain: alert_id, severity (BENIGN/LOW/MEDIUM/HIGH/CRITICAL), confidence (float 0–1), top_features (list of top 3 feature names from feature_importance.json), timestamp.
+Write unit tests: tests/test_classifier.py with at least 3 test cases — a known benign record, a known attack record, and an edge case (all-zero features). All must pass.
+Run pytest tests/test_classifier.py and confirm green output before committing.
+
+
+
+
+Phase 3 adds the two features that most strongly differentiate this system. The Blast Radius Knowledge Graph quantifies business impact. The Active Deception Honeypots provide zero-false-positive detection for covered vectors.
+
+Step 3.1: Infrastructure Knowledge Graph  [Shanteshwar]
+Build a KnowledgeGraph class using NetworkX's DiGraph representing the organisation's infrastructure.
+Node types: WORKSTATION, SERVER, DATABASE, DOMAIN_CONTROLLER, INTERNET_GATEWAY, HONEYPOT, CRITICAL_ASSET.
+For the demo, hardcode a realistic 15–20 node topology: 1 internet gateway, 1 domain controller, 3 servers (web, app, db), 5 workstations, 1 database (critical asset), 2 honeypots, 1 backup server.
+Edges represent connectivity/trust paths. Edge weights represent lateral movement difficulty (lower = easier for attacker): SMB=2, SSH=4, RDP=3, direct DB=1.
+Mark DATABASE and DOMAIN_CONTROLLER nodes with critical_asset=True in their node attributes.
+Persist the graph to /knowledge_graph/infra_graph.graphml using nx.write_graphml().
+
+
+
+Step 3.2: Blast Radius Calculation with Pre-Computed Paths  [Shanteshwar]
+
+Implement a BlastRadiusAnalyser class with a calculate(compromised_node: str) method.
+For each critical_asset node, compute the shortest weighted path from the compromised node using nx.astar_path() with edge weight as heuristic cost.
+Blast radius score = sum(1 / hop_distance_to_each_critical_asset). A node directly adjacent to the database scores higher than one 5 hops away.
+Add temporal analysis: if the same source_ip has generated alerts on 3+ different destination nodes in the last 10 minutes, flag as LATERAL_MOVEMENT and multiply blast radius by 1.5.
+Pre-compute all shortest paths at startup using nx.all_pairs_dijkstra() and store in memory as a dict. Lookups are then O(1) dict access, not live graph traversal.
+Output: blast_radius_score (float), affected_nodes (list), path_to_nearest_critical (list of node names), movement_pattern (LATERAL_MOVEMENT / DIRECT_ATTACK / UNKNOWN).
+
+
+
+Step 3.3: Active Deception Honeypot System  [Shanteshwar]
+Build a HoneypotManager class that manages a registry of 5 fake assets: salary_2024_Q3_final.xlsx, db_credentials_prod.conf, /admin/login endpoint, dummy SSH on port 2222, /backup/cloud_config.json.
+Each honeypot asset has: asset_id, asset_type, description, trigger_conditions, and is_triggered (bool, starts False).
+The check_interaction(alert: dict) method examines raw_log, accessed_path, destination_port, and event_type to determine if it matches any honeypot trigger condition.
+If a honeypot is triggered: set is_triggered=True, override severity to CRITICAL regardless of classifier output, set confidence=1.0, append "HONEYPOT TRIGGERED: 100% fidelity detection — zero false positive possible" to evidence trail, and send an immediate webhook notification.
+The triggered state is intentionally impossible to unset mid-session — once a honeypot fires, that vector stays CRITICAL.
+
+
+
+
+Step 4.1: LangGraph Self-Correcting Playbook FSM  [Ajaya]
+Define playbook states as Python Enums: ALERT_RECEIVED, INITIAL_TRIAGE, IP_BLOCKED, ASN_BLOCKED, HOST_ISOLATED, ESCALATED_TO_L2, RESOLVED, FAILED_DEFENCE.
+Implement PlaybookStateMachine using LangGraph's StateGraph. Nodes are processing functions. Edges are conditional transitions.
+Transition logic: ALERT_RECEIVED → INITIAL_TRIAGE (always). INITIAL_TRIAGE → IP_BLOCKED (if severity HIGH/CRITICAL). INITIAL_TRIAGE → ESCALATED_TO_L2 (if severity MEDIUM and blast_radius > threshold). IP_BLOCKED → RESOLVED (if no further alerts from same IP within 5 minutes). IP_BLOCKED → ASN_BLOCKED (if new alert from same /24 subnet within 5 minutes — attacker switched IPs).
+Implement ASN escalation: when triggering ASN_BLOCKED, extract the /16 subnet from the original IP and log the expanded block as a new playbook action.
+Each state transition logs a playbook_action record: { timestamp, from_state, to_state, action_taken, reason }. Append to an actions_log list.
+FAILED_DEFENCE state triggers if three consecutive remediation attempts fail. This triggers immediate L2 escalation and halts further automated action.
+
+
+
+Step 4.2: Offline LLM Alert Summarisation (Llama 3)  [Aryan]
+Build an LLMSummariser class with a summarise(alert_context: dict) method that calls the locally-running Ollama API at http://localhost:11434/api/generate.
+Prompt template: "You are a cybersecurity analyst. Analyse this security alert and provide: 1) A one-sentence executive summary. 2) The most likely attack technique (use MITRE ATT&CK terminology). 3) Immediate recommended action. Alert data: [JSON dump]. Respond in under 150 words."
+Send as a POST request with stream=False to get a single complete response. Parse the response JSON and extract the response field.
+Add a 30-second timeout. If exceeded, fall back to a template-based summary generated from the alert's severity, event_type, and top_features.
+Build a generate_playbook_narrative(actions_log: list) method that feeds the FSM actions_log to Llama 3 and asks it to write a professional incident narrative in past tense.
+Test both methods with real alert data. Verify the response references actual alert details (not hallucinated data).
+
+
+
+
+Step 5.1: Immutable Forensic Vault  [Ajaya]
+Build a ForensicVault class that captures and seals incident evidence before any automated remediation runs.
+capture_snapshot(incident: dict): takes the full incident context, serialises to JSON, computes SHA-256 hash of the serialised bytes, stores both. CRITICAL: use sort_keys=True in json.dumps to ensure deterministic key ordering.
+Storage: write to /vault/snapshots/ directory. Each file: vault_{timestamp}_{alert_id}.json. Once written, do not modify — this simulates WORM storage.
+verify_integrity(snapshot_id): reload the file, recompute SHA-256, compare with stored hash. Return True if match, False if tampered.
+Add generate_chain_of_custody(snapshot_id) method returning: Incident ID, capture timestamp, SHA-256 hash, system hostname, captured by, and the note "This record is cryptographically sealed and legally admissible."
+Write a unit test: save a snapshot, modify one byte in the file, call verify_integrity() and confirm it returns False.
+
+
+
+Step 5.2: CACAO JSON Export  [Ajaya]
+CACAO (Collaborative Automated Course of Action Operations) is an OASIS standard format for security playbooks.
+Build a CacaoExporter class with an export(incident_id, playbook_actions, llm_summary) method.
+CACAO JSON structure: root with type='playbook', spec_version='cacao-2.0', id (UUID), name, description (use LLM summary), created/modified timestamps, workflow (dict of step_id to step objects).
+Each LangGraph FSM action becomes a CACAO workflow step: type='action', name, description, on_completion (next step ID). Final step has type='end'.
+Write output to /vault/cacao/incident_{id}.json. Validate with json.loads() on the output string.
+Pre-generate one example CACAO JSON showing a complete attack-to-resolution playbook for the demo UI.
+
+
+
+
+All modules built in Phases 1–5 are now wired together through a single FastAPI application. Take it one endpoint at a time, test after each one.
+
+Step 6.1: FastAPI Application Shell  [Rishi]
+
+Create /api/main.py. Initialise FastAPI() app. Import and instantiate all service classes at module level: LogParser, IOCExtractor, VerificationEngine, ClassifierService, BlastRadiusAnalyser, HoneypotManager, PlaybookStateMachine, LLMSummariser, ForensicVault, CacaoExporter.
+Loading all models and graph objects at startup (not per-request) is essential for performance. Use FastAPI's @app.on_event('startup') decorator.
+Define Pydantic request/response models: AlertRequest (raw_log, source_ip, dest_ip, port, timestamp), AlertResponse (alert_id, severity, confidence, evidence_trail, blast_radius, playbook_state, summary, vault_hash).
+Add CORS middleware: app.add_middleware(CORSMiddleware, allow_origins=['*']).
+Run: uvicorn api.main:app --reload --host 0.0.0.0 --port 8000. Verify Swagger UI at http://localhost:8000/docs.
+
+
+
+Step 6.2: Core Processing Pipeline Endpoint  [Rishi]
+Implement POST /api/v1/classify. Pipeline order: 1) LogParser.parse(raw_log). 2) IOCExtractor.extract_all([alert]). 3) VerificationEngine.verify(alert). 4) ClassifierService.predict(alert). 5) HoneypotManager.check_interaction(alert). 6) BlastRadiusAnalyser.calculate(alert source_ip node). 7) PlaybookStateMachine.run(alert). 8) ForensicVault.capture_snapshot(full_incident). 9) LLMSummariser.summarise(alert). 10) CacaoExporter.export(...). Return AlertResponse.
+Log total processing time per request with time.perf_counter(). Target: under 3 seconds end-to-end (LLM will be the bottleneck — acceptable).
+Add GET /api/v1/alerts — returns the last 50 processed alerts from an in-memory list (the frontend polls this every 5 seconds).
+Test with curl: curl -X POST http://localhost:8000/api/v1/classify -H 'Content-Type: application/json' -d '{"raw_log": "test", "source_ip": "185.220.101.1", "dest_ip": "192.168.1.50", "port": 3389, "timestamp": "2024-12-15T10:00:00Z"}'
+
+
+
+Step 6.3: Stats & Vault Endpoints  [Shanteshwar]
+Implement GET /api/v1/stats: total_alerts_processed, severity_distribution (counts per tier), honeypots_triggered, false_positive_rate, average_processing_time_ms.
+Implement GET /api/v1/vault/{alert_id}: returns the forensic vault chain of custody report.
+Implement GET /api/v1/graph/blast-radius/{node_id}: returns the blast radius calculation for a given node.
+Add basic request validation: invalid IP format → HTTP 422 with clear error message via Pydantic validation.
+
+
+
+
+Step 7.1: Dashboard Architecture & Stack  [Rishi]
+Stack recommendation: React (Vite) + Tailwind CSS + Recharts. Alternative: vanilla HTML + JavaScript (faster setup, no build step). Choose based on team confidence.
+Dashboard layout: Left panel — live alert feed (scrollable, colour-coded: red=CRITICAL, orange=HIGH, yellow=MEDIUM, green=BENIGN). Centre panel — selected alert detail. Right panel — system stats (donut chart, honeypot trigger counter, alerts-per-minute).
+Live updates: poll GET /api/v1/alerts every 5 seconds using setInterval. Append new alerts to the feed list.
+Alert submission form: text area for raw log + source/dest IP fields + Submit button. On submit, POST to /api/v1/classify and add result to the feed.
+
+
+
+Step 7.2: Pre-Scripted Demo Alert Generator  [Shanteshwar]
+
+Build demo_alerts.py script that sends 15–20 pre-crafted test alerts to the classify endpoint sequentially with a 3-second delay between each.
+Alert set composition: 3 benign (normal business traffic), 3 low severity (port scans), 3 medium severity (failed logins), 3 high severity (lateral movement attempts), 2 critical (known bad IPs), 1 honeypot trigger (access attempt on db_credentials_prod.conf path), 1 CRITICAL override from honeypot.
+Verify each alert produces the expected severity tier before the presentation. Run the script twice to confirm reproducibility.
+Ensure the known-bad IPs in the demo script match patterns in your knowledge base JSON and trigger high ML classifier confidence.
+
+
+
+
+Step 8.1: End-to-End System Test  [Aryan]
+Start all services: Ollama (ollama serve &), FastAPI (uvicorn api.main:app), Frontend. Confirm all three running simultaneously.
+Run demo_alerts.py. Watch the full 15-alert sequence process through the system. Document any failures.
+Check all four pillars have visible output: Engine — classification result with evidence trail. Brain — blast radius score. Hands — playbook state and LLM summary. Vault — SHA-256 hash in alert detail view.
+Run pytest on the full test suite: pytest tests/ -v. All tests must pass. Fix any failures — evaluators may check CI.
+
+
+
+Step 8.2: 5-Minute Pitch Framework  [All]
+
+Minute 1 — Problem: Alert fatigue is real. 10,000 alerts per day, 70% false positives. L1 analysts burn out. Critical threats get missed.
+Minute 2 — Architecture overview: Show the 4-pillar diagram. One sentence per pillar. Point to the dashboard running live in the background.
+Minute 3 — Live demo: Run demo_alerts.py while presenting. Let the honeypot trigger moment be the centrepiece — it is the most visually dramatic and conceptually clear feature.
+Minute 4 — Technical differentiators: XAI evidence trail (not black-box), offline LLM (zero data leakage), CACAO export (enterprise integration), SHA-256 vault (legal admissibility).
+Minute 5 — Impact and future scope: 65% estimated reduction in L1 manual review time. Future: real-time Splunk/Elastic connector, MITRE ATT&CK framework mapping, active threat hunting.
+Assign speaking roles: Aryan — architecture + ML engine. Rishi — data pipeline + demo running. Shanteshwar — knowledge graph + honeypot demo. Ajaya — forensics + CACAO + closing.
+
+
+
+Break-Glass Protocols — If Things Break
+Read this section BEFORE the hackathon, not during. These are pre-planned fallbacks for the most likely catastrophic failures.
+
+Scenario 1: Ollama / LLM Completely Fails
+Remove the LLM call from the pipeline entirely. Replace with a template-based summary generator that pulls data from the alert's fields directly.
+Talking point: "Our offline LLM integration is functional but we are showing the template-based fallback to demonstrate resilience of the pipeline core."
+Impact: Minimal. All other features still work. LLM is the least technically novel component.
+
+Scenario 2: ML Model Not Training / Poor Accuracy
+Switch to a rule-based classifier: if port in [3389, 445, 22] and source is external IP → HIGH. If honeypot triggered → CRITICAL. If known-bad IOC match → HIGH. Else → LOW.
+Rule-based is actually easier to explain to non-technical judges: "We use a hybrid rules + ML approach."
+Have this ready as RuleBasedClassifier in /classifier/rules_fallback.py. Can be coded in under 15 minutes.
+
+Scenario 3: Dataset Download Fails Completely
+Generate a synthetic dataset using numpy. Create 1,000 rows with random features. Assign labels: if source_ip starts with '185.' → attack. Enough to train and demo the classifier.
+Talking point: "We designed the system to be dataset-agnostic — it connects to any SIEM log format."
+
+Scenario 4: API Keeps Crashing
+Strip out the broken module from the pipeline. The API can return partial results and still demonstrate the core classification flow.
+Each module is independently importable — the API should not be a monolith that crashes entirely if one component fails.
+
+Scenario 5: Time Is Running Out (< 2 Hours Left, Multiple Features Incomplete)
+Priority 1 (non-negotiable): Classification endpoint must work. A working /classify that returns severity + evidence trail is the minimum viable demo.
+Priority 2: Dashboard must show live alerts. Even a plain HTML table is enough.
+Priority 3: One of — Honeypot trigger OR Blast radius (whichever is closer to done). Not both.
+Drop completely if necessary: CACAO export (show the JSON file directly), LangGraph FSM (replace with simple if/else), Vault (show SHA-256 hash computed manually).
+
+Final Reminders

@@ -1,0 +1,30 @@
+============================================================
+TEST 1: IOCExtractor imports without error
+============================================================
+PASS: IOCExtractor imported and instantiated
+
+============================================================
+TEST 2: Parse BETH data then extract IOCs (first 1000 rows)
+============================================================
+Shape after extraction: (1000, 12)
+'iocs' column exists: True
+Rows with at least 1 IOC: 1000 / 1000
+Sample IOC (row 0): {'process': ['close']}
+PASS
+
+============================================================
+TEST 3: false_positive_filter separates private IPs
+============================================================
+Input IPs: ['192.168.1.50', '10.0.0.1', '185.220.101.1', '8.8.8.8']
+External (ipv4): ['185.220.101.1', '8.8.8.8']
+Lateral movement: ['192.168.1.50', '10.0.0.1']
+MD5 preserved: ['d41d8cd98f00b204e9800998ecf8427e']
+PASS
+
+============================================================
+TEST 4: Benchmark on 10,000 BETH rows
+============================================================
+Elapsed: 1.56s
+
+============================================================
+All IOC tests complete.
