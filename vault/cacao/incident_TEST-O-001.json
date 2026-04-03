@@ -1,12 +1,12 @@
 {
   "type": "playbook",
   "spec_version": "cacao-2.0",
-  "id": "playbook--e323987f-c02d-4638-9292-d071bca7e32b",
+  "id": "playbook--81165191-64da-4733-a739-b3bbaa6e73c1",
   "name": "SOC Response Playbook — Incident TEST-O-001",
-  "description": "Incident TEST-O-001: Automated response initiated at 2026-04-03T11:34:07.287937+00:00.\nSystem executed 4 response actions.\nFinal state: PlaybookState.RESOLVED at 2026-04-03T11:34:07.288917+00:00.",
-  "created": "2026-04-03T11:34:07.307209+00:00",
-  "modified": "2026-04-03T11:34:07.307217+00:00",
-  "created_by": "identity--afe1fe81-6a70-4282-8457-28b63c7dc452",
+  "description": "Incident TEST-O-001: Automated response initiated at 2026-04-03T11:34:58.328123+00:00.\nSystem executed 4 response actions.\nFinal state: PlaybookState.RESOLVED at 2026-04-03T11:34:58.329087+00:00.",
+  "created": "2026-04-03T11:34:58.346811+00:00",
+  "modified": "2026-04-03T11:34:58.346819+00:00",
+  "created_by": "identity--f9e14334-4c7f-4128-8173-04024cdea2c6",
   "playbook_types": [
     "investigation",
     "remediation"
@@ -21,28 +21,28 @@
       "type": "action",
       "name": "Alert received and parsed",
       "description": "Initial ingestion of alert data.",
-      "executed_at": "2026-04-03T11:34:07.287937+00:00",
+      "executed_at": "2026-04-03T11:34:58.328123+00:00",
       "on_completion": "action--2"
     },
     "action--2": {
       "type": "action",
       "name": "Automated triage assessment completed",
       "description": "Severity is HIGH.",
-      "executed_at": "2026-04-03T11:34:07.288263+00:00",
+      "executed_at": "2026-04-03T11:34:58.328443+00:00",
       "on_completion": "action--3"
     },
     "action--3": {
       "type": "action",
       "name": "Blocked individual IP: 10.50.0.9",
       "description": "Isolation mandated by playbook rules.",
-      "executed_at": "2026-04-03T11:34:07.288609+00:00",
+      "executed_at": "2026-04-03T11:34:58.328779+00:00",
       "on_completion": "action--4"
     },
     "action--4": {
       "type": "action",
       "name": "Incident closed",
       "description": "Threat mitigated successfully or marked as false positive.",
-      "executed_at": "2026-04-03T11:34:07.288917+00:00",
+      "executed_at": "2026-04-03T11:34:58.329087+00:00",
       "on_completion": "end--4"
     },
     "end--4": {
