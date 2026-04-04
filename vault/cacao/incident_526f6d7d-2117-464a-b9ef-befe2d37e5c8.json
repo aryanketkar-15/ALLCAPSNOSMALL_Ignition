@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--d4d50671-120d-4e40-8b6e-4b8a8015ca26",
+  "name": "SOC Response Playbook — Incident 526f6d7d-2117-464a-b9ef-befe2d37e5c8",
+  "description": "Okay, here’s an analysis of the security alert, following your guidelines:\n\n1.  **SUMMARY:** A data exfiltration attempt was detected originating from a compromised machine, potentially containing sensitive information.\n\n2.  **TECHNIQUE:** T1059 - Data Exfiltration\n\n3.  **ACTION:** QUARANTINE_FILE - Immediately isolate the compromised machine to prevent further data leakage.",
+  "created": "2026-04-03T23:30:14.464128+00:00",
+  "modified": "2026-04-03T23:30:14.464146+00:00",
+  "created_by": "identity--dcd9eb80-139f-4e8a-bae9-e34423276215",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T23:29:44.782254",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 10.0.0.99",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T23:29:44.783855",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

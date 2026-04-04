@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--692eb612-519a-4191-b293-ca93d2a9bf33",
+  "name": "SOC Response Playbook — Incident 517eff90-76c2-4176-932c-e55f66674e35",
+  "description": "SUMMARY: A MEDIUM-severity AUTH_FAIL alert was triggered\nfrom 185.100.86.10 with 50% confidence.\nTECHNIQUE: Suspicious activity detected via unknown pattern (T1059).\nACTION: ISOLATE_HOST",
+  "created": "2026-04-03T20:51:15.660847+00:00",
+  "modified": "2026-04-03T20:51:15.660877+00:00",
+  "created_by": "identity--89b029f3-1c59-435a-93f1-f31cb9856e41",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T20:51:13.596032",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

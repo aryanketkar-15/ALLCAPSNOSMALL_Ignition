@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--26a484b8-cf31-495f-bf53-1428995968dd",
+  "name": "SOC Response Playbook — Incident 5076c10c-18b1-4e94-8b6f-d57bc52923d8",
+  "description": "SUMMARY: A MEDIUM-severity RDP_BRUTEFORCE alert was triggered\nfrom None with 50% confidence.\nTECHNIQUE: Suspicious activity detected via unknown pattern (T1059).\nACTION: ISOLATE_HOST",
+  "created": "2026-04-03T19:28:50.537188+00:00",
+  "modified": "2026-04-03T19:28:50.537204+00:00",
+  "created_by": "identity--089102ee-f48a-4923-9af8-c06d736b7393",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T19:28:48.462632",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

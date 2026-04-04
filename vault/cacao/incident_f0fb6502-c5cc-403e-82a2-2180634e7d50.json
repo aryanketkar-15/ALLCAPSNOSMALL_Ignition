@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--864a99d5-0eba-45c0-99ae-5df95dd04a1e",
+  "name": "SOC Response Playbook — Incident f0fb6502-c5cc-403e-82a2-2180634e7d50",
+  "description": "SUMMARY: A LOW-severity SSH_FAIL alert was triggered\nfrom None with 30% confidence.\nTECHNIQUE: Suspicious activity detected via unknown pattern (T1059).\nACTION: ISOLATE_HOST",
+  "created": "2026-04-03T14:55:06.365027+00:00",
+  "modified": "2026-04-03T14:55:06.365038+00:00",
+  "created_by": "identity--70dc1cde-0cfe-4c07-809f-e810e6e77aba",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T14:55:04.314324",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

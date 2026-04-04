@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--b4b146fd-124e-46b6-8d60-ed6bed6cb531",
+  "name": "SOC Response Playbook — Incident 0a6caaf7-3ac5-4fc7-81e1-82290f967c20",
+  "description": "Okay, here’s a three-point analysis of the security alert:\n\n1.  **SUMMARY:** A critical data exfiltration event has been detected originating from a compromised machine with IP 192.168.1.35. This suggests unauthorized data transfer.\n\n2.  **TECHNIQUE:** T1059 - Command and Control – Data Exfiltration\n\n3.  **ACTION:** IMMEDIATELY QUARANTINE the compromised machine and investigate the source IP to determine the data being exfiltrated.",
+  "created": "2026-04-03T23:02:41.095320+00:00",
+  "modified": "2026-04-03T23:02:41.095346+00:00",
+  "created_by": "identity--99ee0b51-8f4f-42aa-a3c3-f02a1b7812db",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T23:02:22.229579",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 192.168.1.35",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T23:02:22.231164",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

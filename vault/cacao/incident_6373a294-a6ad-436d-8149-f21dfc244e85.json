@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--6f27c171-c926-45b3-af4a-0479d4d82490",
+  "name": "SOC Response Playbook — Incident 6373a294-a6ad-436d-8149-f21dfc244e85",
+  "description": "Okay, here's a three-point analysis of the security alert:\n\n1.  **SUMMARY:** A suspicious attempt to gain unauthorized access to a server identified as 192.168.1.31 by an unknown user.\n\n2.  **TECHNIQUE:** T1059 - Command and Scripting – Exploitation of a vulnerable web application to execute a malicious script.\n\n3.  **ACTION:** QUARANTINE_FILE – Immediately isolate the affected system and review the web application's logs for potential malicious activity.",
+  "created": "2026-04-03T23:00:26.026041+00:00",
+  "modified": "2026-04-03T23:00:26.026057+00:00",
+  "created_by": "identity--8ab1106c-a672-4eb8-96b7-99a84783c232",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T23:00:06.748523",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 192.168.1.31",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T23:00:06.750354",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

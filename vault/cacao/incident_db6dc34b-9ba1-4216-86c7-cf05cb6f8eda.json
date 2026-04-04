@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--53c08729-eee2-4fd5-80f2-948818423ab4",
+  "name": "SOC Response Playbook — Incident db6dc34b-9ba1-4216-86c7-cf05cb6f8eda",
+  "description": "SUMMARY: A CRITICAL-severity C2_BEACON alert was triggered\nfrom None with 95% confidence.\nTECHNIQUE: Suspicious activity detected via unknown pattern (T1059).\nACTION: ISOLATE_HOST",
+  "created": "2026-04-03T19:35:07.956806+00:00",
+  "modified": "2026-04-03T19:35:07.956836+00:00",
+  "created_by": "identity--ce7e3d45-8077-4211-bf17-ee9feea642c5",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T19:35:05.908181",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP None",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T19:35:05.909623",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

@@ -1,0 +1,1420 @@
+
+AI SOC ANALYZER
+UI PROMPT BOOK
+Dark SOC Dashboard  ·  React + Vite + Tailwind
+
+Team SY-A9  ·  24-Hour Hackathon  ·  PS0202
+
+13
+Atomic Prompts
+5
+Pages
+1
+Demo Mode
+2
+Checkpoints
+~6hrs
+Build Window
+
+Before You Start
+
+⚡  MASTER CONTEXT BLOCK — Paste at the top of EVERY new Cursor/Claude Code chat
+
+I am building AI SOC ANALYZER, a dark SOC dashboard.
+Editor: Antigravity (Cursor) — Stnitch MCP is attached and active.
+Use @stnitch to write/edit files directly. Do not output code to chat.
+Stack: React + Vite + Tailwind CSS
+
+Design tokens:
+  bg: #0d1117      surface: #161b22    border: #30363d
+  accent: #00ff88  text: #e6edf3       muted: #8b949e
+
+Severity colors:
+  CRITICAL: #ff4444   HIGH: #ff8c00   MEDIUM: #ffd700
+  LOW: #00ff88        BENIGN: #30363d
+
+Backend: FastAPI at http://localhost:8000/api/v1
+Sidebar + routing already exist. Build ONLY the <PageName /> component.
+Poll live data every 5 seconds via setInterval.
+All fetch calls go to http://localhost:8000/api/v1/<endpoint>
+On network error: show last known data + subtle 'Connection lost' badge.
+
+🏗  Project Structure (already scaffolded)
+src/pages/Overview.jsx   src/pages/LiveAlerts.jsx   src/pages/Playbooks.jsx
+src/pages/GraphView.jsx  src/pages/ForensicVault.jsx  src/demo/demo_data.js
+src/services/api.js      src/services/MockApiService.js
+Each page is imported in App.jsx and rendered via React Router.
+
+SECTION 1 — PROJECT SETUP & SHARED SERVICES
+One prompt. Vite scaffold, Tailwind config, shared ApiService, design tokens. Nothing else works until this is done.
+
+Two prompts. By the end of this section the Vite project runs in the browser, Tailwind is configured with the AI SOC Analyzer design tokens, and all five pages exist as empty shells. The ApiService is wired to the FastAPI backend.
+
+PROMPT 1  —  Vite Scaffold + Tailwind Config + Design Tokens   ⏱ Day 1 → 09:00–09:40
+
+What this prompt does:
+Creates the Vite+React project, installs all dependencies in one shot, configures Tailwind with the full AI SOC Analyzer token set, and wires up the main App shell with React Router. Run this prompt first — every other prompt depends on it.
+Why atomic: Mixing Tailwind config with component code causes Cursor to generate incorrect class names before the config is set. Scaffold first, then build on it.
+
+📋  PASTE INTO CLAUDE CODE / CURSOR
+Create a new Vite + React project called ai-soc-analyzer.
+Install these exact dependencies:
+  npm install react-router-dom recharts reactflow cytoscape
+  npm install cytoscape-dagre cytoscape-cola
+  npm install @xyflow/react lucide-react
+  npm install -D tailwindcss postcss autoprefixer
+  npx tailwindcss init -p
+
+Configure tailwind.config.js with this exact theme extension:
+  theme: {
+    extend: {
+      colors: {
+        'sp-bg':      '#0d1117',
+        'sp-surface': '#161b22',
+        'sp-border':  '#30363d',
+        'sp-accent':  '#00ff88',
+        'sp-text':    '#e6edf3',
+        'sp-muted':   '#8b949e',
+        'sev-critical': '#ff4444',
+        'sev-high':     '#ff8c00',
+        'sev-medium':   '#ffd700',
+        'sev-low':      '#00ff88',
+        'sev-benign':   '#30363d',
+      },
+      fontFamily: {
+        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
+    }
+  }
+
+In index.css add: @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
+
+App.jsx: set up React Router with 5 routes:
+  / → Overview
+  /alerts → LiveAlerts
+  /playbooks → Playbooks
+  /graph → GraphView
+  /vault → ForensicVault
+
+Create src/components/Sidebar.jsx with nav links to all 5 routes.
+Sidebar style: bg-sp-surface border-r border-sp-border w-64 h-screen fixed left-0 top-0.
+Active link: text-sp-accent border-l-2 border-sp-accent.
+
+Create src/services/api.js:
+  const BASE = 'http://localhost:8000/api/v1';
+  export const api = {
+    stats:    () => fetch(`${BASE}/stats`).then(r=>r.json()),
+    alerts:   (after) => fetch(`${BASE}/alerts${after?`?after=${after}`:''}`).then(r=>r.json()),
+    playbooks:(status)=> fetch(`${BASE}/playbooks?status=${status}`).then(r=>r.json()),
+    graph:    () => fetch(`${BASE}/graph/topology`).then(r=>r.json()),
+    blastRadius:(id) => fetch(`${BASE}/graph/blast-radius/${id}`).then(r=>r.json()),
+    vault:    () => fetch(`${BASE}/vault`).then(r=>r.json()),
+    vaultItem:(id) => fetch(`${BASE}/vault/${id}`).then(r=>r.text()),
+  };
+
+All 5 page files must exist as placeholder components returning <div className='p-6 text-sp-text'>PageName</div>
+
+✅  VERIFY — Complete all checks before moving to the next prompt
+CHECK  /  CMD
+PASS IF
+Dev server starts
+npm run dev
+localhost:5173 opens, no console errors
+Tailwind tokens work
+Add className='bg-sp-bg text-sp-accent' to any element
+Dark background + green text renders correctly
+All 5 routes navigate
+Click sidebar links
+Each route renders the placeholder page name without 404
+api.js exports correctly
+import { api } from './services/api' in any page
+No import error. api.stats is a function.
+Fonts load
+Check Network tab → Fonts
+JetBrains Mono loaded from Google Fonts
+
+🔴  COMMON ERRORS & FIXES
+SYMPTOM
+FIX
+Tailwind classes not applying (text stays black)
+Check index.css has @tailwind base; @tailwind components; @tailwind utilities; in order. Also check tailwind.config.js content: ['./index.html','./src/**/*.{js,jsx}']
+React Router shows blank page on /alerts
+Ensure BrowserRouter wraps the entire app in main.jsx, not just App.jsx. Routes must be direct children of <Routes>, not nested inside a div.
+npm install fails — cytoscape-dagre peer dependency error
+Run: npm install cytoscape-dagre --legacy-peer-deps. Then proceed with remaining installs.
+JetBrains Mono not applying to mono class
+In tailwind.config.js fontFamily.mono must be an array, not a string: ['JetBrains Mono', 'monospace'].
+
+🔧  GIT COMMIT
+chore: scaffold Vite+React, configure Tailwind with AI SOC Analyzer tokens
+chore: create App shell with React Router, Sidebar, and all 5 placeholder pages
+
+ANTIGRAVITY RULE — USE STNITCH MCP FOR ALL UI GENERATION
+This is a mandatory rule for the entire UI build. Read before writing any prompt.
+
+🔌  STNITCH MCP — CONNECTED & MANDATORY
+You are working in Antigravity (Cursor-based editor) which has the Stnitch MCP server attached and active. For every UI component you build in this prompt book, you MUST use the Stnitch MCP tool instead of writing prompts manually into the chat box.
+What is Stnitch MCP?
+Stnitch is an MCP (Model Context Protocol) server connected to your Antigravity environment. It gives Claude Code / Cursor direct access to your file system, can read and write project files, and executes prompts as structured tool calls — meaning Claude can directly create, edit, and verify files without you copy-pasting anything manually.
+HOW TO USE STNITCH FOR EACH PROMPT IN THIS BOOK:
+Step 1 — Open Antigravity (Cursor). Confirm the Stnitch MCP is connected:
+         Look for the MCP indicator in the bottom status bar or the Tools panel.
+         It should show: ● Stnitch  connected
+
+Step 2 — For each prompt in this book, instead of pasting into the chat:
+         Use the Stnitch tool call format in Cursor's AI panel:
+         @stnitch create_file path='src/pages/Overview.jsx' content='<prompt text>'
+         OR simply invoke it via the MCP tool picker (⌘K → Tools → Stnitch)
+
+Step 3 — Stnitch will directly write the file to your project directory.
+         You do NOT need to copy the generated code — it is written automatically.
+
+Step 4 — After each Stnitch file write, run the VERIFY checks from this book.
+         If a check fails: use @stnitch edit_file to patch — not a full rewrite.
+
+Step 5 — Commit using Stnitch's terminal access:
+         @stnitch run_command cmd='git add . && git commit -m "feat(ui): ..."\'
+GOLDEN RULE FOR STNITCH:
+Never paste a prompt from this book into the Cursor chat manually if Stnitch is available. The MCP tool writes cleaner, more structured output because it has direct file context. It knows what files already exist, what imports are already declared, and what the project structure looks like.
+
+✅  USE STNITCH FOR
+• Creating new page/component files
+• Editing existing files (targeted patches)
+• Running npm install / npm run dev
+• Git add, commit, push operations
+• Reading file contents to verify output
+• Running verification shell commands
+❌  DO NOT DO THIS
+• Copy-pasting prompts into chat manually
+• Writing code directly in the editor
+• Using a separate terminal for git
+• Manually creating files in the file tree
+• Switching between Antigravity and another editor
+• Bypassing Stnitch for 'quick edits'
+
+🔧  If Stnitch MCP Shows as Disconnected
+In Antigravity (Cursor): go to Settings → MCP Servers → Find 'Stnitch' → Click Reconnect.
+If it does not appear in the list: go to Settings → MCP Servers → Add Server → enter the Stnitch server URL/config provided by your team setup.
+Fallback: If Stnitch is unavailable for any reason, paste the prompt box content directly into the Cursor AI chat. The prompts are written to work both ways.
+
+SECTION 2 — PAGE 1: OVERVIEW DASHBOARD
+Three prompts. KPI cards → Charts → System health panel. Polls /api/v1/stats every 5s.
+
+The Overview page is the first thing judges see. It must convey total system intelligence at a glance: animated KPI cards, live severity trends, a donut chart, recent alerts table, and ML/API health indicators. Build it in three atomic prompts.
+
+PROMPT 2  —  Overview — KPI Cards + Live Stats Polling   ⏱ 09:40–10:20
+
+What this prompt does:
+Creates the Overview.jsx component with the top KPI card row. Each card has an animated count-up, a severity-colored left border, a trend indicator (↑/↓), and an icon. Polls /api/v1/stats every 5 seconds.
+Why atomic: The data-fetching hook must be isolated from the chart components. If the poll breaks, you can fix one file instead of untangling a 400-line page component.
+
+📋  PASTE INTO CLAUDE CODE / CURSOR
+Build src/pages/Overview.jsx — the main dashboard page.
+
+// ── DATA FETCHING ──────────────────────────────────────────
+// Poll /api/v1/stats every 5 seconds using setInterval inside useEffect.
+// On error: keep last known stats, show a red dot 'Connection lost' badge
+// in top-right corner.
+
+// ── KPI CARDS ROW ──────────────────────────────────────────
+// 5 cards in a responsive grid (grid-cols-5 on xl, grid-cols-3 on lg,
+// grid-cols-2 on sm).
+//
+// Card 1: Total Alerts — left border sp-accent
+// Card 2: Critical     — left border sev-critical  (red)
+// Card 3: High+Medium  — left border sev-high      (orange)
+// Card 4: Honeypots Triggered — left border #ff00ff (magenta)
+// Card 5: Avg Response Time (ms) — left border sev-low (green)
+//
+// Each card:
+//   - bg-sp-surface border border-sp-border rounded-lg p-4
+//   - Left border: border-l-4 border-l-[COLOR]
+//   - Icon from lucide-react (pick contextually: Shield, AlertTriangle, etc.)
+//   - Count animates from 0 to value over 800ms on mount (useRef + requestAnimationFrame)
+//   - Trend arrow: if value > prev value → '↑' text-red-400, else '↓' text-green-400
+//   - Label below count in text-sp-muted text-xs font-mono uppercase
+
+// ── SEVERITY DONUT CHART ────────────────────────────────────
+// Use Recharts PieChart with innerRadius=60 outerRadius=90.
+// Center label: largest severity tier name + count.
+// Colors: use severity colors from tokens.
+// Place to the right of the KPI row, same height.
+
+// Include a 'LIVE' badge (green pulsing dot) in the top-right of the section
+// that shows the last poll timestamp.
+
+✅  VERIFY — Complete all checks before moving to the next prompt
+CHECK  /  CMD
+PASS IF
+Stats poll fires on mount
+Network tab → XHR
+Request to /api/v1/stats every 5s visible
+KPI counts animate
+Reload page
+Numbers count up from 0 over ~800ms
+Error state shows badge
+Stop FastAPI. Wait 6 seconds.
+Red dot 'Connection lost' badge appears. Last data still shows.
+Donut chart renders
+Visual check
+5-color pie with center label. No console errors from Recharts.
+LIVE badge pulses
+Visual check
+Green dot has CSS pulse animation (animate-pulse class)
+
+🔴  COMMON ERRORS & FIXES
+SYMPTOM
+FIX
+Recharts PieChart center label not rendering
+Recharts customLabel inside PieChart needs a renderCustomizedLabel function passed as label prop to <Pie>. Or use a positioned absolute <div> with CSS centering inside a relative wrapper.
+Count-up animation flickers on re-poll
+The animation should only run on mount (empty dependency array). On subsequent polls, update the value directly without retriggering the animation. Use a ref to track firstMount.
+Grid overlaps on md breakpoint
+Use grid-cols-2 md:grid-cols-3 xl:grid-cols-5 with gap-4. Ensure the donut chart wraps below on smaller screens using flex-wrap or a separate row.
+fetch() call fails with CORS error
+FastAPI must have CORSMiddleware with allow_origins=['*']. This is Rishi's backend — confirm it's running. For local dev add a Vite proxy: server.proxy in vite.config.js.
+
+🔧  GIT COMMIT
+feat(ui): Overview KPI cards with count-up animation and 5s polling
+feat(ui): Overview severity donut chart with center label
+
+PROMPT 3  —  Overview — Line Chart (60-min trend) + Recent Alerts Table   ⏱ 10:20–11:00
+
+What this prompt does:
+Adds the severity trend line chart (5 coloured lines, last 60 minutes on x-axis) and the recent alerts table (last 10, clickable rows that navigate to /alerts). These are the two largest visual elements on the Overview page.
+
+📋  PASTE INTO CLAUDE CODE / CURSOR
+Continue editing src/pages/Overview.jsx — add below the KPI row:
+
+// ── SEVERITY TREND LINE CHART ───────────────────────────────
+// Recharts LineChart, full width (w-full), height 220px.
+// X-axis: last 60 minutes in 5-minute buckets (12 data points).
+// Y-axis: alert count per bucket.
+// 5 Lines, one per severity:
+//   CRITICAL: stroke='#ff4444'  strokeWidth=2
+//   HIGH:     stroke='#ff8c00'  strokeWidth=2
+//   MEDIUM:   stroke='#ffd700'  strokeWidth=1.5
+//   LOW:      stroke='#00ff88'  strokeWidth=1
+//   BENIGN:   stroke='#30363d'  strokeWidth=1
+// Chart bg: #161b22. Grid lines: #30363d opacity-30.
+// Tooltip: custom dark tooltip component (bg #0d1117, border #30363d).
+// Legend at bottom with colored dots.
+// Data comes from stats.trend_data (array of 12 objects).
+// If stats.trend_data is undefined: generate 12 zero-value dummy points.
+
+// ── RECENT ALERTS TABLE ─────────────────────────────────────
+// Show last 10 alerts from stats.recent_alerts (or empty array).
+// Table: w-full, bg-sp-surface, rounded-lg overflow-hidden.
+// Columns: Severity pill | Alert ID | Source IP | Event Type | Time | Confidence%
+// Severity pill: rounded-full px-2 py-0.5 text-xs font-mono font-bold
+//   colored bg using severity colors at 20% opacity, text at full color.
+// Each row: hover:bg-sp-border cursor-pointer
+// On row click: navigate('/alerts') — link to Live Alerts page.
+// Confidence: shown as a mini progress bar inside the cell.
+//   Bar width = confidence * 100%, color matches severity.
+
+// ── LAYOUT ──────────────────────────────────────────────────
+// Overall page layout (full page, no scroll ideally):
+// Row 1: KPI cards (left 3/4) + Donut (right 1/4)
+// Row 2: Line chart (full width)
+// Row 3: Recent alerts table (left 2/3) + System health (right 1/3)
+
+✅  VERIFY — Complete all checks before moving to the next prompt
+CHECK  /  CMD
+PASS IF
+Line chart renders with 5 lines
+Visual check on Overview
+5 colored lines visible. X-axis shows time labels. Y-axis shows counts.
+Empty data shows gracefully
+Return empty trend_data from backend
+Chart renders with flat zero lines, no crash or blank screen
+Recent alerts table navigates
+Click any row
+Browser navigates to /alerts
+Confidence mini-bar renders
+Visual check
+Progress bar visible inside confidence cell, color matches severity
+No horizontal scroll on 1440px screen
+Set browser to 1440px width
+All elements fit without overflow
+
+🔴  COMMON ERRORS & FIXES
+SYMPTOM
+FIX
+LineChart shows 'No data' or blank
+Recharts requires data prop on <LineChart> AND dataKey on each <Line>. If backend returns no trend_data, generate dummy: Array.from({length:12},(_,i)=>({time:`-${(12-i)*5}m`,CRITICAL:0,HIGH:0,MEDIUM:0,LOW:0,BENIGN:0}))
+Custom Recharts tooltip styling not applied
+Pass content={<CustomTooltip/>} to <Tooltip>. The CustomTooltip component receives payload, label, active props. Only render when active && payload?.length.
+Table overflows on small screens
+Wrap table in <div className='overflow-x-auto'>. Add min-w-[600px] to the table itself.
+Row click navigates but URL doesn't change
+useNavigate() must be called inside the component, not at module level. Import: import { useNavigate } from 'react-router-dom'. Call const navigate = useNavigate() inside the component function.
+
+🔧  GIT COMMIT
+feat(ui): Overview severity trend line chart (60min, 5 lines)
+feat(ui): Overview recent alerts table with confidence mini-bars
+
+PROMPT 4  —  Overview — System Health Panel + Attack Timeline Bar   ⏱ 11:00–11:30
+
+What this prompt does:
+Adds the system health panel (ML/API/Ollama/Graph status with colored dots and latency readings) and the mini attack timeline bar at the bottom of the page. These complete the Overview page.
+
+📋  PASTE INTO CLAUDE CODE / CURSOR
+Complete src/pages/Overview.jsx by adding the right-side panel and footer bar.
+
+// ── SYSTEM HEALTH PANEL (bottom-right, 1/3 width) ───────────
+// Data from stats.system_health object.
+// 4 service rows: ML Engine | API Server | Ollama LLM | Knowledge Graph
+// Each row:
+//   - Status dot: if status=='ok' → animate-pulse bg-sp-accent
+//                 if status=='slow' → bg-sev-medium (yellow)
+//                 if status=='down' → bg-sev-critical animate-ping
+//   - Service name (font-mono text-sp-text text-sm)
+//   - Latency reading: right-aligned (e.g. '42ms')
+//   - If status=='down': show 'DEGRADED' badge (red pill)
+// Card: bg-sp-surface border border-sp-border rounded-lg p-4
+// Header: 'SYSTEM STATUS' in text-sp-muted font-mono uppercase text-xs
+//         + overall health dot (green if all ok, red if any down)
+
+// ── MINI ATTACK TIMELINE BAR (full width, bottom of page) ───
+// Horizontal bar showing alert distribution over last 60 minutes.
+// 60 vertical micro-bars (1 per minute), height proportional to alert count.
+// Color: if any CRITICAL in that minute → #ff4444
+//        elif any HIGH → #ff8c00
+//        elif any MEDIUM → #ffd700
+//        else → #30363d
+// Hover on a bar: tooltip showing minute timestamp + alert counts.
+// Label: 'LAST 60 MINUTES' left, current time right (font-mono text-xs).
+// Height: 60px total. Each bar is 1.5% width with 0.5px gap.
+// Data from stats.timeline_bars (60-item array).
+// If undefined: render 60 bars at minimum height (#30363d).
+
+// ── FINAL LAYOUT CHECK ───────────────────────────────────────
+// The complete Overview page should have NO vertical scroll on a
+// 1440×900 screen. Use flex flex-col h-screen overflow-hidden on
+// the page wrapper, with children that flex-1 to fill space.
+
+✅  VERIFY — Complete all checks before moving to the next prompt
+CHECK  /  CMD
+PASS IF
+Health panel shows 4 services
+Visual check
+4 rows: ML Engine, API Server, Ollama LLM, Knowledge Graph with status dots
+Down service shows red ping animation
+Set one service status to 'down' in mock data
+animate-ping on red dot + DEGRADED badge
+Timeline bar renders 60 micro-bars
+Visual check at bottom of page
+60 colored bars visible. Correct heights.
+Bar hover tooltip works
+Hover over a bar
+Tooltip shows minute + count. Disappears on mouseLeave.
+Full page fits in viewport
+Set browser to 1440×900
+No scroll needed. All content visible.
+
+🔴  COMMON ERRORS & FIXES
+SYMPTOM
+FIX
+animate-ping on status dot makes it disappear
+animate-ping should be on a sibling span, not the dot itself. Pattern: <span class='relative flex h-3 w-3'><span class='animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75'></span><span class='relative inline-flex rounded-full h-3 w-3 bg-red-500'></span></span>
+Timeline bar overflows horizontally
+Use display:flex with each bar having flex-shrink-0 width: calc(100% / 60 - 0.5px). Or use a CSS grid with grid-cols-[repeat(60,1fr)].
+Page has scroll even on large screens
+Add overflow-hidden to the root wrapper. Make chart and table containers use flex-1 min-h-0 so they shrink to available space rather than taking full content height.
+
+🔧  GIT COMMIT
+feat(ui): Overview system health panel with service status dots
+feat(ui): Overview 60-minute attack timeline micro-bar chart
+
+SECTION 3 — PAGE 2: LIVE ALERTS
+Two prompts. Filter bar → Virtual-scroll table with side drawer. Honeypot auto-pins to top.
+
+The Live Alerts page is the operational core. Analysts spend 80% of their time here. It must be fast, filterable, and clear. Two prompts: the filter bar + table first, then the side drawer and bulk actions.
+
+PROMPT 5  —  Live Alerts — Filter Bar + Virtual-Scroll Table   ⏱ 11:30–12:20
+
+What this prompt does:
+Builds the LiveAlerts.jsx page with the full filter bar (severity multi-checkboxes, event type dropdown, IP search, time range selector, LIVE toggle) and the virtual-scroll alert table with animated new-row insertion and honeypot pinning.
+
+📋  PASTE INTO CLAUDE CODE / CURSOR
+Build src/pages/LiveAlerts.jsx
+
+// ── FILTER BAR ──────────────────────────────────────────────
+// Sticky top bar: bg-sp-surface border-b border-sp-border px-6 py-3.
+// Row of filter controls:
+//
+// 1. SEVERITY multi-checkboxes (inline, not a dropdown):
+//    5 toggle pills: CRITICAL HIGH MEDIUM LOW BENIGN
+//    When active: bg-[severityColor] text-black font-bold
+//    When inactive: bg-transparent border border-sp-border text-sp-muted
+//
+// 2. EVENT TYPE dropdown:
+//    Options: All Types | PORT_SCAN | AUTH_FAIL | LATERAL_MOVEMENT |
+//             C2_BEACON | FILE_READ | HTTP_REQUEST | HONEYPOT
+//    Style: bg-sp-surface border border-sp-border text-sp-text rounded px-3 py-1.5
+//
+// 3. SOURCE IP search input:
+//    Placeholder: 'Filter by IP...'
+//    Magnifying glass icon from lucide-react inside the input (left side).
+//
+// 4. TIME RANGE selector:
+//    Radio pills: 15m | 30m | 1h | 6h | 24h
+//    Same pill style as severity filters.
+//
+// 5. LIVE toggle (far right):
+//    When ON: green pulsing dot + 'LIVE' text (sp-accent)
+//    When OFF: grey dot + 'PAUSED' text (sp-muted)
+//    Toggle pauses/resumes the setInterval poll.
+
+// ── POLLING ──────────────────────────────────────────────────
+// Poll GET /api/v1/alerts every 5s when LIVE is ON.
+// Track lastTimestamp. Send as query param: ?after=<timestamp>
+// Prepend new alerts to the alertList state array.
+// Cap alertList at 500 items (slice from end if over limit).
+
+// ── ALERT TABLE ─────────────────────────────────────────────
+// Columns:
+//   Pin | Severity | Alert ID (font-mono) | Source IP | Dest IP |
+//   Event Type | Confidence | Time | Actions
+//
+// HONEYPOT ALERTS (honeypot_triggered === true):
+//   - Always pinned to top of list (sort honeypot first)
+//   - Entire row: bg-[#ff00ff]/10 border-l-4 border-[#ff00ff]
+//   - 'HONEYPOT' badge instead of severity pill (magenta background)
+//   - Pin icon (🔒 or Pin icon from lucide) shown in first column
+//
+// NEW ROWS ANIMATION:
+//   - New alerts get a CSS class 'row-new' for 2 seconds then removed
+//   - .row-new { animation: slideInGreen 0.3s ease-out; }
+//   - @keyframes slideInGreen: from opacity 0 + background #00ff88/20,
+//                               to opacity 1 + background transparent
+//
+// Each row: cursor-pointer hover:bg-sp-border
+// On row click: open side drawer with alert details (see Prompt 6)
+
+// ── FILTER LOGIC ─────────────────────────────────────────────
+// Apply filters client-side to alertList (not server-side):
+//   - severityFilter: include only checked severities
+//   - eventTypeFilter: match exact event_type string
+//   - ipFilter: match source_ip or dest_ip contains the typed text
+//   - timeRangeFilter: filter by alert timestamp within range
+
+✅  VERIFY — Complete all checks before moving to the next prompt
+CHECK  /  CMD
+PASS IF
+Filter pills toggle correctly
+Click CRITICAL severity pill
+Pill turns red bg. Table shows only CRITICAL alerts.
+Honeypot rows pin to top
+Add an alert with honeypot_triggered=true to mock data
+Magenta row appears first, above non-honeypot alerts
+New row animation plays
+Wait for new alert to arrive via poll
+Row slides in with green flash, then settles to normal style
+LIVE toggle pauses poll
+Click LIVE toggle to OFF
+No new XHR requests in Network tab. 'PAUSED' state shown.
+IP filter works
+Type '185.220' in IP search
+Only rows with matching source or dest IP remain
+
+🔴  COMMON ERRORS & FIXES
+SYMPTOM
+FIX
+New alerts appear at bottom instead of top
+Use setAlerts(prev => [...newAlerts, ...prev]) not [...prev, ...newAlerts]. Prepend new items.
+Row animation fires on every re-render, not just new rows
+Track 'new' rows by ID in a Set ref. Only add the CSS class for IDs in the set. Remove IDs from set after 2 seconds via setTimeout.
+All 500 rows render, causing lag
+Implement windowed rendering: only render rows in viewport + 20 buffer. Or use a simple scroll-event listener with visibleStart/visibleEnd state. React Window library is an option: npm install react-window.
+Severity pill filter doesn't update when clicking again
+The severityFilter state must be a Set or array. Toggle: setFilter(prev => prev.includes(s) ? prev.filter(x=>x!==s) : [...prev,s]). Don't use a boolean per severity — use an array.
+
+🔧  GIT COMMIT
+feat(ui): LiveAlerts filter bar with severity pills, IP search, time range, LIVE toggle
+feat(ui): LiveAlerts virtual-scroll table with honeypot pinning and row-entry animation
+
+PROMPT 6  —  Live Alerts — Side Drawer + Bulk Actions Bar   ⏱ 12:20–13:00
+
+What this prompt does:
+Adds the side drawer that opens on row click (SHA-256 hash, evidence trail, AI summary, vault link), the bulk actions bar that appears when rows are checkbox-selected, and the auto-open behaviour for honeypot alerts.
+
+📋  PASTE INTO CLAUDE CODE / CURSOR
+Continue editing src/pages/LiveAlerts.jsx — add the side drawer and bulk actions.
+
+// ── SIDE DRAWER ──────────────────────────────────────────────
+// A sliding panel from the right edge of the screen.
+// Width: 480px. Position: fixed right-0 top-0 h-full z-50.
+// Backdrop: fixed inset-0 bg-black/50 z-40 (click to close).
+// Transition: translate-x-full (closed) → translate-x-0 (open)
+//   Use CSS transition: 'transform 0.25s ease-in-out'
+//
+// Drawer header:
+//   - Alert ID in font-mono text-sp-accent
+//   - Severity pill (large version)
+//   - Close button (X icon) top-right
+//   - If honeypot_triggered: magenta HONEYPOT TRIGGERED banner at top
+//     '🍯 HONEYPOT TRIGGERED — Zero false positive · Confidence: 100%'
+//
+// Drawer sections (scrollable body):
+// 1. CLASSIFICATION DETAILS
+//    Grid 2-col: Source IP | Dest IP | Port | Protocol | Event Type | Timestamp
+//    Each cell: label (text-sp-muted text-xs uppercase) + value (font-mono text-sp-text)
+//
+// 2. CONFIDENCE SCORE
+//    Large progress bar full width. Height 12px. Rounded.
+//    Color: severity color. Value: confidence * 100%.
+//    Percentage text right-aligned above bar.
+//
+// 3. EVIDENCE TRAIL
+//    Header: 'WHY THIS WAS FLAGGED'
+//    Numbered list of evidence strings from alert.evidence_trail[]
+//    Each item: bullet dot (sp-accent) + text-sp-text text-sm
+//
+// 4. AI SUMMARY
+//    Header: '🤖 AI ANALYSIS (Llama 3)'
+//    The alert.summary string in italic text-sp-muted.
+//    If summary is empty/null: show 'Generating...' with a spinner.
+//
+// 5. FORENSIC VAULT
+//    Header: 'FORENSIC VAULT'
+//    SHA-256 hash: font-mono text-xs with a 📋 copy button.
+//    On copy: button flashes green 'Copied!' for 1 second.
+//    Link: 'View chain of custody →' navigates to /vault.
+//
+// HONEYPOT AUTO-OPEN:
+//   When a new alert arrives with honeypot_triggered=true,
+//   automatically open the drawer for that alert after 300ms delay.
+
+// ── BULK ACTIONS BAR ─────────────────────────────────────────
+// Appears at bottom of screen when 1+ rows are checkbox-selected.
+// Slides up from bottom: translate-y-full → translate-y-0
+// Shows: '{N} alerts selected' + 3 action buttons:
+//   [Export CACAO JSON]  [Mark Resolved]  [Clear Selection]
+// Buttons: bg-sp-surface border border-sp-border rounded px-4 py-2
+// Export CACAO JSON: calls /api/v1/cacao/export with selected alert IDs.
+//   On success: triggers a browser download of the JSON file.
+
+✅  VERIFY — Complete all checks before moving to the next prompt
+CHECK  /  CMD
+PASS IF
+Drawer opens on row click
+Click any alert row
+480px panel slides in from right. Backdrop appears.
+Drawer closes on backdrop click
+Click the dark backdrop
+Panel slides out. Backdrop removed.
+SHA-256 copy button works
+Click copy icon next to hash
+Hash copied to clipboard. Button turns green for 1s.
+Honeypot drawer auto-opens
+Add honeypot_triggered alert to mock data
+Drawer opens automatically within 300ms of alert appearing
+Bulk actions bar appears on selection
+Check 2 alert checkboxes
+Bar slides up from bottom showing '2 alerts selected'
+
+🔴  COMMON ERRORS & FIXES
+SYMPTOM
+FIX
+Drawer clips content or hides behind Sidebar
+The drawer needs z-50 and the sidebar needs z-40. Or give the sidebar z-30. Fixed positioning contexts matter — the drawer's fixed parent must be the viewport, not a transformed ancestor.
+navigator.clipboard.writeText() fails in dev
+Clipboard API requires HTTPS or localhost. Should work on localhost:5173. If still failing: use the execCommand fallback: const el = document.createElement('textarea'); el.value = text; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
+Bulk actions bar jumps without animation
+The bar must start with translate-y-full class (out of view) and transition to translate-y-0 when selectedCount > 0. Use a conditional class: className={`... transition-transform duration-200 ${selected.size>0 ? 'translate-y-0' : 'translate-y-full'}`}
+
+🔧  GIT COMMIT
+feat(ui): LiveAlerts side drawer with evidence trail, AI summary, vault hash
+feat(ui): LiveAlerts bulk actions bar with slide-up animation
+
+⛳  CHECKPOINT — OVERVIEW + LIVE ALERTS COMPLETE   ⏱ After Prompt 6
+CHECK
+HOW TO TEST
+PASS IF
+Overview: all 5 KPI cards animate
+Reload page
+Counts animate from 0
+Overview: line chart + donut render
+Visual check
+Both charts visible with data
+Overview: health panel 4 services
+Visual check
+4 rows with dots
+Live Alerts: filter bar functional
+Toggle severity pills
+Table filters in real-time
+Live Alerts: honeypot row pinned + magenta
+Mock data has honeypot
+Magenta row at top
+Live Alerts: drawer slides in on click
+Click row
+480px drawer from right
+No console errors on either page
+DevTools console
+Zero red errors
+
+SECTION 4 — PAGE 3: PLAYBOOKS
+Two prompts. Active playbook cards + React Flow FSM diagram + history table + CACAO viewer.
+
+The Playbooks page visualises the LangGraph FSM in action. It is the most technically complex page — React Flow for the state diagram, live elapsed timers on active playbooks, and a CACAO JSON syntax viewer.
+
+PROMPT 7  —  Playbooks — Active Cards + React Flow FSM Diagram   ⏱ 13:00–14:00
+
+What this prompt does:
+Builds the top section of Playbooks.jsx: active playbook cards with live elapsed timers and 8-dot step progress, and the React Flow FSM diagram showing all 8 states with coloured directed edges and the current active state highlighted.
+
+📋  PASTE INTO CLAUDE CODE / CURSOR
+Build src/pages/Playbooks.jsx
+
+// ── DATA FETCHING ──────────────────────────────────────────
+// Poll GET /api/v1/playbooks?status=active every 3 seconds.
+
+// ── ACTIVE PLAYBOOK CARDS ───────────────────────────────────
+// Grid of cards: grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4
+// Each card (bg-sp-surface border border-sp-border rounded-lg p-4):
+//
+// HEADER ROW:
+//   - Alert ID badge (font-mono bg-sp-border text-sp-muted text-xs rounded px-2)
+//   - Severity pill (right-aligned)
+//   - 'ACTIVE' badge with green pulse dot
+//
+// ELAPSED TIMER:
+//   - Large monospace timer: 'MM:SS' format
+//   - Updates every second via setInterval (local state per card)
+//   - Color: < 5min → sp-accent, 5–15min → sev-medium, > 15min → sev-critical
+//   - Label 'ELAPSED' in text-sp-muted text-xs below
+//
+// 8-DOT STEP PROGRESS:
+//   The 8 FSM states as labelled dots in a row:
+//   RECEIVED → TRIAGE → IP_BLOCK → ASN_BLOCK →
+//   ISOLATED → ESCALATED → RESOLVED → FAILED
+//   Each dot: h-3 w-3 rounded-full
+//   Completed state: bg-sp-accent
+//   Current state: bg-sev-medium animate-pulse scale-125
+//   Future state: bg-sp-border
+//   Connected by a thin line between dots.
+//   State label below each dot: text-[8px] font-mono text-sp-muted
+//   truncated to first 4 chars.
+//
+// CURRENT ACTION:
+//   'Current: IP_BLOCKED → checking for follow-up...'
+//   text-sp-text text-sm
+
+// ── REACT FLOW FSM DIAGRAM ──────────────────────────────────
+// Full-width panel below the cards, height 360px.
+// Use @xyflow/react ReactFlow component.
+// 8 nodes — one per FSM state:
+//   ALERT_RECEIVED | INITIAL_TRIAGE | IP_BLOCKED | ASN_BLOCKED |
+//   HOST_ISOLATED  | ESCALATED_L2   | RESOLVED   | FAILED_DEFENCE
+//
+// Node style:
+//   Default: bg-sp-surface border-2 border-sp-border text-sp-text
+//   Active:  bg-[#00ff88]/20 border-2 border-sp-accent text-sp-accent
+//           + drop-shadow: 0 0 12px rgba(0,255,136,0.4)
+//   Resolved: bg-[#00ff88]/10 border-sp-accent text-sp-accent
+//   Failed:  bg-[#ff4444]/10 border-sev-critical text-sev-critical
+//
+// Edges (directed arrows):
+//   Normal transitions: stroke #30363d
+//   Hot path (current active transition): stroke #00ff88 strokeWidth 2
+//             animated: true (React Flow animated edge)
+//   Failure path (→ FAILED_DEFENCE): stroke #ff4444
+//
+// Layout: manual positions (dagre not needed for 8 nodes).
+// Arrange as a flow from left to right, branching at INITIAL_TRIAGE.
+// Controls: show React Flow MiniMap and Controls panels.
+// Background: ReactFlow Background with variant='dots' gap=12 color='#30363d'
+//
+// Active state from the first active playbook in the list.
+// Highlight the current state node and the last-taken edge.
+
+✅  VERIFY — Complete all checks before moving to the next prompt
+CHECK  /  CMD
+PASS IF
+Elapsed timer updates each second
+Watch the card for 5 seconds
+MM:SS counter increments every second
+8-dot progress accurate
+Mock data with current_state='IP_BLOCKED'
+Dots 1,2,3 are green. Dot 3 pulses. Dots 4–8 are grey.
+React Flow diagram renders
+Visual check
+8 nodes visible. Arrows between them. No blank panel.
+Active node highlighted in diagram
+Mock active_state='INITIAL_TRIAGE'
+INITIAL_TRIAGE node glows green
+React Flow background dots visible
+Visual check
+Dotted dark background texture in canvas
+
+🔴  COMMON ERRORS & FIXES
+SYMPTOM
+FIX
+React Flow nodes not visible (blank canvas)
+Ensure <ReactFlow> has a defined width and height. The container div needs: className='w-full h-[360px]'. ReactFlow requires a measured parent to render.
+Elapsed timer resets on every poll
+Store the startTime in a ref (useRef), not in state. The timer useEffect must not be re-created when the parent re-renders from a poll. Use useMemo for the startTime calculated from playbook.started_at.
+React Flow imports fail — '@xyflow/react' not found
+Run: npm install @xyflow/react. Also import the CSS: import '@xyflow/react/dist/style.css' at the top of Playbooks.jsx.
+Animated edge in React Flow not animating
+In the edge object, set: animated: true AND type: 'default'. Also ensure you're using the latest @xyflow/react (not the older reactflow package).
+
+🔧  GIT COMMIT
+feat(ui): Playbooks active cards with elapsed timer and 8-dot FSM progress
+feat(ui): Playbooks React Flow FSM diagram with active state highlighting
+
+PROMPT 8  —  Playbooks — Execution History Table + CACAO JSON Viewer   ⏱ 14:00–14:40
+
+What this prompt does:
+Adds the execution history table (expandable state-transition timelines) and the CACAO JSON syntax viewer panel that shows the structured playbook export.
+
+📋  PASTE INTO CLAUDE CODE / CURSOR
+Continue editing src/pages/Playbooks.jsx — add history table and CACAO viewer.
+
+// ── EXECUTION HISTORY TABLE ─────────────────────────────────
+// Two-column layout below the FSM diagram.
+// Left column (60% width): Execution History
+// Right column (40% width): CACAO JSON Viewer
+//
+// History table columns:
+//   Expand chevron | Alert ID | Trigger Severity | States Traversed |
+//   Duration | Outcome | Timestamp
+//
+// Outcome badges:
+//   RESOLVED    → bg-sp-accent/20 text-sp-accent border border-sp-accent
+//   ESCALATED   → bg-sev-medium/20 text-sev-medium
+//   FAILED      → bg-sev-critical/20 text-sev-critical
+//
+// EXPANDABLE TIMELINE (row expansion on chevron click):
+//   Accordion-style expand beneath each row.
+//   Horizontal timeline showing each state transition:
+//   [STATE_NAME]──>timestamp──>[STATE_NAME]──>timestamp──>...
+//   Each state bubble: rounded px-2 py-0.5 text-xs font-mono
+//   Arrow between: → with the transition timestamp in tiny text above
+//
+// ── CACAO JSON VIEWER ───────────────────────────────────────
+// Fixed-height panel (height 100% of right column).
+// Header: 'CACAO 2.0 EXPORT' + Copy button + Download button.
+//
+// Syntax-highlighted JSON display:
+//   Use a <pre> tag with custom syntax highlighting:
+//   - Keys: color #79b8ff (blue)
+//   - String values: color #9ecbff
+//   - Numbers: color #f8c555 (yellow)
+//   - Booleans/null: color #f97583 (pink)
+//   - Punctuation: color #e6edf3
+//   Scrollable within the panel.
+//   Font: font-mono text-xs.
+//
+// Download button: creates a Blob from the JSON string,
+//   triggers <a href=blobUrl download='cacao_playbook.json'> click.
+//
+// Data: fetch from /api/v1/vault/{selected_alert_id}/cacao
+// If no selection: show the most recent resolved playbook's CACAO JSON.
+// If API unavailable: show a hardcoded sample CACAO skeleton.
+
+✅  VERIFY — Complete all checks before moving to the next prompt
+CHECK  /  CMD
+PASS IF
+History table row expands
+Click chevron on a row
+Timeline expands below row with state bubbles
+CACAO JSON is syntax highlighted
+Visual check of JSON panel
+Keys in blue, strings in light blue, numbers in yellow
+Download button triggers file download
+Click Download button
+Browser downloads 'cacao_playbook.json'
+Copy button copies JSON
+Click Copy in CACAO panel
+JSON copied to clipboard. Button flashes 'Copied!'
+Outcome badges correct colors
+Mock data with RESOLVED and FAILED outcomes
+RESOLVED=green, FAILED=red badges
+
+🔴  COMMON ERRORS & FIXES
+SYMPTOM
+FIX
+JSON syntax highlighting not working (all text same color)
+The highlighting needs to parse the JSON string with a regex. Pattern: text.replace(/('.*?')|('.*?')|(\btrue\b|\bfalse\b|\bnull\b)|([\d.]+)|([:,{}\[\]])/g, ...). Use dangerouslySetInnerHTML on a <pre> — but sanitize the input first since it's API data.
+Blob download doesn't work in Safari
+Safari requires: const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'filename.json'; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+Row expand collapses all rows when one is clicked
+Store expandedRowIds as a Set in state, not a single ID. Toggle: setExpanded(prev => { const next = new Set(prev); next.has(id) ? next.delete(id) : next.add(id); return next; })
+
+🔧  GIT COMMIT
+feat(ui): Playbooks execution history table with expandable state timelines
+feat(ui): Playbooks CACAO JSON syntax viewer with copy/download
+
+SECTION 5 — PAGE 4: GRAPH VIEW
+Two prompts. Cytoscape canvas with 7 node types + blast radius query + attack simulation drawer.
+
+The Graph View is the visual showstopper. Cytoscape.js renders the full infrastructure topology. Blast radius queries animate flowing particles along attack paths. The attack simulation drawer lets judges trigger a demo traversal.
+
+PROMPT 9  —  Graph View — Cytoscape Canvas + Node Details Panel   ⏱ 14:40–15:40
+
+What this prompt does:
+Builds the GraphView.jsx with the full Cytoscape.js canvas (7 node type shapes/colors), the left filter panel, and the right node-details panel with radial risk gauge and path display.
+
+📋  PASTE INTO CLAUDE CODE / CURSOR
+Build src/pages/GraphView.jsx
+
+// ── DATA LOADING ──────────────────────────────────────────
+// Load GET /api/v1/graph/topology once on mount (no polling).
+// Transform response into Cytoscape elements array.
+
+// ── CYTOSCAPE CANVAS ─────────────────────────────────────
+// Import cytoscape from 'cytoscape'.
+// Mount in a useEffect with a ref to the container div.
+// Container: flex-1 (takes remaining space in layout).
+//
+// 7 NODE TYPES — shapes and colors:
+//   WORKSTATION:       ellipse      fill: #1f2937  border: #4b5563
+//   SERVER:            roundrectangle  fill: #1e3a5f  border: #2563eb
+//   DATABASE:          cylinder (use rectangle + label 'DB') fill: #2d1b69  border: #7c3aed
+//   DOMAIN_CONTROLLER: diamond      fill: #1a1a2e  border: #00ff88
+//   INTERNET_GATEWAY:  hexagon      fill: #1a2a3a  border: #0ea5e9
+//   HONEYPOT:          star (5-pointed) fill: #2d0a0a  border: #ff00ff
+//   CRITICAL_ASSET:    octagon      fill: #3b0f0f  border: #ff4444
+//                      + glowing red border: 'border-color': '#ff4444', 'border-width': 3
+//
+// NODE LABELS: node.data('label') below each node, font-size 10px, color #8b949e
+//
+// EDGES:
+//   Default: line-color #30363d, width 1
+//   hover: line-color #8b949e
+//   Protocol label on edge: show edge.data('protocol') in 8px font
+//
+// LAYOUT: Use cose layout (cytoscape built-in, no extra plugin needed).
+//   layout: { name: 'cose', nodeRepulsion: 8000, idealEdgeLength: 100 }
+//
+// NODE CLICK: on tap event → setSelectedNode(node.data())
+//   Also highlight the node: change border color to #ffd700, width 4
+//
+// FIT: After layout, call cy.fit() to show all nodes.
+
+// ── LEFT PANEL (node filter, w-64) ────────────────────────
+// NODE TYPE FILTER:
+//   7 toggle checkboxes, one per node type.
+//   When a type is unchecked: hide those nodes (cy.nodes().filter().style('display','none'))
+//
+// BLAST RADIUS QUERY FORM:
+//   Label: 'BLAST RADIUS QUERY'
+//   Dropdown: all node IDs from the graph
+//   [Run Query] button → calls /api/v1/graph/blast-radius/{nodeId}
+//   Shows a loading spinner on the button while fetching.
+
+// ── RIGHT PANEL (node details, w-80) ─────────────────────
+// Only visible when selectedNode is not null.
+// HEADER: node type badge + node ID in font-mono
+//
+// RADIAL RISK GAUGE:
+//   SVG half-circle gauge, 200px wide.
+//   Score 0–100 mapped to 0–180 degrees of arc.
+//   Arc color: < 30 → #00ff88, 30–60 → #ffd700, 60–80 → #ff8c00, > 80 → #ff4444
+//   Center text: score value + '/100'
+//   Label below: 'BLAST RADIUS SCORE'
+//
+// PATH TO CRITICAL ASSET:
+//   Ordered list of node names with → arrows between them.
+//   Each node chip: bg-sp-surface border border-sp-border rounded px-2 text-xs font-mono
+//   The path comes from blastRadiusData.path_to_nearest_critical
+
+✅  VERIFY — Complete all checks before moving to the next prompt
+CHECK  /  CMD
+PASS IF
+Cytoscape canvas renders with nodes
+Load /graph with backend running
+All nodes visible as different shapes. No blank canvas.
+7 node type shapes render correctly
+Visual check
+Honeypot=star, DOMAIN_CTRL=diamond, GATEWAY=hexagon visible
+Node click populates right panel
+Click any node
+Right panel appears with node type + ID
+Blast radius query runs
+Select node, click Run Query
+Loading spinner, then score + path appear in right panel
+Node type filter hides nodes
+Uncheck WORKSTATION
+All workstation nodes disappear from canvas
+
+🔴  COMMON ERRORS & FIXES
+SYMPTOM
+FIX
+Cytoscape renders blank — no nodes visible
+Cytoscape requires the container element to have a defined pixel size at mount time. Use a div with style={{width:'100%',height:'100%'}} inside a sized parent. Call cy.resize() after mount if the container size was unknown.
+cose layout throws error — 'CoSE layout requires cose-bilkent'
+The built-in 'cose' layout doesn't need a plugin. Only 'cose-bilkent' does. Use: layout: { name: 'cose' } — NOT 'cose-bilkent'. If you see this error, you accidentally used the plugin name.
+SVG gauge arc doesn't update when score changes
+The SVG arc length must be calculated as: const arcLength = (score/100) * Math.PI * radius. Use a computed d attribute on the <path> element. Make it a reactive calculation inside the component body, not a useEffect.
+Node click handler fires multiple times
+The cy.on('tap','node', handler) is being registered on every render. Move the cy.on() call into a useEffect with [] dependencies (empty array), using the cy ref. Unmount cleanup: return () => cy.off('tap','node', handler)
+
+🔧  GIT COMMIT
+feat(ui): GraphView Cytoscape canvas with 7 node types and node filter panel
+feat(ui): GraphView blast radius query with SVG risk gauge and path display
+
+PROMPT 10  —  Graph View — Blast Radius Animation + Attack Simulation Drawer   ⏱ 15:40–16:20
+
+What this prompt does:
+Adds the animated blast radius path (flowing particles along edges) and the attack simulation drawer that shows an animated dot traversal from the compromised node to the nearest critical asset.
+
+📋  PASTE INTO CLAUDE CODE / CURSOR
+Continue editing src/pages/GraphView.jsx — add path animation and simulation drawer.
+
+// ── BLAST RADIUS PATH ANIMATION ─────────────────────────────
+// When a blast radius query returns, animate the attack path:
+//
+// 1. Highlight the path edges:
+//    cy.edges().forEach: if edge connects consecutive nodes in the path:
+//      .style({ 'line-color': '#ff4444', 'width': 3 })
+//
+// 2. Animated particle along the path:
+//    Use CSS animation with a small orange circle div (12px × 12px).
+//    Position it absolutely over the Cytoscape canvas.
+//    Animate it along the path using a sequence of x,y positions
+//    from cy.getElementById(nodeId).renderedPosition().
+//    Move from node to node over 600ms per hop with ease-in-out.
+//    The particle pulses (scale 1 → 1.5 → 1) as it reaches each node.
+//    After animation completes: particle fades out.
+//
+// 3. Node glow on path:
+//    Each node on the path gets: border-color #ff4444, border-width 4,
+//    shadow (box-shadow equivalent in Cytoscape: 'shadow-blur': 15,
+//    'shadow-color': '#ff4444', 'shadow-opacity': 0.8)
+
+// ── ATTACK SIMULATION DRAWER ────────────────────────────────
+// Bottom panel that slides up, height 280px.
+// Triggered by: 'SIMULATE ATTACK' button in the left panel.
+// Drawer header: 'ATTACK PATH SIMULATION' + Close button.
+//
+// Content:
+//   Two dropdowns: 'FROM node' and 'TO node' (all graph node IDs).
+//   [Simulate] button → triggers the animation sequence below.
+//
+// SIMULATION ANIMATION:
+//   1. Flash the FROM node red (border-color #ff4444, 300ms)
+//   2. Compute shortest path (use blastRadiusData if same source,
+//      or call /api/v1/graph/blast-radius/{fromNodeId} to get path)
+//   3. Animate a red dot traversing each edge in the path:
+//      - 500ms per edge hop
+//      - As dot arrives at each intermediate node: flash that node yellow (#ffd700)
+//      - When dot arrives at destination: flash it red + show popup:
+//        'CRITICAL ASSET COMPROMISED — {nodeId}' in red
+//        with a pulsing animation for 3 seconds
+//   4. After simulation: show summary in drawer:
+//      '{N} hops · Blast radius: {score} · Movement: {pattern}'
+//
+// Reset button: clears all highlighted edges/nodes, resets graph to default.
+
+✅  VERIFY — Complete all checks before moving to the next prompt
+CHECK  /  CMD
+PASS IF
+Path edges highlight red after blast radius query
+Run blast radius query for WS_1
+Edges along path to DB_PROD turn red, width 3
+Animated particle traverses path
+Visual check during blast radius query
+Orange circle moves from node to node along edges
+Simulation drawer slides up
+Click 'SIMULATE ATTACK' button
+280px panel slides up from bottom
+Full simulation plays through
+Select FROM=INTERNET_GW, TO=DB_PROD, click Simulate
+Red dot traverses all hops. 'CRITICAL ASSET COMPROMISED' popup appears.
+Reset clears all highlights
+Click Reset button
+All edges and nodes return to default colors
+
+🔴  COMMON ERRORS & FIXES
+SYMPTOM
+FIX
+Animated particle position is wrong — doesn't follow edges
+Use cy.getElementById(nodeId).renderedPosition() (not .position()). renderedPosition gives viewport coordinates, matching the canvas element's position on screen. Subtract the canvas offset.
+Cytoscape shadow styles not applying
+Cytoscape shadow requires: 'shadow-blur': 15, 'shadow-color': '#ff4444', 'shadow-opacity': 0.8, 'shadow-offset-x': 0, 'shadow-offset-y': 0. All four shadow properties needed.
+Particle animation freezes at first node
+The multi-step animation needs to chain promises. Use async/await with a sleep helper: const sleep = ms => new Promise(r => setTimeout(r, ms)). Then: for (const node of path) { moveParticle(node); await sleep(500); }
+
+🔧  GIT COMMIT
+feat(ui): GraphView blast radius path animation with flowing particle
+feat(ui): GraphView attack simulation drawer with animated dot traversal
+
+SECTION 6 — PAGE 5: FORENSIC VAULT
+One prompt. Integrity banner + snapshot table + chain-of-custody drawer + CACAO export cards.
+
+PROMPT 11  —  Forensic Vault — Full Page Build   ⏱ 16:20–17:10
+
+What this prompt does:
+Builds the complete ForensicVault.jsx page: integrity status banner, snapshot table with per-row re-verify animation, chain-of-custody side drawer, and CACAO export cards at the bottom.
+
+📋  PASTE INTO CLAUDE CODE / CURSOR
+Build src/pages/ForensicVault.jsx — complete in one prompt.
+
+// ── DATA ─────────────────────────────────────────────────
+// Load GET /api/v1/vault on mount. No polling needed.
+// Response: array of snapshot objects:
+//   { alert_id, sha256, captured_at, integrity_status, chain_of_custody }
+
+// ── INTEGRITY STATUS BANNER ───────────────────────────────
+// Full-width banner at top.
+// IF all snapshots have integrity_status == 'VERIFIED':
+//   Green banner: bg-[#00ff88]/10 border border-sp-accent text-sp-accent
+//   '🔒 ALL VAULT RECORDS VERIFIED — SHA-256 integrity confirmed'
+//   + shield icon (lucide Shield) animated with a slow pulse.
+// IF any snapshot has integrity_status == 'COMPROMISED':
+//   Red banner: bg-sev-critical/10 border border-sev-critical text-sev-critical
+//   '⚠ INTEGRITY VIOLATION DETECTED — {N} record(s) compromised'
+//   + AlertTriangle icon with animate-bounce.
+
+// ── SNAPSHOT TABLE ────────────────────────────────────────
+// Columns: Alert ID | Captured At | SHA-256 | Integrity | Actions
+//
+// INTEGRITY BADGE (Integrity column):
+//   VERIFIED:    bg-sp-accent/20 text-sp-accent '✓ VERIFIED'
+//   COMPROMISED: bg-sev-critical/20 text-sev-critical '✗ COMPROMISED' + pulse
+//
+// SHA-256 CELL:
+//   Show first 8 chars + '...' + last 8 chars.
+//   Hover: show full hash in a tooltip (title attribute).
+//   📋 copy button inline. On copy: flash green 'Copied!' for 1s.
+//
+// ACTIONS column per row:
+//   [View] → opens chain of custody drawer
+//   [Re-Verify] → per-row animation:
+//     1. Button shows spinner 'Verifying...'
+//     2. Call GET /api/v1/vault/{alert_id} (re-verify endpoint)
+//     3. Row flashes: if verified → green flash for 1s
+//                     if failed   → red flash for 2s
+//     4. Update integrity_status in local state
+//   [Export CACAO] → download CACAO JSON for this alert
+
+// ── CHAIN OF CUSTODY DRAWER ───────────────────────────────
+// Same pattern as Live Alerts drawer: 480px, slides from right.
+// Contents: formatted legal-style report from chain_of_custody string.
+// Use a styled <pre> with monospace font.
+// Header sections should be detected (lines that are ALL CAPS)
+//   and styled with: text-sp-accent font-bold border-b border-sp-border mb-2.
+// Add a 'Print / Download' button that opens window.print().
+// The SHA-256 hash line should be styled with bg-sp-border/50 rounded px-2.
+
+// ── CACAO EXPORT CARDS (bottom section) ───────────────────
+// Grid of cards: grid-cols-1 md:grid-cols-2 lg:grid-cols-3
+// One card per RESOLVED playbook incident.
+// Card:
+//   - Incident ID + date
+//   - 3-line CACAO summary (spec_version, step count, last action)
+//   - [Download CACAO JSON] button
+//   - [Copy] button
+// Card style: bg-sp-surface border border-sp-border rounded-lg p-4
+//   hover: border-sp-accent transition-colors duration-200
+
+✅  VERIFY — Complete all checks before moving to the next prompt
+CHECK  /  CMD
+PASS IF
+Green banner shows when all verified
+Mock all integrity_status='VERIFIED'
+Green banner with shield icon and animated pulse
+Red banner shows on compromise
+Mock one integrity_status='COMPROMISED'
+Red banner with AlertTriangle bounce animation
+SHA-256 shortened + copy works
+Visual check + click copy
+'a1b2c3d4...e5f6g7h8' format. Copy works.
+Re-Verify animation plays
+Click Re-Verify on any row
+Spinner → green/red flash → integrity badge updates
+Chain of custody drawer opens
+Click View on any row
+480px drawer with formatted legal report text
+CACAO export cards at bottom
+Visual check with resolved playbooks
+Grid of cards with Download CACAO button
+
+🔴  COMMON ERRORS & FIXES
+SYMPTOM
+FIX
+SHA-256 tooltip not showing full hash on hover
+The title attribute approach works for simple tooltips. If you need custom styling, use a CSS tooltip with ::after pseudo-element. Or use a state-controlled Tooltip component: onMouseEnter → setTooltipVisible(id).
+Re-Verify row flash overwrites the integrity badge too early
+The flash animation should play while the badge still shows the old value. Update the badge AFTER the flash completes: await sleep(1000); setAlerts(prev => prev.map(...update integrity...))
+window.print() prints the entire page, not just the chain of custody
+Add a @media print CSS rule that hides everything except the drawer content: @media print { body > *:not(.chain-of-custody-drawer) { display: none; } }. Add a 'chain-of-custody-drawer' class to the drawer.
+
+🔧  GIT COMMIT
+feat(ui): ForensicVault page with integrity banner, snapshot table, re-verify animation
+feat(ui): ForensicVault chain-of-custody drawer and CACAO export cards
+
+SECTION 7 — DEMO MODE (Insurance Policy)
+One prompt. MockApiService + demo_data.js + DEMO toggle in Sidebar. Build it. Test it twice.
+
+Demo Mode is your insurance policy. If the FastAPI backend crashes during the presentation, a single toggle in the Sidebar swaps ALL API calls to local mock data. The demo plays perfectly — 15 pre-scripted alerts, honeypot fires at alert 12, full graph and vault data.
+
+PROMPT 12  —  Demo Mode — MockApiService + demo_data.js + DEMO Toggle   ⏱ 17:10–18:00
+
+What this prompt does:
+Creates the complete mock data layer and wires a DEMO toggle into the Sidebar that swaps every api.* call to mockApi.* calls with a single state change. No page components need to be modified.
+Critical: Build this. Test it. Know where the toggle is. If the backend has any issue during the presentation, flip this toggle before the judges look at the screen.
+
+📋  PASTE INTO CLAUDE CODE / CURSOR
+Create src/demo/demo_data.js and src/services/MockApiService.js.
+Then add a DEMO toggle to the Sidebar.
+
+// ── demo_data.js ─────────────────────────────────────────
+// Export: MOCK_STATS, MOCK_ALERTS (18 items), MOCK_PLAYBOOKS,
+//         MOCK_GRAPH, MOCK_VAULT
+
+// MOCK_STATS:
+export const MOCK_STATS = {
+  total_alerts_processed: 247,
+  severity_distribution: { CRITICAL:12, HIGH:34, MEDIUM:67, LOW:89, BENIGN:45 },
+  honeypots_triggered: 3,
+  false_positive_rate: 18.2,
+  average_processing_time_ms: 1847,
+  uptime_seconds: 51420,
+  system_health: {
+    ml_engine:  { status:'ok',  latency_ms: 42 },
+    api_server: { status:'ok',  latency_ms: 8  },
+    ollama_llm: { status:'slow',latency_ms: 8420 },
+    knowledge_graph: { status:'ok', latency_ms: 0.3 }
+  },
+  trend_data: [/* 12 objects, each with {time, CRITICAL, HIGH, MEDIUM, LOW, BENIGN} */],
+  timeline_bars: [/* 60 objects, each with {minute, max_severity, count} */],
+  recent_alerts: [/* last 10 from MOCK_ALERTS */]
+};
+
+// MOCK_ALERTS — 18 items in escalating severity order:
+// Alerts 1-3: BENIGN (source_ip 192.168.x, normal events)
+// Alerts 4-6: LOW (port scans, 203.0.113.x range)
+// Alerts 7-9: MEDIUM (auth failures, 185.100.x range)
+// Alerts 10-12: HIGH (lateral movement, 192.168.x internal)
+// Alert 12: honeypot_triggered=true, accessed_path contains 'db_credentials_prod'
+// Alerts 13-14: CRITICAL (C2 beacons, 91.108.x)
+// Alerts 15-18: Follow-up HIGH/CRITICAL from same source as alert 12
+// Each alert must have ALL fields: alert_id, severity, confidence,
+// source_ip, dest_ip, port, event_type, timestamp, evidence_trail[],
+// summary, vault_hash, honeypot_triggered, blast_radius_score
+
+// MOCK_GRAPH: topology with 18 nodes and edges matching the Python graph.
+// Format for Cytoscape: { nodes: [{data:{id,label,node_type}}, ...], edges: [{data:{source,target,protocol,weight}}, ...] }
+
+// ── MockApiService.js ─────────────────────────────────────
+import { MOCK_STATS, MOCK_ALERTS, MOCK_PLAYBOOKS, MOCK_GRAPH, MOCK_VAULT } from '../demo/demo_data.js';
+
+// All methods return Promises (matching the real api.js interface):
+export const mockApi = {
+  stats:    () => Promise.resolve(MOCK_STATS),
+  alerts:   () => Promise.resolve(MOCK_ALERTS),
+  playbooks:() => Promise.resolve(MOCK_PLAYBOOKS),
+  graph:    () => Promise.resolve(MOCK_GRAPH),
+  blastRadius:(id) => Promise.resolve(MOCK_BLAST_RADIUS[id] || MOCK_BLAST_RADIUS['WS_1']),
+  vault:    () => Promise.resolve(MOCK_VAULT),
+  vaultItem:(id) => Promise.resolve(MOCK_VAULT.find(v=>v.alert_id===id)?.chain_of_custody || 'No record'),
+};
+
+// ── DEMO CONTEXT ─────────────────────────────────────────
+// Create src/context/DemoContext.jsx:
+// export const DemoContext = React.createContext({ isDemo: false, setDemo: ()=>{} });
+// Wrap App.jsx in <DemoContext.Provider>
+
+// ── SIDEBAR DEMO TOGGLE ──────────────────────────────────
+// At bottom of Sidebar.jsx, add a toggle button:
+//   When OFF: 'LIVE MODE' label, green dot, bg-sp-surface
+//   When ON:  'DEMO MODE' label, orange dot + 'DEMO' pill in orange border
+//             bg-[#ff8c00]/10 border border-[#ff8c00] rounded text-[#ff8c00]
+// Toggle flips isDemo in DemoContext.
+
+// ── WIRE INTO ALL PAGES ──────────────────────────────────
+// In each page file, replace: import { api } from '../services/api'
+// With:
+//   import { api } from '../services/api';
+//   import { mockApi } from '../services/MockApiService';
+//   import { DemoContext } from '../context/DemoContext';
+//   const { isDemo } = useContext(DemoContext);
+//   const activeApi = isDemo ? mockApi : api;
+// Then replace all api.xxx() calls with activeApi.xxx()
+
+✅  VERIFY — Complete all checks before moving to the next prompt
+CHECK  /  CMD
+PASS IF
+DEMO toggle appears in Sidebar
+Visual check
+Orange DEMO button visible at bottom of sidebar
+Toggling DEMO swaps data immediately
+Click DEMO toggle
+Overview KPI cards update to mock values (247 total alerts)
+All 5 pages work in DEMO mode
+Navigate each page with DEMO=ON
+No blank pages, no API errors, all data visible
+Alert #12 is honeypot in DEMO
+Open Live Alerts in DEMO mode
+Alert #12 row is magenta/pinned. Drawer shows honeypot banner.
+Turning DEMO off restores live API
+Toggle DEMO off
+Pages start polling real FastAPI backend again
+
+🔴  COMMON ERRORS & FIXES
+SYMPTOM
+FIX
+Context not available in child components
+DemoContext.Provider must wrap the entire App, including the Router: <DemoContext.Provider value={{isDemo, setIsDemo}}><BrowserRouter>...</BrowserRouter></DemoContext.Provider>
+mockApi returns immediately — charts don't animate
+Add artificial delays for realism: stats: () => new Promise(res => setTimeout(() => res(MOCK_STATS), 120)). 120ms delay is enough for loading states to show.
+DEMO mode persists after page refresh (unexpected)
+If using localStorage for DEMO state persistence — that's optional. If you don't want persistence: use React state only (not localStorage), so DEMO mode resets on refresh.
+
+🔧  GIT COMMIT
+feat(demo): create MockApiService and demo_data.js with 18-alert sequence
+feat(demo): add DEMO/LIVE toggle to Sidebar with DemoContext
+
+SECTION 8 — FINAL POLISH & PRESENTATION PREP
+One prompt. Loading states, error boundaries, responsive fixes, clean up debug output.
+
+PROMPT 13  —  Global Polish — Loading States + Error Boundaries + Responsive   ⏱ 18:00–18:45
+
+What this prompt does:
+Adds a global loading skeleton component used by all pages during initial data fetch, an error boundary that shows a clean fallback instead of a crash, and a final pass on responsive breakpoints.
+
+📋  PASTE INTO CLAUDE CODE / CURSOR
+Final polish pass across the AI SOC Analyzer app. Do NOT change any business logic.
+Only add loading states, error handling, and responsive fixes.
+
+// ── LOADING SKELETON COMPONENT ───────────────────────────
+// Create src/components/LoadingSkeleton.jsx:
+// A dark skeleton that mimics the layout of each page.
+// Usage: show on first load (when data is null/undefined), hide after first fetch.
+// Skeleton style: bg-sp-border animate-pulse rounded
+// The skeleton should match the rough shape of the page it's on.
+// Make it generic enough to reuse: <LoadingSkeleton rows={5} />
+// Each row: h-8 w-full rounded bg-sp-border animate-pulse mb-2
+
+// ── ERROR BOUNDARY ───────────────────────────────────────
+// Create src/components/ErrorBoundary.jsx (class component — required):
+// On error, show:
+//   bg-sp-surface border border-sev-critical rounded-lg p-6 m-4
+//   '⚠ Component Error — {error.message}'
+//   [Retry] button that calls this.setState({hasError: false})
+// Wrap each page in ErrorBoundary in App.jsx.
+
+// ── RESPONSIVE FIXES ─────────────────────────────────────
+// Sidebar: on screens < 768px, collapse to icon-only (w-16).
+//   Show only icons (no text labels) when collapsed.
+//   Add a hamburger button to toggle collapse.
+// On mobile (< 640px):
+//   - KPI cards: 2-column grid (grid-cols-2)
+//   - Drawers: full width (100vw) instead of 480px
+//   - Cytoscape canvas: h-[300px] instead of full height
+
+// ── FINAL CHECKS ─────────────────────────────────────────
+// Remove ALL console.log() statements from all page files.
+// Remove ALL TODO comments.
+// Ensure the app title is 'AI SOC ANALYZER' (update index.html <title>).
+// Add a favicon: use a shield emoji as SVG favicon.
+//   <link rel='icon' href='data:image/svg+xml,<svg...>🛡️</svg>' />
+
+// ── CONNECTION STATUS INDICATOR ──────────────────────────
+// Add to Sidebar (below nav links, above DEMO toggle):
+// A small status row: 'BACKEND' label + dot.
+// Every 10 seconds: ping GET /api/v1/stats.
+//   If success: green dot.
+//   If fail: red dot + 'Offline' text.
+// This gives a persistent real-time indicator of backend health.
+
+✅  VERIFY — Complete all checks before moving to the next prompt
+CHECK  /  CMD
+PASS IF
+Loading skeleton shows on first page load
+Throttle network to 'Slow 3G' in DevTools
+Skeleton visible for ~2s before data loads
+Error boundary catches crashes
+Force an error in Overview (e.g., stats.nonexistent.deeply.nested)
+Error boundary shows warning panel. Other pages still work.
+Sidebar collapses on mobile
+Set browser to 375px width
+Sidebar shows icons only. Hamburger button toggles it.
+No console.log in production
+DevTools console after full navigation
+Zero console.log outputs. Only warnings (if any) are acceptable.
+Backend connection dot updates
+Stop FastAPI. Wait 10 seconds.
+Sidebar dot turns red. Restart FastAPI → turns green within 10s.
+
+🔴  COMMON ERRORS & FIXES
+SYMPTOM
+FIX
+ErrorBoundary must be a class component — but we're using hooks everywhere
+This is correct. React ErrorBoundaries MUST be class components (no hooks equivalent exists yet). Create as: class ErrorBoundary extends React.Component { state={hasError:false}; static getDerivedStateFromError(){return {hasError:true}}; ... }
+Skeleton stays visible even after data loads
+The condition should be: {data === null ? <LoadingSkeleton /> : <ActualContent />}. Make sure the initial state is null (not [] or {}), so the skeleton shows before the first successful fetch.
+Sidebar icon-only mode shows broken layout
+In collapsed mode, set overflow-hidden on the sidebar and transition-all duration-200 for smooth collapse. Each nav item needs justify-center (not justify-start) in collapsed mode. Text spans should have: className={isCollapsed ? 'hidden' : 'block'}.
+
+🔧  GIT COMMIT
+feat(ui): add LoadingSkeleton, ErrorBoundary, and responsive sidebar
+chore: remove all console.log, update title and favicon, add backend connection indicator
+
+⛳  CHECKPOINT — FULL UI COMPLETE — PRESENTATION READY   ⏱ Before 18:45
+CHECK
+HOW TO TEST
+PASS IF
+All 5 pages load without errors
+Navigate each route
+No blank pages, no console errors
+DEMO mode works on all 5 pages
+Toggle DEMO, check each page
+All data visible, honeypot fires on alert #12
+Live polling active on Overview
+Network tab
+Request every 5s to /stats
+Live Alerts: honeypot row magenta+pinned
+Visual
+HP row at top with magenta border
+Playbooks: FSM diagram renders
+Visual
+8 nodes, edges, active state glows
+Graph View: Cytoscape canvas loads
+Visual
+18 nodes visible with correct shapes
+Forensic Vault: integrity banner green
+Visual
+Green shield banner if all verified
+Sidebar DEMO toggle visible
+Visual
+Orange DEMO button at bottom of sidebar
+No console errors anywhere
+DevTools Console, all pages
+Zero red errors
+App works on 1440px AND 768px screens
+Resize browser
+No overflow, no broken layout at either size
+
+BREAK-GLASS PROTOCOLS
+Read before the hackathon. Not during.
+
+If Things Go Wrong During the Demo
+
+⚡  Backend API is down during presentation
+IMMEDIATELY flip the DEMO toggle in the Sidebar. All pages swap to local mock data. The demo plays perfectly. Tell judges: 'We also built a full offline demo mode — let me show you how resilient the system is.'
+⚡  Cytoscape canvas is blank
+Call cy.resize() in a useEffect triggered by a button click. Or add a 'Reload Graph' button that destroys and recreates the Cytoscape instance. The data is there — only the render is broken.
+⚡  React Flow diagram crashes (white screen)
+Wrap the ReactFlow component in its own ErrorBoundary. The FSM diagram is a nice-to-have. If it crashes, hide it and show only the playbook cards — they still demonstrate the FSM concept.
+⚡  Recharts throws on malformed data
+Wrap all chart data access with optional chaining: stats?.trend_data ?? []. Never pass undefined to Recharts data prop. Always default to empty arrays.
+⚡  App is blank — Vite build error
+Run npm run dev and read the first error in the terminal. 99% of Vite errors are import path issues (wrong case, missing extension). Fix the import, the server hot-reloads instantly.
+⚡  Less than 1 hour remaining, multiple pages incomplete
+Priority 1 (non-negotiable): Overview + Live Alerts must work. Priority 2: Flip to DEMO mode and present all pages from mock data. Priority 3: Graph View and Vault can be shown as static screenshots if needed. The judges want to see the SOC concept — not just the React code.
+
+🎤  UI DEMO SPEAKING POINTS
+Minute 2 — Architecture: Point to the live dashboard running behind you. 'This is AI SOC Analyzer — a real-time SOC dashboard. Every panel is live-polling our backend.'
+Minute 3 — During demo_alerts.py: 'Watch the Live Alerts page — new threats are arriving in real time. Each row tells you exactly why it was flagged. Click any row to see the AI analysis and the forensic vault hash.'
+Honeypot moment: Navigate to Live Alerts. The magenta row auto-appears at top. Click it. 'The drawer opens automatically — because this is a HONEYPOT trigger. One hundred percent confidence. No possible false positive. The credential file was a decoy.'
+Graph View: 'Click any node to see its blast radius — how quickly an attacker could reach the production database from that position. We pre-computed all shortest paths at startup, so this is sub-millisecond.'
+
+AI SOC ANALYZER  ·  UI PROMPT BOOK  ·  TEAM SY-A9  ·  SOC AI HACKATHON
+13 atomic prompts  ·  2 checkpoints  ·  1 demo mode  ·  ~6 hour build window

@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--66939a74-336e-49f3-a83a-51ef738e4ffe",
+  "name": "SOC Response Playbook — Incident 303e0f9f-6210-43af-a8cf-50625f28f455",
+  "description": "SUMMARY: A LOW-severity RDP_CONNECT alert was triggered\nfrom None with 30% confidence.\nTECHNIQUE: Suspicious activity detected via unknown pattern (T1059).\nACTION: ISOLATE_HOST",
+  "created": "2026-04-03T15:01:10.374726+00:00",
+  "modified": "2026-04-03T15:01:10.374745+00:00",
+  "created_by": "identity--79a3da43-65a9-49e1-ba37-28ec01db41e9",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T15:01:08.312365",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

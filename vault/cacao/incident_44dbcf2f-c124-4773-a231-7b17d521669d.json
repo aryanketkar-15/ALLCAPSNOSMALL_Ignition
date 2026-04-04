@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--ca464350-3c02-4fde-ba2c-249d951b6274",
+  "name": "SOC Response Playbook — Incident 44dbcf2f-c124-4773-a231-7b17d521669d",
+  "description": "SUMMARY: A LOW-severity C2_BEACON alert was triggered\nfrom None with 30% confidence.\nTECHNIQUE: Suspicious activity detected via unknown pattern (T1059).\nACTION: ISOLATE_HOST",
+  "created": "2026-04-03T16:43:27.508164+00:00",
+  "modified": "2026-04-03T16:43:27.508186+00:00",
+  "created_by": "identity--e85087ec-92ec-4d31-9718-223dee919258",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T16:43:25.437850",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

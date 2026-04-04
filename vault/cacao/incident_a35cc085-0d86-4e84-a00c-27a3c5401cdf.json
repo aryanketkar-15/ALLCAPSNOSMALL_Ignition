@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--1982cb57-06ce-4501-9f39-3dd5c59960b9",
+  "name": "SOC Response Playbook — Incident a35cc085-0d86-4e84-a00c-27a3c5401cdf",
+  "description": "Here’s an analysis of the alert:\n\n1.  **SUMMARY:** A potential lateral movement within a network has been detected.\n2.  **TECHNIQUE:** T1059 - Lateral Movement\n3.  **ACTION:** QUARANTINE_FILE - Immediately isolate the source IP address 10.0.0.99 to prevent further potential compromise.",
+  "created": "2026-04-03T23:30:44.038786+00:00",
+  "modified": "2026-04-03T23:30:44.038805+00:00",
+  "created_by": "identity--1c6e683b-c30b-47b0-94c1-c46e1a98337e",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T23:30:15.950793",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 10.0.0.99",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T23:30:15.952810",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

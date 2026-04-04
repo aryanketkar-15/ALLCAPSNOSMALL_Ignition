@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--e26a9a9c-381a-4403-8b1d-adbad467600b",
+  "name": "SOC Response Playbook — Incident aeea11fc-47ed-499a-8bd5-002bad837d4b",
+  "description": "SUMMARY: A CRITICAL-severity CREDENTIAL_DUMP alert was triggered\nfrom 192.168.1.35 with 95% confidence.\nTECHNIQUE: Suspicious activity detected via unknown pattern (T1059).\nACTION: ISOLATE_HOST",
+  "created": "2026-04-03T20:52:27.542007+00:00",
+  "modified": "2026-04-03T20:52:27.542032+00:00",
+  "created_by": "identity--9d4b9fc5-f3d7-43eb-8167-1c8e87349495",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T20:52:25.498701",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 192.168.1.35",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T20:52:25.499563",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

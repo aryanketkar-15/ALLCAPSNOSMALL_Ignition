@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--0eb5f029-c19b-4a37-9e12-59958f5636d5",
+  "name": "SOC Response Playbook — Incident 154be52b-5d54-4b75-ba20-5796bb0356ca",
+  "description": "[Template] LOW severity alert — event: HTTP_OPTIONS from 198.51.100.20",
+  "created": "2026-04-03T22:23:47.363494+00:00",
+  "modified": "2026-04-03T22:23:47.363512+00:00",
+  "created_by": "identity--e09d8d55-509a-4c31-a36b-74882d080bf7",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:23:42.353091",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

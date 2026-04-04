@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--3c1a5ff2-71c7-4a1a-8c2f-a3e009127c4d",
+  "name": "SOC Response Playbook — Incident ed25eef9-7d7a-40c5-917a-85a0b256bc53",
+  "description": "Okay, here's an analysis of the security alert, adhering to your specifications:\n\n1.  **SUMMARY:** A DNS query originating from a specific IP address triggered an alert indicating potential unauthorized access to a system.\n\n2.  **TECHNIQUE:** T1059 - Command Execution – The attacker is attempting to execute a command through DNS.\n\n3.  **ACTION:** QUARANTINE_FILE – Immediately isolate the source IP address to prevent further potential malicious activity.",
+  "created": "2026-04-03T22:46:13.912620+00:00",
+  "modified": "2026-04-03T22:46:13.912635+00:00",
+  "created_by": "identity--f622e98a-ecdc-4597-94a6-0c539efb7dda",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:45:55.492201",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

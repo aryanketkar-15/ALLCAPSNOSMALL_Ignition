@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--36706c10-7e35-42d5-811f-fc8200dc6d5b",
+  "name": "SOC Response Playbook — Incident d895515e-82ff-4f46-9244-e9b82a0982e3",
+  "description": "Here are three things based on the provided alert:\n\n1.  **SUMMARY:** A suspicious network connection originating from a remote IP address has been detected, potentially indicating a malicious actor attempting to access sensitive data.\n\n2.  **TECHNIQUE:** T1059 - Command and Scripting\n\n3.  **ACTION:** QUARANTINE_FILE - Immediately isolate the compromised system 10.0.0.55 to prevent further potential damage.",
+  "created": "2026-04-04T03:14:07.811684+00:00",
+  "modified": "2026-04-04T03:14:07.811702+00:00",
+  "created_by": "identity--ff580d9a-b7ca-4217-8eea-64c840a24e1c",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-04T03:13:50.484765",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 10.0.0.55",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-04T03:13:50.487031",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

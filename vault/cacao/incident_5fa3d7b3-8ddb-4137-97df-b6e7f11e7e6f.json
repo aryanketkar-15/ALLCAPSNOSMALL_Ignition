@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--6a347b47-567e-4118-820a-0070f38778cb",
+  "name": "SOC Response Playbook — Incident 5fa3d7b3-8ddb-4137-97df-b6e7f11e7e6f",
+  "description": "Here are three things based on the provided alert:\n\n1.  **SUMMARY:** A compromised user account accessed a database containing sensitive credentials, potentially leading to data breach.\n2.  **TECHNIQUE:** T1059 - Credential Access\n3.  **ACTION:** QUARANTINE_FILE – Immediately isolate the compromised user account to prevent further access to the database.",
+  "created": "2026-04-03T22:35:27.913559+00:00",
+  "modified": "2026-04-03T22:35:27.913575+00:00",
+  "created_by": "identity--cf7a086a-bc0e-4364-b371-6f2093c4a7ce",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:35:08.123606",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 192.168.1.35",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T22:35:08.124167",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--c072dcce-5164-4fd2-8c35-84585c81f786",
+  "name": "SOC Response Playbook — Incident 085e6c98-242e-49ac-b8c1-788cadde81a0",
+  "description": "[Template] MEDIUM severity alert — event: VPN_FAIL from 91.108.4.1",
+  "created": "2026-04-03T22:24:08.674891+00:00",
+  "modified": "2026-04-03T22:24:08.674911+00:00",
+  "created_by": "identity--b8000a3b-a681-491e-9ef3-bf856c58ed12",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:24:03.637944",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--d00e92c8-39e1-49bf-813a-778e1c6e59d0",
+  "name": "SOC Response Playbook — Incident c0783e65-8ca5-4183-b839-f1930684d8de",
+  "description": "Okay, here's an analysis of the security alert, adhering to your specifications:\n\n1.  **SUMMARY:** A critical alert indicates a potential command-and-control (C2) communication originating from a compromised device, potentially targeting internal systems.\n\n2.  **TECHNIQUE:** T1059 - Command and Control\n\n3.  **ACTION:** QUARANTINE_FILE - Immediately isolate the source IP address (10.0.0.99) to prevent further communication with the C2 server.",
+  "created": "2026-04-04T01:20:11.045910+00:00",
+  "modified": "2026-04-04T01:20:11.045929+00:00",
+  "created_by": "identity--8d9359c3-5e47-430b-a36f-98cc7b3e354b",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-04T01:19:50.533920",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 10.0.0.99",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-04T01:19:50.535377",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

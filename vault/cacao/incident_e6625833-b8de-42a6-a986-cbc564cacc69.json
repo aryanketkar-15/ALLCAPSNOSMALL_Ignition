@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--a1cd4849-bdca-4799-96eb-1b811941828d",
+  "name": "SOC Response Playbook — Incident e6625833-b8de-42a6-a986-cbc564cacc69",
+  "description": "[Template] LOW severity alert — event: ICMP_PING from 198.51.100.10",
+  "created": "2026-04-03T22:23:37.247823+00:00",
+  "modified": "2026-04-03T22:23:37.247911+00:00",
+  "created_by": "identity--7b2da7b6-4a6e-4c18-a7f8-5a96b7b2bda6",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:23:32.240264",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

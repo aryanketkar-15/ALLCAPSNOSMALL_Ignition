@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--0220d5cd-7680-4fbe-9026-154ef288d154",
+  "name": "SOC Response Playbook — Incident a7bbb4eb-79da-4001-b6bf-eab46f2e8c09",
+  "description": "SUMMARY: A BENIGN-severity DNS_QUERY alert was triggered\nfrom 192.168.1.11 with 10% confidence.\nTECHNIQUE: Suspicious activity detected via unknown pattern (T1059).\nACTION: ISOLATE_HOST",
+  "created": "2026-04-03T20:16:25.984483+00:00",
+  "modified": "2026-04-03T20:16:25.984509+00:00",
+  "created_by": "identity--321f6116-d1ed-4d0a-94bc-b9c6bf7b6e2f",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T20:16:23.912801",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

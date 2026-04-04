@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--d7f9f785-2e84-4f45-81db-79fe92ef41bd",
+  "name": "SOC Response Playbook — Incident 0721a732-da7f-4980-8451-dc4af3ac472b",
+  "description": "Here's an analysis of the security alert:\n\n1.  **SUMMARY:** A critical file read event has been detected, indicating a potential unauthorized access to sensitive data.\n2.  **TECHNIQUE:** T1059 - Command Execution – Exploitation of a vulnerable file to execute malicious commands.\n3.  **ACTION:** QUARANTINE_FILE – Immediately isolate the compromised system to prevent further data compromise and potential lateral movement.",
+  "created": "2026-04-04T03:15:20.293956+00:00",
+  "modified": "2026-04-04T03:15:20.293972+00:00",
+  "created_by": "identity--39c06185-2bbe-482a-946d-9705a71a08f1",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-04T03:15:01.868208",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 10.0.0.99",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-04T03:15:01.870581",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

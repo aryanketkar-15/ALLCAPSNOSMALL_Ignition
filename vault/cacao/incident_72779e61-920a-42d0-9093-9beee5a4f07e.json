@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--853603b1-867c-4b3e-a01b-ea45f7f363e5",
+  "name": "SOC Response Playbook — Incident 72779e61-920a-42d0-9093-9beee5a4f07e",
+  "description": "[Template] MEDIUM severity alert — event: AUTH_FAIL from 185.100.86.10",
+  "created": "2026-04-04T03:57:56.072780+00:00",
+  "modified": "2026-04-04T03:57:56.072817+00:00",
+  "created_by": "identity--7e2bb000-c59f-43d3-aefa-f291222f5803",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-04T03:49:43.587620",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

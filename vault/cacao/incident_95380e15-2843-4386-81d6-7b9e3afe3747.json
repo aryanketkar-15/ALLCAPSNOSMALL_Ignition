@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--df12ce2a-9676-4211-bee5-9275fa93054f",
+  "name": "SOC Response Playbook — Incident 95380e15-2843-4386-81d6-7b9e3afe3747",
+  "description": "Okay, here's a breakdown of the security alert:\n\n1.  **SUMMARY:** An unknown source attempted to initiate an ICMP ping to the system, indicating a potential reconnaissance attempt.\n\n2.  **TECHNIQUE:** T1059 - Command and Scripting\n    *   **ID Flag:** T1059 - Command Execution\n\n3.  **ACTION:** QUARANTINE_FILE - Immediately isolate the affected system to prevent further potential malicious activity.",
+  "created": "2026-04-03T22:47:18.905886+00:00",
+  "modified": "2026-04-03T22:47:18.905913+00:00",
+  "created_by": "identity--9b8c6e1b-536e-4e85-8c3c-105f06360d71",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:47:01.376575",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--eb7907b5-0e5b-46eb-b8e2-85482505093c",
+  "name": "SOC Response Playbook — Incident 7c8db3e8-92ec-4265-b7a2-bae5a73aa37c",
+  "description": "Here are three things based on the security alert:\n\n1.  **SUMMARY:** A suspicious HTTP request originated from an unknown IP address, potentially indicating a compromised web application.\n2.  **TECHNIQUE:** T1059 - Web Application Attack\n3.  **ACTION:** QUARANTINE_FILE - Secure the affected web server by isolating it from further network access.",
+  "created": "2026-04-04T01:30:18.624566+00:00",
+  "modified": "2026-04-04T01:30:18.624585+00:00",
+  "created_by": "identity--498cf33c-170e-4cd0-8b0c-98e88b31a1b3",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-04T01:30:02.383783",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

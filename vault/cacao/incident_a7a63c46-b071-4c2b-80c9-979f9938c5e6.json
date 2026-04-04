@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--77146050-171c-4acf-996c-f8735ec05de3",
+  "name": "SOC Response Playbook — Incident a7a63c46-b071-4c2b-80c9-979f9938c5e6",
+  "description": "Okay, here’s an analysis of the security alert, following your guidelines:\n\n1.  **SUMMARY:** A lateral movement alert has been triggered from a compromised machine (10.0.0.50) to other systems within the network, potentially indicating a malicious actor attempting to expand their reach.\n\n2.  **TECHNIQUE:** T1059 - Command and Scripting – Execution of a program or script.\n\n3.  **ACTION:** QUARANTINE_FILE – Immediately isolate the compromised machine (10.0.0.50) to prevent further potential damage or data exfiltration.  Investigate the origin of the alert and potential compromised files.",
+  "created": "2026-04-04T01:28:22.144661+00:00",
+  "modified": "2026-04-04T01:28:22.144689+00:00",
+  "created_by": "identity--873c328b-134e-4819-823f-dd38d1fa7f8b",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-04T01:28:01.231717",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 10.0.0.50",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-04T01:28:01.233354",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--3dfaeb19-76e2-423a-ab5e-e1ab2b71fef7",
+  "name": "SOC Response Playbook — Incident 3b2114f5-ed73-4a13-9b01-517f8b871ac2",
+  "description": "Here are three things to analyze the security alert:\n\n1.  **SUMMARY:** A suspicious ICMP ping originated from a remote IP address, suggesting potential reconnaissance or malicious activity.\n2.  **TECHNIQUE:** T1059 - Command and Scripting – Exploit\n3.  **ACTION:** BLOCK_IP - Immediately block the source IP address to prevent further communication.",
+  "created": "2026-04-03T22:57:57.368017+00:00",
+  "modified": "2026-04-03T22:57:57.368033+00:00",
+  "created_by": "identity--d51e4e9f-602a-4586-b9d3-368232fb92f5",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:57:41.472901",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--3584643b-9f4a-47ca-b016-83e5930443e6",
+  "name": "SOC Response Playbook — Incident 54903788-620f-447d-a396-8268ef8ce49b",
+  "description": "Okay, here’s an analysis of the security alert, following your guidelines:\n\n1.  **SUMMARY:** A suspicious process has been spawned on a network device, potentially indicating malicious activity.\n\n2.  **TECHNIQUE:** T1059 - Command Execution - The process is attempting to execute a command without proper authorization.\n\n3.  **ACTION:** QUARANTINE_FILE - Immediately isolate the process and its associated files on the affected host to prevent further damage.",
+  "created": "2026-04-03T22:49:41.336577+00:00",
+  "modified": "2026-04-03T22:49:41.336597+00:00",
+  "created_by": "identity--9c88c3b4-a833-4c72-a8bb-0e4bb3d30db8",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:49:18.470752",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 192.168.1.32",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T22:49:18.472646",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

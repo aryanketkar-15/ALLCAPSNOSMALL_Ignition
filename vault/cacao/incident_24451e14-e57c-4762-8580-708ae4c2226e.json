@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--948b64e9-9252-4057-9130-016a28d299ec",
+  "name": "SOC Response Playbook — Incident 24451e14-e57c-4762-8580-708ae4c2226e",
+  "description": "Okay, here's a breakdown of the alert:\n\n1.  **SUMMARY:** A sophisticated C2 beacon signal has been detected originating from a known compromised server, potentially indicating a coordinated attack.\n\n2.  **TECHNIQUE:** T1059 - Command and Scripting Facility – Specifically, the Beacon module suggests a targeted communication attempt.\n\n3.  **ACTION:** QUARANTINE_FILE – Immediately isolate the 91.108.56.100 IP address to prevent further malicious activity and investigation.",
+  "created": "2026-04-03T22:50:52.914957+00:00",
+  "modified": "2026-04-03T22:50:52.914992+00:00",
+  "created_by": "identity--a2608db8-f051-4dd0-bd27-f8e9a8ddaa10",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:50:34.210256",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 91.108.56.100",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T22:50:34.210748",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--f7e2e9aa-c6f3-4c04-a1cc-87ee646134d9",
+  "name": "SOC Response Playbook — Incident e4d71c1e-0822-47d8-a1cc-cc8e90a29a34",
+  "description": "Here’s an analysis of the security alert:\n\n1.  **SUMMARY:** A critical alert indicates a potential command-and-control (C2) beacon attack targeting a specific host (10.0.0.99).\n\n2.  **TECHNIQUE:** T1059 - Command Execution – The attacker is attempting to execute a malicious command on the target system.\n\n3.  **ACTION:** QUARANTINE_FILE – Immediately isolate the affected host by blocking all network traffic and preventing any further communication.",
+  "created": "2026-04-03T23:40:31.928065+00:00",
+  "modified": "2026-04-03T23:40:31.928085+00:00",
+  "created_by": "identity--86e00902-e848-4fdb-9a0f-3fa6dc32cb77",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T23:40:11.387405",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 10.0.0.99",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T23:40:11.390155",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

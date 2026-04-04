@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--bd201f70-63b5-466e-ba60-21e05694d39b",
+  "name": "SOC Response Playbook — Incident ad7201ee-65e4-4804-a01b-3a0881427775",
+  "description": "Here’s an analysis of the alert:\n\n1.  **SUMMARY:** A critical data exfiltration attempt was detected from a compromised internal IP address.\n2.  ** TECHNIQUE:**  Credential Disrabelling (T1059). The attacker is attempting to use stolen credentials to access sensitive data.\n3.  **ACTION:**  Immediately isolate the source IP address 10.0.0.99 and investigate further for evidence of lateral movement within the network.",
+  "created": "2026-04-03T23:35:12.377036+00:00",
+  "modified": "2026-04-03T23:35:12.377054+00:00",
+  "created_by": "identity--f3c26d14-04f8-490a-a7e3-2f56a26336f5",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T23:34:54.284305",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 10.0.0.99",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T23:34:54.285062",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

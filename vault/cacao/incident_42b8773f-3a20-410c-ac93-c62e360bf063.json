@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--663f5f16-1d0a-4759-bb73-0eef99ee824d",
+  "name": "SOC Response Playbook — Incident 42b8773f-3a20-410c-ac93-c62e360bf063",
+  "description": "Here's an analysis of the security alert:\n\n1.  **SUMMARY:** A low-severity ICMP ping originated from a potentially compromised IP address, suggesting a possible reconnaissance attempt.\n\n2.  ** TECHNIQUE:** T1059 - Command Execution – The attacker is attempting to establish a connection to the system, potentially using a command to gather information.\n\n3.  **ACTION:** BLOCK_IP – Immediately block the source IP address to prevent further potential reconnaissance activity.",
+  "created": "2026-04-04T01:27:11.417141+00:00",
+  "modified": "2026-04-04T01:27:11.417166+00:00",
+  "created_by": "identity--cc3f94aa-cf19-44f2-ac16-4f08a03a531e",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-04T01:26:55.138577",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

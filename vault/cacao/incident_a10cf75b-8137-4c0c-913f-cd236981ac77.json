@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--9b8cb117-d2c9-4ed0-8a67-877ad0ff98d2",
+  "name": "SOC Response Playbook — Incident a10cf75b-8137-4c0c-913f-cd236981ac77",
+  "description": "SUMMARY: A HIGH-severity KERBEROAST alert was triggered\nfrom 192.168.1.31 with 70% confidence.\nTECHNIQUE: Suspicious activity detected via unknown pattern (T1059).\nACTION: ISOLATE_HOST",
+  "created": "2026-04-03T21:10:18.367706+00:00",
+  "modified": "2026-04-03T21:10:18.367729+00:00",
+  "created_by": "identity--43dcab86-e6e2-455f-b280-3c2a4ed3c850",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T21:10:16.298174",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 192.168.1.31",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T21:10:16.300278",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

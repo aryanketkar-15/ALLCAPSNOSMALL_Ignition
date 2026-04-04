@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--81c9ca9f-ec85-4a16-a353-73d3ab4a71be",
+  "name": "SOC Response Playbook — Incident caef8cfc-3acd-4ccf-9d55-b3c3b66f5019",
+  "description": "[Template] LOW severity alert — event: PORT_SCAN from 203.0.113.50",
+  "created": "2026-04-03T22:23:27.165525+00:00",
+  "modified": "2026-04-03T22:23:27.165545+00:00",
+  "created_by": "identity--3ae73a86-313f-48fc-92f0-680f04e42641",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:23:22.158005",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

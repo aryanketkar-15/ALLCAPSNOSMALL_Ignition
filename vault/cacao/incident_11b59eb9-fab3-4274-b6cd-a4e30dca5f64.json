@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--ae90b95a-8bb9-4849-9ad7-b752ce14cabd",
+  "name": "SOC Response Playbook — Incident 11b59eb9-fab3-4274-b6cd-a4e30dca5f64",
+  "description": "[Template] LOW severity alert — event: C2_CALLBACK from None",
+  "created": "2026-04-03T16:38:57.982315+00:00",
+  "modified": "2026-04-03T16:38:57.982327+00:00",
+  "created_by": "identity--381f3607-73ab-45b5-ab92-2dd10a903204",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T15:11:06.676205",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

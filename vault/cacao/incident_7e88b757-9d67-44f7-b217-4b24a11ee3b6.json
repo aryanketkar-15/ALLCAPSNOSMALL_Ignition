@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--1d06fe15-3dc0-487f-b890-58e1f88d3b38",
+  "name": "SOC Response Playbook — Incident 7e88b757-9d67-44f7-b217-4b24a11ee3b6",
+  "description": "Okay, here’s an analysis of the security alert, following your instructions:\n\n1.  **SUMMARY:** A VPN connection was unexpectedly failed for a single IP address, potentially indicating a compromised or malicious session.\n\n2.  **TECHNIQUE:** T1059 - Command Execution – This technique suggests a user attempted to execute a command through the failed VPN connection.\n\n3.  **ACTION:** QUARANTINE_FILE – Immediately isolate the source IP address to prevent further potential malicious activity.",
+  "created": "2026-04-03T22:31:37.344162+00:00",
+  "modified": "2026-04-03T22:31:37.344183+00:00",
+  "created_by": "identity--eaa582ce-31c7-42d4-bfbe-4ff0609e8adf",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:31:20.055498",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

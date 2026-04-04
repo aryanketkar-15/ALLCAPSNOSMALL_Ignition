@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--72efdcdf-c2be-4854-b9a2-404b68a95da4",
+  "name": "SOC Response Playbook — Incident bbc3159c-2cbd-4b2c-9b15-fe471e06cdff",
+  "description": "Okay, here's a three-point analysis of the security alert:\n\n1.  **SUMMARY:** A port scan originating from IP address 203.0.113.50 was detected, indicating potential unauthorized network access attempts.\n\n2.  ** TECHNIQUE:** T1059 - Command and Scripting Execution\n\n3.  **ACTION:** QUARANTINE_FILE - Immediately isolate the source IP address to prevent further scanning activity.",
+  "created": "2026-04-04T01:26:51.945778+00:00",
+  "modified": "2026-04-04T01:26:51.945797+00:00",
+  "created_by": "identity--d1468634-f71e-4d2f-bac9-0c87556464c9",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-04T01:26:35.411236",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

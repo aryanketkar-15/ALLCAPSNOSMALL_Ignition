@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--ebbe7fa2-0e02-4f18-8044-1aca5caf68b1",
+  "name": "SOC Response Playbook — Incident ef42f402-3242-4273-8f88-daf471c51307",
+  "description": "Okay, here’s an analysis of the security alert, following your guidelines:\n\n1.  **SUMMARY:** A suspicious port scan originating from IP 10.0.0.99 has been detected, potentially indicating an attempt to identify vulnerable systems.\n\n2.  **TECHNIQUE:** T1059 - Reconnaissance\n\n3.  **ACTION:** QUARANTINE_FILE - Immediately isolate the source IP address to prevent further scanning activity.",
+  "created": "2026-04-03T23:29:59.674461+00:00",
+  "modified": "2026-04-03T23:29:59.674491+00:00",
+  "created_by": "identity--3cfe0d40-e459-452c-b059-9393eceeee6c",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T23:29:37.438158",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

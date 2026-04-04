@@ -33,37 +33,21 @@ class BlastRadiusAnalyser:
     # Core API
     # ------------------------------------------------------------------
 
-    def calculate(self, compromised_node: str, alert_history: list = None) -> dict:
+    def calculate(self, compromised_node: str) -> dict:
         """
         Compute the blast radius for a compromised node.
-
-        Parameters
-        ----------
-        compromised_node : str
-            Node ID of the compromised asset.
-        alert_history : list[dict], optional
-            Recent alerts with keys: source_ip, dest_node, timestamp (ISO 8601).
-
-        Returns
-        -------
-        dict with blast_radius_score, affected_nodes, path_to_nearest_critical,
-        movement_pattern, nearest_critical_node, nearest_critical_distance.
         """
 
-        # Guard: unknown node → safe default, never crash
+        # Guard: unknown node
         if compromised_node not in self.graph:
             return {
                 "blast_radius_score": 0.0,
                 "affected_nodes": [],
                 "path_to_nearest_critical": [],
-                "movement_pattern": "UNKNOWN",
-                "nearest_critical_node": None,
-                "nearest_critical_distance": float("inf"),
+                "movement_pattern": "UNKNOWN"
             }
 
         lengths, paths = self.all_paths[compromised_node]
-
-        # ── Affected nodes (all reachable from compromised_node) ───
         affected_nodes = list(lengths.keys())
 
         # ── Blast radius score ─────────────────────────────────────
@@ -75,66 +59,45 @@ class BlastRadiusAnalyser:
         for crit in self.critical_nodes:
             if crit in lengths:
                 dist = lengths[crit]
-                if dist > 0:
-                    score += 1.0 / dist
+                score += 1.0 / (dist + 1.0)
                 # Track nearest critical asset
                 if dist < nearest_critical_distance:
                     nearest_critical_distance = dist
                     nearest_critical_node = crit
                     path_to_nearest_critical = paths.get(crit, [])
 
-        # ── Temporal lateral movement detection ────────────────────
-        movement_pattern = "DIRECT_ATTACK"
-
-        if alert_history:
-            movement_pattern = self._detect_lateral_movement(alert_history)
-
-        # Apply 1.5x multiplier for lateral movement
-        if movement_pattern == "LATERAL_MOVEMENT":
-            score *= 1.5
+        movement_pattern = "LATERAL_MOVEMENT" if len(affected_nodes) > 1 else "DIRECT_ATTACK"
 
         return {
             "blast_radius_score": round(score, 4),
             "affected_nodes": affected_nodes,
             "path_to_nearest_critical": path_to_nearest_critical,
-            "movement_pattern": movement_pattern,
-            "nearest_critical_node": nearest_critical_node,
-            "nearest_critical_distance": nearest_critical_distance,
+            "movement_pattern": movement_pattern
         }
 
-    # ------------------------------------------------------------------
-    # Lateral movement detection
-    # ------------------------------------------------------------------
-
-    def _detect_lateral_movement(self, alert_history: list) -> str:
+    def simulate_path(self, source_node: str, target_node: str) -> dict:
         """
-        If the same source_ip has hit 3+ DIFFERENT dest_nodes in the
-        last 10 minutes → LATERAL_MOVEMENT, else DIRECT_ATTACK.
+        Simulate an attack path between source and target node.
         """
-        now = datetime.now(timezone.utc)
-        window = timedelta(minutes=10)
-
-        ip_destinations = defaultdict(set)
-
-        for alert in alert_history:
-            src_ip = alert.get("source_ip", "")
-            dest = alert.get("dest_node", "")
-            ts_raw = alert.get("timestamp", "")
-
-            try:
-                ts = datetime.fromisoformat(ts_raw.replace("Z", "+00:00"))
-            except (ValueError, AttributeError):
-                continue
-
-            if now - ts <= window:
-                ip_destinations[src_ip].add(dest)
-
-        # Any IP hitting 3+ distinct destinations → lateral movement
-        for destinations in ip_destinations.values():
-            if len(destinations) >= 3:
-                return "LATERAL_MOVEMENT"
-
-        return "DIRECT_ATTACK"
+        if source_node not in self.graph or target_node not in self.graph:
+            return {"hops": 0, "path": [], "risk_exposure": 0.0}
+            
+        lengths, paths = self.all_paths[source_node]
+        if target_node not in lengths:
+            return {"hops": 0, "path": [], "risk_exposure": 0.0}
+            
+        path = paths[target_node]
+        hops = max(0, len(path) - 1)
+        dist = lengths[target_node]
+        
+        # Calculate risk exposure on 0-100 scale (closer distance = higher exposure)
+        risk_exposure = max(0.0, 100.0 - (dist * 10))
+        
+        return {
+            "hops": hops,
+            "path": path,
+            "risk_exposure": round(risk_exposure, 2)
+        }
 
     # ------------------------------------------------------------------
     # Performance verification
@@ -164,3 +127,7 @@ if __name__ == "__main__":
     print("\nBlast radius for WS_1:")
     for k, v in result.items():
         print(f"  {k}: {v}")
+    
+    sim = b.simulate_path("INTERNET_GW", "DB_PROD")
+    print("\nSimulation INTERNET_GW -> DB_PROD:")
+    print(sim)

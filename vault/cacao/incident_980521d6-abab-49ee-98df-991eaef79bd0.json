@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--bb264576-0178-402f-aec5-aad0bbad321b",
+  "name": "SOC Response Playbook — Incident 980521d6-abab-49ee-98df-991eaef79bd0",
+  "description": "SUMMARY: A BENIGN-severity FILE_COPY alert was triggered\nfrom None with 10% confidence.\nTECHNIQUE: Suspicious activity detected via unknown pattern (T1059).\nACTION: ISOLATE_HOST",
+  "created": "2026-04-03T19:46:26.797332+00:00",
+  "modified": "2026-04-03T19:46:26.797352+00:00",
+  "created_by": "identity--fc0bded3-d533-4b50-bb9e-8570a313737f",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T19:46:24.762331",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--17b4f3bd-578b-4b38-be37-1fc9721621b4",
+  "name": "SOC Response Playbook — Incident 47f875ae-37bb-4fac-a165-cfde59764019",
+  "description": "SUMMARY: A CRITICAL-severity CREDENTIAL_DUMP alert was triggered\nfrom None with 95% confidence.\nTECHNIQUE: Suspicious activity detected via unknown pattern (T1059).\nACTION: ISOLATE_HOST",
+  "created": "2026-04-03T17:43:10.021429+00:00",
+  "modified": "2026-04-03T17:43:10.021461+00:00",
+  "created_by": "identity--a3df2050-9c98-4652-bb0b-f19e3f7fb057",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T17:43:07.935635",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP None",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T17:43:07.939645",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

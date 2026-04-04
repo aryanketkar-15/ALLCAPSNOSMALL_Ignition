@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--2b0e4dad-f2bb-4ee8-8601-55077a9cccb0",
+  "name": "SOC Response Playbook — Incident 8a1ac653-79e6-4f51-b454-1af466f5ae9b",
+  "description": "Here’s an analysis of the security alert:\n\n1.  **SUMMARY:** A malicious actor is attempting to establish a persistent foothold on a network using a compromised endpoint.\n\n2.  ** TECHNIQUE:** T1057.001 -  Credential Access – Exploitation of a vulnerable credential.\n\n3.  **ACTION:** QUARANTINE_FILE – Immediately isolate the 10.0.0.99 endpoint to prevent further malicious activity.",
+  "created": "2026-04-03T23:43:57.492375+00:00",
+  "modified": "2026-04-03T23:43:57.492388+00:00",
+  "created_by": "identity--dd9f1aac-d334-4088-abf5-b6e4fdae169f",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T23:43:29.035793",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 10.0.0.99",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T23:43:29.037690",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--b9790a0a-00ae-42e5-81aa-ec82fd3aa8c5",
+  "name": "SOC Response Playbook — Incident 8e6c8ec0-b22b-4b33-be36-8bfe466ac7bc",
+  "description": "Okay, here's a breakdown of the security alert:\n\n1.  **SUMMARY:** A user attempting to authenticate to a corporate network via a suspicious IP address is failing, triggering an investigation.\n\n2.  **TECHNIQUE:**  Credential Harvesting – T1566.001 –  Attempting to obtain credentials via a compromised device.\n\n3.  **ACTION:**  Immediately block the source IP address and investigate the connection logs for potential credential leakage.",
+  "created": "2026-04-03T22:48:02.319214+00:00",
+  "modified": "2026-04-03T22:48:02.319232+00:00",
+  "created_by": "identity--57c6268c-ce9a-4ff7-a9ec-f9f0871c0414",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:47:45.467778",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

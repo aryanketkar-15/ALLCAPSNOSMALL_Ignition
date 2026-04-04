@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--c3086e8a-ab7a-4ada-9b02-22b69e0bf00b",
+  "name": "SOC Response Playbook — Incident 52c06e3b-7f7e-4ad6-8b03-298a8c0ad6bd",
+  "description": "Okay, here's a three-point analysis of the security alert:\n\n1.  **SUMMARY:** A brute-force attack was detected targeting a remote endpoint originating from a specific IP address.\n2.  **TECHNIQUE:** T1059 - Command Execution\n3.  **ACTION:** IMMEDIATELY isolate the compromised host to prevent further exploitation.",
+  "created": "2026-04-03T23:29:07.583762+00:00",
+  "modified": "2026-04-03T23:29:07.583777+00:00",
+  "created_by": "identity--72bbc4ba-ab32-4d35-a998-dc465c9ef6b2",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T23:28:47.739619",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

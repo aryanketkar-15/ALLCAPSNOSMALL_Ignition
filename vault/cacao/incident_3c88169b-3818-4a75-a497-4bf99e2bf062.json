@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--6be2844e-fd41-4f4a-a82b-bdcb5b75148a",
+  "name": "SOC Response Playbook — Incident 3c88169b-3818-4a75-a497-4bf99e2bf062",
+  "description": "SUMMARY: A HIGH-severity SMB_LATERAL alert was triggered\nfrom 192.168.1.35 with 70% confidence.\nTECHNIQUE: Suspicious activity detected via unknown pattern (T1059).\nACTION: ISOLATE_HOST",
+  "created": "2026-04-03T22:10:37.821426+00:00",
+  "modified": "2026-04-03T22:10:37.821437+00:00",
+  "created_by": "identity--47a3ffcd-ee33-4d82-9ec4-17b08a41d4d5",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:10:35.737922",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 192.168.1.35",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T22:10:35.739819",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

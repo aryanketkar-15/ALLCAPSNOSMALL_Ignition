@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--82f5779c-3800-45e0-8f66-3000a0e2e018",
+  "name": "SOC Response Playbook — Incident b15c6011-e1c7-417e-88d2-16cf53fe447c",
+  "description": "SUMMARY: A HIGH-severity PROCESS_SPAWN alert was triggered\nfrom None with 70% confidence.\nTECHNIQUE: Suspicious activity detected via unknown pattern (T1059).\nACTION: ISOLATE_HOST",
+  "created": "2026-04-03T17:42:26.742797+00:00",
+  "modified": "2026-04-03T17:42:26.742834+00:00",
+  "created_by": "identity--66e91f44-de5b-4a1b-ab45-1e5dcbd92758",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T17:42:24.660337",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP None",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T17:42:24.662262",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

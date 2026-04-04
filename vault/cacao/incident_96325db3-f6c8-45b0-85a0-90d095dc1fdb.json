@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--1fcbee0f-f66c-4f3e-8df0-fd0299226959",
+  "name": "SOC Response Playbook — Incident 96325db3-f6c8-45b0-85a0-90d095dc1fdb",
+  "description": "Okay, here’s an analysis of the security alert:\n\n1.  **SUMMARY:** A suspicious process has been spawned originating from a remote IP address, indicating potential malicious activity.\n\n2.  **TECHNIQUE:** T1059 - Command and Scripting, ID_FLAG: T1059.001 - Execution of a script.\n\n3.  **ACTION:** QUARANTINE_FILE – Immediately isolate the process running on 192.168.1.32 to prevent further potential damage.",
+  "created": "2026-04-03T22:32:57.820848+00:00",
+  "modified": "2026-04-03T22:32:57.820868+00:00",
+  "created_by": "identity--993226be-0663-44d0-a0f5-74ceef06775f",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:32:35.364731",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 192.168.1.32",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T22:32:35.366792",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

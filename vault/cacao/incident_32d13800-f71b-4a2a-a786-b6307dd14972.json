@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--2e717222-5486-42df-a9b7-934fe7edc63d",
+  "name": "SOC Response Playbook — Incident 32d13800-f71b-4a2a-a786-b6307dd14972",
+  "description": "Okay, here's a breakdown of the security alert, following your instructions:\n\n1.  **SUMMARY:** A brute-force attack was detected targeting a remote RDP connection originating from a specific IP address, potentially attempting to gain unauthorized access to a system.\n\n2.  ** TECHNIQUE:** T1059 - Command Execution\n\n3.  **ACTION:** QUARANTINE_FILE - Immediately isolate the compromised system by preventing further connections and attempting to restore from backups.",
+  "created": "2026-04-04T01:19:21.924106+00:00",
+  "modified": "2026-04-04T01:19:21.924126+00:00",
+  "created_by": "identity--7a1df464-f07d-4653-ba3e-850a5d12b847",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-04T01:19:02.917630",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

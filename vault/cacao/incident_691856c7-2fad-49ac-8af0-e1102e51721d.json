@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--8c1d91ab-ffbb-42db-ac71-fd5b608a1212",
+  "name": "SOC Response Playbook — Incident 691856c7-2fad-49ac-8af0-e1102e51721d",
+  "description": "Here are three things based on the alert:\n\n1.  **SUMMARY:** An unauthorized user attempted to access a server identified as 185.100.86.10, triggering a failed login attempt.\n\n2.  **TECHNIQUE:** T1059 - Command Execution – The attacker attempted to execute a command on the compromised system.\n\n3.  **ACTION:** QUARANTINE_FILE – Immediately isolate the affected server to prevent further potential damage.",
+  "created": "2026-04-04T03:12:58.847516+00:00",
+  "modified": "2026-04-04T03:12:58.847538+00:00",
+  "created_by": "identity--cc214111-1284-49a0-a9e2-543e60ec877f",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-04T03:12:40.245033",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

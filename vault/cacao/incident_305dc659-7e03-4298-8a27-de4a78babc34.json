@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--cd3d0187-9197-4012-91c6-cafb0d38f3bf",
+  "name": "SOC Response Playbook — Incident 305dc659-7e03-4298-8a27-de4a78babc34",
+  "description": "Okay, here's a three-point analysis of the security alert:\n\n1.  **SUMMARY:** A potential ransomware attack is underway targeting a specific user account on a network.\n\n2.  **TECHNIQUE:** T1566 - Phishing – The attacker is attempting to leverage a compromised user account to deliver ransomware.\n\n3.  **ACTION:** QUARANTINE_FILE – Immediately isolate the compromised user account to prevent further data exfiltration.",
+  "created": "2026-04-04T01:19:46.222630+00:00",
+  "modified": "2026-04-04T01:19:46.222655+00:00",
+  "created_by": "identity--95f588d4-8a13-4bf1-b42b-a15f351b2ac5",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-04T01:19:26.491988",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 10.0.0.99",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-04T01:19:26.496347",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

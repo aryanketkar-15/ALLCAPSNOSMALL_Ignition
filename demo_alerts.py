@@ -191,7 +191,7 @@ def main():
         try:
             if "timestamp" not in alert:
                 alert["timestamp"] = "2024-12-15T10:00:00Z"
-            resp = requests.post(BASE_URL, json=alert, timeout=60)
+            resp = requests.post(BASE_URL, json=alert, timeout=90)
             data = resp.json() if resp.ok else {}
             severity = data.get("severity", "???")
             honeypot = " [HONEYPOT]" if data.get("honeypot_triggered") else ""

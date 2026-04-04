@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--87eda371-07b0-4783-98c9-86d4dafd2ab4",
+  "name": "SOC Response Playbook — Incident 86d087fb-9696-445b-bcc3-90567727e985",
+  "description": "Here are three things based on the provided alert:\n\n1.  **SUMMARY:** A lateral movement has been detected from a compromised machine to other systems within the network, indicating a potential advanced persistent threat (APT) activity.\n\n2.  **TECHNIQUE:** T1059 - Lateral Movement\n\n3.  **ACTION:** QUARANTINE_FILE - Immediately isolate the compromised machine to prevent further data exfiltration and potential compromise.",
+  "created": "2026-04-03T22:59:38.347070+00:00",
+  "modified": "2026-04-03T22:59:38.347086+00:00",
+  "created_by": "identity--7e62a8a1-d808-4d4d-bdf1-a2d29eb893d8",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:59:20.648107",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 192.168.1.33",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T22:59:20.648812",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

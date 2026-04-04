@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--74d1b0c9-b6aa-4a42-b2af-85712582771f",
+  "name": "SOC Response Playbook — Incident afb78cbe-049d-4b52-a234-845bb8418245",
+  "description": "Here’s an analysis of the alert:\n\n1.  **SUMMARY:** A critical security incident has been detected with a potential ransomware attack originating from a compromised system.\n2.  **TECHNIQUE:** T1057.001 - Command and Scripting – Exploitation of a vulnerable system.\n3.  **ACTION:** QUARANTINE_FILE – Immediately isolate the 10.0.0.99 IP address to prevent further lateral movement.",
+  "created": "2026-04-03T23:34:26.633923+00:00",
+  "modified": "2026-04-03T23:34:26.633942+00:00",
+  "created_by": "identity--5d49212d-7f72-4838-8376-bc0ca17cd945",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T23:34:06.871485",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 10.0.0.99",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T23:34:06.873928",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

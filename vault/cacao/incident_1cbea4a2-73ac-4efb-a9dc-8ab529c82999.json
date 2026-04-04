@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--ee58d79d-4a58-4403-ac60-d5e53f709112",
+  "name": "SOC Response Playbook — Incident 1cbea4a2-73ac-4efb-a9dc-8ab529c82999",
+  "description": "SUMMARY: A LOW-severity DNS_QUERY alert was triggered\nfrom None with 30% confidence.\nTECHNIQUE: Suspicious activity detected via unknown pattern (T1059).\nACTION: ISOLATE_HOST",
+  "created": "2026-04-03T17:34:07.892451+00:00",
+  "modified": "2026-04-03T17:34:07.892473+00:00",
+  "created_by": "identity--94573d6d-fc9d-4bac-a930-b4443df70dcb",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T17:34:05.813291",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

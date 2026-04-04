@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--e292ff6b-42e3-4e5e-9212-d5c34d559258",
+  "name": "SOC Response Playbook — Incident 91b076c5-eaba-4d65-a4f6-ba569d307750",
+  "description": "Okay, here’s an analysis of the security alert:\n\n1.  **SUMMARY:** A lateral attack has been detected originating from a compromised workstation (192.168.1.35) targeting the SMB protocol.\n\n2.  **TECHNIQUE:** T1059 - Command Execution – The attacker is attempting to execute a malicious command on the compromised system, potentially pivoting to other networks.\n\n3.  **ACTION:** QUARANTINE_FILE – Immediately isolate the compromised workstation by disabling network access and potentially scanning for malware.",
+  "created": "2026-04-03T22:35:03.043173+00:00",
+  "modified": "2026-04-03T22:35:03.043197+00:00",
+  "created_by": "identity--76849e4e-e8ed-423d-9e01-850462f72f20",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:34:43.726886",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 192.168.1.35",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T22:34:43.727461",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

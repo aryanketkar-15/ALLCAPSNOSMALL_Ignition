@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--35c3efda-2223-49f1-9c77-bc8a8075fb67",
+  "name": "SOC Response Playbook — Incident bcb5ab09-1ea8-497b-acdd-3813396676ce",
+  "description": "SUMMARY: A CRITICAL-severity FILE_READ alert was triggered\nfrom 192.168.1.35 with 100% confidence.\nTECHNIQUE: Suspicious activity detected via unknown pattern (T1059).\nACTION: ISOLATE_HOST",
+  "created": "2026-04-03T22:10:30.618838+00:00",
+  "modified": "2026-04-03T22:10:30.618859+00:00",
+  "created_by": "identity--e5846a8c-c6f1-4b82-863a-7044968be40f",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:10:28.571499",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 192.168.1.35",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T22:10:28.572150",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--1cddeea3-4986-4d15-a473-8dc4ecf335b5",
+  "name": "SOC Response Playbook — Incident e0ff40b8-7e9c-4617-a8ba-b1fd7879486e",
+  "description": "[Template] CRITICAL severity alert — event: DATA_EXFIL from 192.168.1.35",
+  "created": "2026-04-03T22:25:50.885434+00:00",
+  "modified": "2026-04-03T22:25:50.885454+00:00",
+  "created_by": "identity--b928c90e-6c14-4bb0-b94f-fd9ae20756b5",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:25:45.858173",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 192.168.1.35",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T22:25:45.862091",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

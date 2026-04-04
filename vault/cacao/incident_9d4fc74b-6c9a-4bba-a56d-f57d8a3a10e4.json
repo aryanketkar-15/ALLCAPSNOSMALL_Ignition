@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--3528f290-edaa-4388-8d10-13b8eee3896b",
+  "name": "SOC Response Playbook — Incident 9d4fc74b-6c9a-4bba-a56d-f57d8a3a10e4",
+  "description": "Okay, here's a breakdown of the security alert, following your requirements:\n\n1.  **SUMMARY:** A suspicious file copy event was detected originating from a single IP address, potentially indicating unauthorized access to sensitive data.\n\n2.  **TECHNIQUE:** T1059 - Command Execution – The attacker is attempting to execute a malicious command on the compromised system.\n\n3.  **ACTION:** QUARANTINE_FILE – Immediately isolate the compromised system’s file system to prevent further potential damage. \n\nLet me know if you'd like me to analyze another alert!",
+  "created": "2026-04-03T22:29:40.799299+00:00",
+  "modified": "2026-04-03T22:29:40.799313+00:00",
+  "created_by": "identity--aa187408-505a-41c1-9d0a-2352fa2fbdf3",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:29:21.721349",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--093004e7-9ddb-4c87-be2e-997988f9ba3b",
+  "name": "SOC Response Playbook — Incident 3b99b7e2-41df-43f7-a4c9-fc1756bd8d7b",
+  "description": "SUMMARY: A HIGH-severity SMB_LATERAL alert was triggered\nfrom None with 70% confidence.\nTECHNIQUE: Suspicious activity detected via unknown pattern (T1059).\nACTION: ISOLATE_HOST",
+  "created": "2026-04-03T19:48:00.244084+00:00",
+  "modified": "2026-04-03T19:48:00.244103+00:00",
+  "created_by": "identity--e7d394df-0224-4c76-841b-90cea5df1b74",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T19:47:58.173557",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP None",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T19:47:58.175017",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

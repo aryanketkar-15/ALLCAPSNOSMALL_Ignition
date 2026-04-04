@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--730e9351-5185-4669-b912-1d6331dc5155",
+  "name": "SOC Response Playbook — Incident fbcb26fa-51bb-4620-a8cf-938d8ca431ca",
+  "description": "Here’s an analysis of the security alert:\n\n1.  **SUMMARY:** A suspicious network connection originating from a compromised endpoint has been detected, indicating potential data exfiltration.\n\n2.  **TECHNIQUE:** T1059 - Command and Scripting – Initial Access.\n\n3.  **ACTION:** QUARANTINE_FILE – Immediately isolate the compromised endpoint to prevent further malicious activity.",
+  "created": "2026-04-04T01:14:50.672506+00:00",
+  "modified": "2026-04-04T01:14:50.672524+00:00",
+  "created_by": "identity--9ca79f3d-7616-4343-8cf5-4f00814fd7c1",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-04T01:14:29.110053",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 10.0.0.99",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-04T01:14:29.112687",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

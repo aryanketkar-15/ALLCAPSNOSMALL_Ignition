@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--9b2ff8ed-fea2-4d2f-940d-43c599e9098a",
+  "name": "SOC Response Playbook — Incident 2231f01b-cb74-4028-b1c8-dd0aa44d9c94",
+  "description": "Okay, here’s an analysis of the security alert, following your guidelines:\n\n1.  **SUMMARY:** A critical alert indicates a potential botnet infection targeting a network, likely utilizing Beacon malware.\n\n2.  **TECHNIQUE:** T1059 - Command and Control – Initial Access\n\n3.  **ACTION:** QUARANTINE_FILE – Immediately isolate the 91.108.56.100 IP address to prevent further malicious activity and investigate the source of the infection.",
+  "created": "2026-04-03T23:01:09.502503+00:00",
+  "modified": "2026-04-03T23:01:09.502518+00:00",
+  "created_by": "identity--fdf24269-1ac5-47b0-97f7-aba68e401ec0",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T23:00:52.604044",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 91.108.56.100",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T23:00:52.606048",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--6e7b83f1-82f8-4b10-b8db-df7717933aca",
+  "name": "SOC Response Playbook — Incident 7ee29e61-e1ae-48e2-a44f-1b09dc55d094",
+  "description": "Okay, here’s an analysis of the security alert, following your guidelines:\n\n1.  **SUMMARY:** A malicious actor accessed a file share on a corporate network, potentially exfiltrating sensitive data.\n\n2.  **TECHNIQUE:** T1059 - Command Execution – The attacker initiated a command execution to gain access to the file share.\n\n3.  **ACTION:** QUARANTINE_FILE – Immediately isolate the affected file share to prevent further data leakage.",
+  "created": "2026-04-03T22:51:16.389421+00:00",
+  "modified": "2026-04-03T22:51:16.389440+00:00",
+  "created_by": "identity--e13ec518-fcb1-472d-bfab-4f71798ca0df",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:50:58.001519",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 192.168.1.35",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T22:50:58.002054",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

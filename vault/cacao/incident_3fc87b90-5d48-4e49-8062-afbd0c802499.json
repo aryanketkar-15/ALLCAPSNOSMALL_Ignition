@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--fe0c24d7-8d77-4616-b57e-52bf7f6b7d87",
+  "name": "SOC Response Playbook — Incident 3fc87b90-5d48-4e49-8062-afbd0c802499",
+  "description": "[Template] BENIGN severity alert — event: DNS_QUERY from 192.168.1.11",
+  "created": "2026-04-03T22:23:06.897274+00:00",
+  "modified": "2026-04-03T22:23:06.897301+00:00",
+  "created_by": "identity--f08c7ce5-c226-4db4-a697-44f6ebbb9f5d",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:23:01.886306",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

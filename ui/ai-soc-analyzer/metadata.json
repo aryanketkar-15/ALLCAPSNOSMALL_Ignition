@@ -1,0 +1,5 @@
+{
+  "name": "AI SOC Analyzer",
+  "description": "AI-Powered SOC Alert Classification & Prioritization System with real-time monitoring, forensic snapshots, and automated response playbooks.",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--fa4001cf-6e28-46b3-996b-7d5dc44588de",
+  "name": "SOC Response Playbook — Incident f414b6fd-719e-48ff-9b0d-b2eef3a53170",
+  "description": "SUMMARY: A LOW-severity PORT_SCAN alert was triggered\nfrom 203.0.113.50 with 30% confidence.\nTECHNIQUE: Suspicious activity detected via unknown pattern (T1059).\nACTION: ISOLATE_HOST",
+  "created": "2026-04-03T21:09:20.651131+00:00",
+  "modified": "2026-04-03T21:09:20.651154+00:00",
+  "created_by": "identity--51800d97-83b5-4deb-b25b-65731cd63ebf",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T21:09:18.587298",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

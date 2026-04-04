@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--7ee32985-4dbf-463d-9dde-60d1aef5de22",
+  "name": "SOC Response Playbook — Incident a59658b3-6e2f-4b3a-bf17-e42b9ae39421",
+  "description": "Okay, here’s a breakdown of the security alert:\n\n1.  **SUMMARY:** A suspicious HTTP request originated from a single IP address, potentially indicating a malicious attack.\n2.  ** TECHNIQUE:** T1059 - Command and Scripting – Execute Commands\n3.  **ACTION:**  ISOLATE_HOST – Immediately block the source IP address and investigate further for suspicious activity.\n\nLet me know if you’d like me to analyze a different alert!",
+  "created": "2026-04-03T22:30:51.492981+00:00",
+  "modified": "2026-04-03T22:30:51.492993+00:00",
+  "created_by": "identity--b7e75d9e-100f-4ffd-b416-a4c644980ae8",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:30:32.363739",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--417b7d77-9570-4e27-9863-f657efdc3e33",
+  "name": "SOC Response Playbook — Incident dc409fc3-c228-4400-9a43-2b0281cb009f",
+  "description": "Here’s an analysis of the security alert:\n\n1.  **SUMMARY:** A user account on a network has been compromised, exhibiting suspicious activity that could lead to data exfiltration.\n2.  **TECHNIQUE:** T1059 - Command and Script Escalation\n3.  **ACTION:** QUARANTINE_FILE - Immediately isolate the compromised user account to prevent further malicious actions.",
+  "created": "2026-04-04T01:28:45.025795+00:00",
+  "modified": "2026-04-04T01:28:45.025816+00:00",
+  "created_by": "identity--78675677-f732-4159-af2b-97a120031eb9",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-04T01:28:27.588029",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 10.0.0.55",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-04T01:28:27.589981",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

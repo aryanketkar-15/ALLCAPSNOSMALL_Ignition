@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--d8e1897d-058d-4ad3-bdfe-256bdfb4e12c",
+  "name": "SOC Response Playbook — Incident a594597f-aca1-4680-8f4f-d3a257469ded",
+  "description": "Here’s an analysis of the security alert:\n\n1.  **SUMMARY:** A potential unauthorized HTTP request was detected originating from a single IP address, indicating possible malicious activity.\n\n2.  **TECHNIQUE:** T1059 - Command & Scripting – Execute a command.\n\n3.  **ACTION:** QUARANTINE_FILE – Immediately isolate the source IP address to analyze its traffic and potential command execution.",
+  "created": "2026-04-03T22:45:50.329284+00:00",
+  "modified": "2026-04-03T22:45:50.329302+00:00",
+  "created_by": "identity--fa1f0161-0059-4c67-a71c-272c5c923729",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:45:28.650333",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

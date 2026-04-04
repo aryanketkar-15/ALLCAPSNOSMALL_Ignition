@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--e88a45c4-4f20-49b9-8f4f-791fa248e0bc",
+  "name": "SOC Response Playbook — Incident bd4b074e-5a4e-492d-bb7c-f8dad12e1960",
+  "description": "SUMMARY: A LOW-severity HTTP_OPTIONS alert was triggered\nfrom 198.51.100.20 with 30% confidence.\nTECHNIQUE: Suspicious activity detected via unknown pattern (T1059).\nACTION: ISOLATE_HOST",
+  "created": "2026-04-03T21:09:34.997726+00:00",
+  "modified": "2026-04-03T21:09:34.997745+00:00",
+  "created_by": "identity--cb2393d4-55b0-488b-b19e-2a12e1e90038",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T21:09:32.899591",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--bd7c43a9-e0ba-4053-b3ec-21cb900f1aa3",
+  "name": "SOC Response Playbook — Incident 63df4501-8e43-4309-b236-bed7a7440e29",
+  "description": "Okay, here’s an analysis of the security alert, following your guidelines:\n\n1.  **SUMMARY:** An unauthorized attacker exploited a Remote Desktop Protocol (RDP) connection to gain access to a compromised system.\n\n2.  **TECHNIQUE:** T1059 - Command Execution\n\n3.  **ACTION:** QUARANTINE_USER & ISOLATE_HOST immediately.  Investigate the RDP connection and user associated with the source IP to determine the scope of the attack.",
+  "created": "2026-04-03T22:32:02.752817+00:00",
+  "modified": "2026-04-03T22:32:02.752835+00:00",
+  "created_by": "identity--b2563224-640a-4fcd-97db-6d054b122f40",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:31:42.495530",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

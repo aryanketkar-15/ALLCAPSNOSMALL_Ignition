@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--f52408e4-c267-491e-b75f-2c6863b8f4b9",
+  "name": "SOC Response Playbook — Incident 4e53ca97-0c91-4f7b-aaf1-484fca4ea2d2",
+  "description": "Okay, here’s a three-point analysis of the security alert:\n\n1.  **SUMMARY:** A malicious file was successfully accessed from an unknown source, potentially containing sensitive data.\n\n2.  **TECHNIQUE:** T1059 - Command and Scripting – File Upload\n\n3.  **ACTION:** QUARANTINE_FILE – Immediately isolate the 10.0.0.99 IP address to prevent further data exfiltration.",
+  "created": "2026-04-04T01:29:56.948690+00:00",
+  "modified": "2026-04-04T01:29:56.948710+00:00",
+  "created_by": "identity--b053d434-3398-4fd6-9380-6c0dff5b5b81",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-04T01:29:38.204382",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 10.0.0.99",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-04T01:29:38.205813",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

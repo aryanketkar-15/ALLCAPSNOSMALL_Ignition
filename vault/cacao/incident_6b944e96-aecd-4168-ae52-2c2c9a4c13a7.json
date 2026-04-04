@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--4f63d33d-7cec-45aa-a929-3d28017f7f1a",
+  "name": "SOC Response Playbook — Incident 6b944e96-aecd-4168-ae52-2c2c9a4c13a7",
+  "description": "Okay, here’s an analysis of the security alert:\n\n1.  **SUMMARY:** A critical alert indicates a potential compromise involving credential dumping, suggesting attackers may be attempting to steal user credentials for unauthorized access.\n\n2.  **TECHNIQUE:** T1059 - Command & Scripting – Exploitation\n\n3.  **ACTION:** QUARANTINE_FILE – Immediately isolate the compromised system to prevent further data exfiltration and potential damage.",
+  "created": "2026-04-03T23:02:17.114630+00:00",
+  "modified": "2026-04-03T23:02:17.114658+00:00",
+  "created_by": "identity--c3bc7779-40a3-4d85-9776-8881223e7d71",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T23:01:59.880434",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 192.168.1.35",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T23:01:59.881903",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

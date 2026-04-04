@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--3ce5114a-d804-4e11-a963-145a4783b8c3",
+  "name": "SOC Response Playbook — Incident f31f540b-5add-4e63-a35e-89a699ff20d3",
+  "description": "Okay, here’s a breakdown of the security alert:\n\n1.  **SUMMARY:** A user attempting to access a sensitive database via a compromised network connection was blocked.\n\n2.  **TECHNIQUE:** T1059 - Command Execution –  The attacker is attempting to leverage a compromised system to execute a command on the target host.\n\n3.  **ACTION:** QUARANTINE_FILE – Immediately isolate the affected system to prevent further potential damage.",
+  "created": "2026-04-03T22:31:14.945339+00:00",
+  "modified": "2026-04-03T22:31:14.945355+00:00",
+  "created_by": "identity--b985b157-d018-4140-8dbf-bd301a177cdb",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:30:56.573969",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

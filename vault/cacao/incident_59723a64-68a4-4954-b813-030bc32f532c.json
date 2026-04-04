@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--27f1d5e6-12c4-4ce6-86dd-72829264a0e1",
+  "name": "SOC Response Playbook — Incident 59723a64-68a4-4954-b813-030bc32f532c",
+  "description": "Here’s an analysis of the alert:\n\n1.  **SUMMARY:** A suspicious attempt to steal credentials has been detected, potentially leading to unauthorized access to a system.\n\n2.  **TECHNIQUE:** T1059 - Command Execution – The attacker is attempting to execute a command to gain access to the system.\n\n3.  **ACTION:** QUARANTINE_FILE – Immediately isolate the compromised host to prevent further potential damage.",
+  "created": "2026-04-03T22:52:04.859110+00:00",
+  "modified": "2026-04-03T22:52:04.859123+00:00",
+  "created_by": "identity--ef2426b7-5ccc-492d-9019-26d66fe75097",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:51:45.740621",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 192.168.1.35",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T22:51:45.742455",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

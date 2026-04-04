@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--5289c090-3cb5-4a8b-9be7-b5e454460204",
+  "name": "SOC Response Playbook — Incident d9530df8-781c-4b71-957e-eb95c0de4db5",
+  "description": "SUMMARY: A LOW-severity ICMP_PING alert was triggered\nfrom 198.51.100.10 with 30% confidence.\nTECHNIQUE: Suspicious activity detected via unknown pattern (T1059).\nACTION: ISOLATE_HOST",
+  "created": "2026-04-03T21:09:27.810227+00:00",
+  "modified": "2026-04-03T21:09:27.810250+00:00",
+  "created_by": "identity--b463d47d-e1cf-4073-bf32-0d7001bf7a27",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T21:09:25.744005",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

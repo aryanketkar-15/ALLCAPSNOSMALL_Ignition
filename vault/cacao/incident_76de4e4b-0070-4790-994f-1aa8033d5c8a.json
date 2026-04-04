@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--6fe7f5a5-37fd-4931-be7b-02ef3f697d19",
+  "name": "SOC Response Playbook — Incident 76de4e4b-0070-4790-994f-1aa8033d5c8a",
+  "description": "Okay, here's a three-point analysis of the security alert:\n\n1.  **SUMMARY:** A sophisticated C2 Beacon signal has been detected originating from a compromised device (10.0.0.99) attempting to establish communication with a command-and-control server.\n\n2.  **TECHNIQUE:** T1059 - Command and Control – Initiate Command\n\n3.  **ACTION:** QUARANTINE_FILE – Immediately isolate the compromised device and prevent further communication with potential command-and-control servers.",
+  "created": "2026-04-04T01:15:16.133936+00:00",
+  "modified": "2026-04-04T01:15:16.133958+00:00",
+  "created_by": "identity--d629da87-00c1-4f67-b671-fa15d70a60c6",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-04T01:14:54.852086",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 10.0.0.99",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-04T01:14:54.854348",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

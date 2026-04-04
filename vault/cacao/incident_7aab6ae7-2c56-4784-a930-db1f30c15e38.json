@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--3e228ef0-978c-4e60-a80f-305c915f9cba",
+  "name": "SOC Response Playbook — Incident 7aab6ae7-2c56-4784-a930-db1f30c15e38",
+  "description": "Here’s an analysis of the alert:\n\n1.  **SUMMARY:** A VPN connection to a specific IP address was unexpectedly severed, potentially allowing unauthorized access.\n2.  **TECHNIQUE:** T1059 - Command Execution – The attacker is attempting to execute a command on the compromised system.\n3.  **ACTION:** QUARANTINE_FILE – Immediately isolate the compromised device to prevent further potential damage or data exfiltration.",
+  "created": "2026-04-03T22:48:25.864291+00:00",
+  "modified": "2026-04-03T22:48:25.864309+00:00",
+  "created_by": "identity--2b88d900-6b02-4f7f-b2c8-81de9e105cf4",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:48:07.441480",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--5616694a-4572-4a6d-a2ac-e11b8076b13f",
+  "name": "SOC Response Playbook — Incident 86760160-b95d-44fa-8c64-be2822539c3a",
+  "description": "Here's an analysis of the security alert:\n\n1.  **SUMMARY:** An unauthorized attempt was detected to access a specific web application via a compromised IP address.\n2.  **TECHNIQUE:** T1059 –  Malicious Command Execution – the attacker is attempting to execute a command on the target system.\n3.  **ACTION:**  Immediately investigate the source IP and analyze the accessed web application for suspicious activity.",
+  "created": "2026-04-03T22:58:17.005207+00:00",
+  "modified": "2026-04-03T22:58:17.005223+00:00",
+  "created_by": "identity--682a0ee4-8aee-49ba-b23c-7ec30707136d",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:58:02.486846",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

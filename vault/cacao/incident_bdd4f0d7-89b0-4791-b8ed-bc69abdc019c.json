@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--94fdd613-0a4f-46d0-8933-e965ce7fbdd6",
+  "name": "SOC Response Playbook — Incident bdd4f0d7-89b0-4791-b8ed-bc69abdc019c",
+  "description": "Okay, here’s an analysis of the alert, following your requirements:\n\n1.  **SUMMARY:** A file copy event originating from a specific IP address indicates potential unauthorized access to sensitive data.\n\n2.  ** TECHNIQUE:**  `COPY_FILE` - This technique focuses on transferring files, potentially for malicious purposes.\n\n3.  **ACTION:**  Immediately investigate the source IP address and verify the integrity of the copied file against established security policies.",
+  "created": "2026-04-03T22:46:34.752629+00:00",
+  "modified": "2026-04-03T22:46:34.752654+00:00",
+  "created_by": "identity--9c4e02da-4e8d-4bcd-8201-aea88451d8b6",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:46:19.078396",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

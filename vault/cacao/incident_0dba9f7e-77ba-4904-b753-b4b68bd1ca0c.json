@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--d60672dc-c54a-4e98-aecd-5cf2c6102c0e",
+  "name": "SOC Response Playbook — Incident 0dba9f7e-77ba-4904-b753-b4b68bd1ca0c",
+  "description": "Okay, here’s an analysis of the security alert, following your requirements:\n\n1.  **SUMMARY:** A critical C2 callback alert indicates a potential compromise initiated by a malicious actor, likely targeting a specific system.\n\n2.  ** TECHNIQUE:** T1059 – Command Execution – The attacker is attempting to execute a command on the victim system.\n\n3.  **ACTION:** QUARANTINE_FILE – Immediately isolate the affected system by preventing any further communication or data access.",
+  "created": "2026-04-03T22:33:52.191127+00:00",
+  "modified": "2026-04-03T22:33:52.191200+00:00",
+  "created_by": "identity--289dc499-0be0-4807-89a2-b2f59f5158a9",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:33:32.410027",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 192.168.1.25",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T22:33:32.410535",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

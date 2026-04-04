@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--2e4b62e0-3452-4770-b208-1d14ccf7fefe",
+  "name": "SOC Response Playbook — Incident 6c41c981-ecc0-4d68-9564-2ee624ebbf32",
+  "description": "SUMMARY: A MEDIUM-severity VPN_FAIL alert was triggered\nfrom 91.108.4.1 with 50% confidence.\nTECHNIQUE: Suspicious activity detected via unknown pattern (T1059).\nACTION: ISOLATE_HOST",
+  "created": "2026-04-03T20:36:22.202519+00:00",
+  "modified": "2026-04-03T20:36:22.202536+00:00",
+  "created_by": "identity--72afe00a-3f80-4de2-a7b5-8e4453df0586",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T20:36:20.123194",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

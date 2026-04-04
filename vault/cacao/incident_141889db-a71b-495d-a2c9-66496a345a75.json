@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--fe1a4d65-0835-4b38-8029-21b4a63d398b",
+  "name": "SOC Response Playbook — Incident 141889db-a71b-495d-a2c9-66496a345a75",
+  "description": "SUMMARY: A LOW-severity KERBEROAST alert was triggered\nfrom None with 30% confidence.\nTECHNIQUE: Suspicious activity detected via unknown pattern (T1059).\nACTION: ISOLATE_HOST",
+  "created": "2026-04-03T16:43:13.190322+00:00",
+  "modified": "2026-04-03T16:43:13.190344+00:00",
+  "created_by": "identity--b4f33d17-9d95-47b0-b88f-d3172b94c40f",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T16:43:11.133189",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

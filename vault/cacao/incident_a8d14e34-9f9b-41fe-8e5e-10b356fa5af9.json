@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--1dad4e1c-7a27-4dea-8587-a872f4b3e16b",
+  "name": "SOC Response Playbook — Incident a8d14e34-9f9b-41fe-8e5e-10b356fa5af9",
+  "description": "Okay, here’s a three-point analysis of the security alert:\n\n1.  **SUMMARY:** A user attempting to exfiltrate sensitive data from a network connected to a compromised server (192.168.1.35) has been detected.\n\n2.  **TECHNIQUE:** T1059 - Command Execution – The attacker is attempting to execute a command on the compromised system.\n\n3.  **ACTION:** IMMEDIATELY isolate the source IP address 192.168.1.35 to prevent further data leakage.",
+  "created": "2026-04-03T22:52:27.986489+00:00",
+  "modified": "2026-04-03T22:52:27.986506+00:00",
+  "created_by": "identity--766c4b98-9d3d-4332-86f1-9ebc7f416522",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:52:09.960833",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 192.168.1.35",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T22:52:09.964133",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

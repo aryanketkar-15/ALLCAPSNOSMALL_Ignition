@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--be423986-2dd6-4fc8-9b87-69f579d07129",
+  "name": "SOC Response Playbook — Incident 480a4048-9e97-45b1-bfdd-f7d11e65a92e",
+  "description": "Here are three things for your security alert analysis:\n\n1.  **SUMMARY:** A suspicious file copy event was detected originating from a local machine, raising potential data exfiltration concerns.\n2.  **TECHNIQUE:** T1059 - Copying\n3.  **ACTION:** QUARANTINE_FILE - Immediately isolate the source machine to prevent further potential data access.",
+  "created": "2026-04-03T22:57:16.938564+00:00",
+  "modified": "2026-04-03T22:57:16.938580+00:00",
+  "created_by": "identity--3f749cd1-9cf2-4a39-ba9f-82495ef81e70",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:57:02.844765",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

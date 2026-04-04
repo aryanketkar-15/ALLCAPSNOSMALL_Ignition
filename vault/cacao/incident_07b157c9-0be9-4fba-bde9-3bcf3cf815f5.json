@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--bbcc7a3d-7c82-4603-beaf-7151eb703f68",
+  "name": "SOC Response Playbook — Incident 07b157c9-0be9-4fba-bde9-3bcf3cf815f5",
+  "description": "Okay, here's a breakdown of the security alert:\n\n1.  **SUMMARY:** A potential unauthorized access attempt to a web server originating from a single IP address.\n2.  **TECHNIQUE:**  `T1059.001 - Remote File Write` – This technique describes a user attempting to modify a file on a remote system.\n3.  **ACTION:** QUARANTINE_FILE – Immediately block the source IP address and potentially the affected file to prevent further damage.",
+  "created": "2026-04-03T22:47:40.361472+00:00",
+  "modified": "2026-04-03T22:47:40.361491+00:00",
+  "created_by": "identity--69d2b46f-d90a-4316-9b4a-9f6046de38ae",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:47:24.009468",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

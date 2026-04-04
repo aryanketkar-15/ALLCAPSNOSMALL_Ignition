@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--ba66a5ca-076c-4785-99eb-0094b94ab489",
+  "name": "SOC Response Playbook — Incident ee618d06-16a9-4ab6-a783-16fdcd3a2382",
+  "description": "[Template] BENIGN severity alert — event: HTTP_REQUEST from 192.168.1.10",
+  "created": "2026-04-03T22:22:56.766091+00:00",
+  "modified": "2026-04-03T22:22:56.766116+00:00",
+  "created_by": "identity--7b9939dd-2636-4824-b99b-dc44613d045e",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:22:51.754855",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

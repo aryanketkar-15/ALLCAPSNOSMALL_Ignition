@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--c887a020-7632-4002-9b98-8caf9fbd5039",
+  "name": "SOC Response Playbook — Incident 9e46f78f-f4ab-4a65-9c02-5e3be53aee32",
+  "description": "[Template] MEDIUM severity alert — event: RDP_BRUTEFORCE from 185.220.100.5",
+  "created": "2026-04-03T22:24:18.791683+00:00",
+  "modified": "2026-04-03T22:24:18.791696+00:00",
+  "created_by": "identity--07234d22-de0d-4913-a0a1-ceefc9fc94e5",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T22:24:13.783065",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}
