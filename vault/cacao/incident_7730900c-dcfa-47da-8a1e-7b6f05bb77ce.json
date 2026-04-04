@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--907c2919-cb98-4213-a557-402b6788f8d5",
+  "name": "SOC Response Playbook — Incident 7730900c-dcfa-47da-8a1e-7b6f05bb77ce",
+  "description": "Here is the analysis:\n\n1. SUMMARY: A high-severity threat was detected and an unknown source IP was blocked.\n2. TECHNIQUE: The most likely MITRE ATT&CK technique used is T1059 Command Execution.\n3. ACTION: BLOCK_IP - Block the unknown source IP immediately to prevent further attacks.",
+  "created": "2026-04-03T12:58:03.552046+00:00",
+  "modified": "2026-04-03T12:58:03.552046+00:00",
+  "created_by": "identity--0be6dbb4-a9b6-4f39-be2d-aff9a7e2329e",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T12:57:55.184127",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP None",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T12:57:55.185636",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

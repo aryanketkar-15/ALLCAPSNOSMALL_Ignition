@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--0f030dcc-5885-4010-a891-35c78e80a703",
+  "name": "SOC Response Playbook — Incident bda67299-6248-4400-b453-c3abf7bb4f52",
+  "description": "Here is the analysis:\n\nSUMMARY: The Security Information and Event Management (SIEM) system ingested a medium-severity VPN failure alert.\n\nTECHNIQUE: T1069 System Network Disruption, which suggests an attempted disruption of network communications.\n\nACTION: BLOCK_IP",
+  "created": "2026-04-03T13:23:12.141720+00:00",
+  "modified": "2026-04-03T13:23:12.141720+00:00",
+  "created_by": "identity--daa55c42-3533-4dd3-8062-31c22af781c8",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:23:05.010146",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

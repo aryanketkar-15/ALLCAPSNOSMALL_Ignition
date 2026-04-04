@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--c567c405-e676-431e-b80e-f68105a7a13a",
+  "name": "SOC Response Playbook — Incident 85482a16-156a-433c-9741-e4744e992411",
+  "description": "Here is the analysis:\n\n1. SUMMARY: A high-severity threat was detected and an unknown IP address was blocked in response.\n2. TECHNIQUE: T1568 Siphon or Steal Authentication Information\n3. ACTION: BLOCK_IP",
+  "created": "2026-04-03T12:44:44.758614+00:00",
+  "modified": "2026-04-03T12:44:44.758614+00:00",
+  "created_by": "identity--d9c142f1-e8e8-4b5a-902f-df170e8f2711",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T12:44:35.966317",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP None",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T12:44:35.966317",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

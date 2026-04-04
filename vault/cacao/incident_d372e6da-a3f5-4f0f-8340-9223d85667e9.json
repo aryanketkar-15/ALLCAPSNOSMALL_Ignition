@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--6b28ade1-0f0a-46cb-8b65-d3aacf2502d0",
+  "name": "SOC Response Playbook — Incident d372e6da-a3f5-4f0f-8340-9223d85667e9",
+  "description": "Here is the analysis:\n\nSUMMARY: A high-severity C2 beacon was detected from an unknown source IP address (91.108.56.100).\n\nTECHNIQUE: T1047 Data Transfer Size Killing, specifically for command and control communication.\n\nACTION: BLOCK_IP",
+  "created": "2026-04-03T18:47:09.249297+00:00",
+  "modified": "2026-04-03T18:47:09.249297+00:00",
+  "created_by": "identity--b514ac92-d348-4764-820e-1a815cf305e8",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T18:47:01.743334",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 91.108.56.100",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T18:47:01.743334",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

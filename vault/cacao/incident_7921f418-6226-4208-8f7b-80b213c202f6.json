@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--7ddeadc9-0bdc-4d44-a684-a0d729e4dfd1",
+  "name": "SOC Response Playbook — Incident 7921f418-6226-4208-8f7b-80b213c202f6",
+  "description": "Here is the analysis:\n\nSUMMARY: A new raw SIEM log was ingested into the system, indicating a benign event.\n\nTECHNIQUE: T1059 Command Execution (though it's unlikely an actual command execution occurred in this case)\n\nACTION: IGNORE_ALERT",
+  "created": "2026-04-03T13:01:24.239464+00:00",
+  "modified": "2026-04-03T13:01:24.239464+00:00",
+  "created_by": "identity--33d5d87b-b00f-45cf-bab6-62604044c9e2",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:01:08.758556",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

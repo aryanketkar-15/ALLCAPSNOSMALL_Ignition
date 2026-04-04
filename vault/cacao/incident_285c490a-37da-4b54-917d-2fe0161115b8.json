@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--aca13712-1623-4285-90b4-9986a99c0f3a",
+  "name": "SOC Response Playbook — Incident 285c490a-37da-4b54-917d-2fe0161115b8",
+  "description": "Here is the analysis:\n\n**SUMMARY:** A suspicious ICMP ping request was received from an unknown IP address.\n\n**TECHNIQUE:** T1090: Remote System Discovery/Information Gathering (ID flag: T1090)\n\n**ACTION:** ISOLATE_HOST",
+  "created": "2026-04-03T14:30:57.815851+00:00",
+  "modified": "2026-04-03T14:30:57.815851+00:00",
+  "created_by": "identity--ca37d51f-4d07-4860-9b35-b7abcf2775ba",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T14:30:50.445527",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

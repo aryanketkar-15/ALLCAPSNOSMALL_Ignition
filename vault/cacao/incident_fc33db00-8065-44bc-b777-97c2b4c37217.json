@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--398f0caf-6c24-4773-b08a-319d463c4969",
+  "name": "SOC Response Playbook — Incident fc33db00-8065-44bc-b777-97c2b4c37217",
+  "description": "Here is the analysis:\n\n**SUMMARY:** A low-severity alert was triggered due to an ICMP ping request from an unknown IP address.\n\n**TECHNIQUE:** T1047: Network Scan (ID flag)\n\n**ACTION:** QUARANTINE_FILE",
+  "created": "2026-04-03T17:03:18.440809+00:00",
+  "modified": "2026-04-03T17:03:18.441319+00:00",
+  "created_by": "identity--f4040c3c-15a2-4ea6-852f-b17ecdffddca",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T17:03:11.255202",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

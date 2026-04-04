@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--335b635e-c2ee-4113-a097-916d5848f394",
+  "name": "SOC Response Playbook — Incident 4e405cce-a706-445c-b908-5c11d0f3b84c",
+  "description": "Here's the analysis:\n\n**SUMMARY**: A benign HTTP request was made from IP address 192.168.1.10.\n\n**TECHNIQUE**: T1398 - Web Application Discovery (no specific ID flag applicable)\n\n**ACTION**: NO_ACTION_NEEDED",
+  "created": "2026-04-03T18:44:32.141565+00:00",
+  "modified": "2026-04-03T18:44:32.141565+00:00",
+  "created_by": "identity--1ffe8137-10a8-401f-9796-a4bbe6a6e748",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T18:44:15.243751",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

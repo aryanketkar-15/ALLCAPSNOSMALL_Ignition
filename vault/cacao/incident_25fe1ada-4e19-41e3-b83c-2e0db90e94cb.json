@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--3a18c5dd-275c-4c81-a32c-aa69d0d3c418",
+  "name": "SOC Response Playbook — Incident 25fe1ada-4e19-41e3-b83c-2e0db90e94cb",
+  "description": "Here is the analysis:\n\n1. SUMMARY: A critical high-severity threat was detected and an IP address was blocked as a result.\n2. TECHNIQUE: The most likely MITRE ATT&CK technique name is T1566: Phishing, with ID flag T1566: Phishing.\n3. ACTION: BLOCK_IP",
+  "created": "2026-04-03T12:45:53.651948+00:00",
+  "modified": "2026-04-03T12:45:53.651948+00:00",
+  "created_by": "identity--fbdb7899-7797-4ccf-828a-8b3ea3bdce75",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T12:45:44.665101",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP None",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T12:45:44.666103",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

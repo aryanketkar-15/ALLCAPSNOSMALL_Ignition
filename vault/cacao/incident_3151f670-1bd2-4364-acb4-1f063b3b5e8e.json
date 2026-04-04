@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--bc2fc8d2-b742-47f6-a665-f6e372cbd46d",
+  "name": "SOC Response Playbook — Incident 3151f670-1bd2-4364-acb4-1f063b3b5e8e",
+  "description": "Here is the analysis:\n\nSUMMARY: A high-severity SMB lateral movement was detected, indicating potential privilege escalation.\n\nTECHNIQUE: T1027 Windows Scheduled Task Manipulation (ID flag: T1027)\n\nACTION: BLOCK_IP",
+  "created": "2026-04-03T13:06:20.494367+00:00",
+  "modified": "2026-04-03T13:06:20.495016+00:00",
+  "created_by": "identity--7e2a9f60-254a-4676-9acf-52d9a558e667",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:06:03.259937",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP None",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T13:06:03.260937",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

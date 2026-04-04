@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--02a3bba1-f306-4b03-899f-4f1fb02ae3b4",
+  "name": "SOC Response Playbook — Incident ee3c2086-5596-409a-a29f-6d6367b2be3f",
+  "description": "Here's the analysis:\n\n**SUMMARY:** A benign alert was ingested into the system, indicating a normal event.\n\n**TECHNIQUE:** T1568.001: Simulated Threat Execution (ID flag)\n\n**ACTION:** NO_ACTION_REQUIRED",
+  "created": "2026-04-03T13:02:42.506733+00:00",
+  "modified": "2026-04-03T13:02:42.506733+00:00",
+  "created_by": "identity--b2c36912-a45d-44f7-aa82-832458835972",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:02:25.912336",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--b468b106-6e0b-4187-93e5-927c6ddad76a",
+  "name": "SOC Response Playbook — Incident e42850c8-c1f2-4414-ae76-03f603e67f0e",
+  "description": "Here is the analysis:\n\n**SUMMARY**: A low-severity alert was generated due to an unknown ICMP PING event.\n\n**TECHNIQUE**: T1047: Network Scanning (ID flag)\n\n**ACTION**: ISOLATE_HOST",
+  "created": "2026-04-03T13:04:38.635956+00:00",
+  "modified": "2026-04-03T13:04:38.635956+00:00",
+  "created_by": "identity--9e1f38d8-2226-492b-8116-8ea8a2b67220",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:04:22.042288",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

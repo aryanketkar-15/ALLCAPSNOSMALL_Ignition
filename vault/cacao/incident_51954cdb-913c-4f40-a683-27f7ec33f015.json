@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--4c086629-a79c-402c-9e08-59fbc5bcfc3c",
+  "name": "SOC Response Playbook — Incident 51954cdb-913c-4f40-a683-27f7ec33f015",
+  "description": "Here is the analysis:\n\n**SUMMARY:** A high-severity threat was detected and an unknown IP address was blocked.\n\n**TECHNIQUE:** T1566: Phishing: Spearfishing via Link.\n\n**ACTION:** BLOCK_IP.",
+  "created": "2026-04-03T12:42:28.546780+00:00",
+  "modified": "2026-04-03T12:42:28.546780+00:00",
+  "created_by": "identity--19644092-484e-4b1f-8b2e-91190e5a802c",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T12:42:18.491238",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP None",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T12:42:18.493238",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

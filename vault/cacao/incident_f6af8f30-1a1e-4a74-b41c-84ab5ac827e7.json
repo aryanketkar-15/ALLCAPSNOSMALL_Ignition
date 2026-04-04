@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--5730b8a6-1709-412c-87fe-c78ee6710839",
+  "name": "SOC Response Playbook — Incident f6af8f30-1a1e-4a74-b41c-84ab5ac827e7",
+  "description": "Here is the analysis:\n\n1. SUMMARY: A low-severity port scan was detected from IP address 203.0.113.50.\n2. TECHNIQUE: T1090 Port Scanning\n3. ACTION: BLOCK_IP",
+  "created": "2026-04-03T17:03:06.176376+00:00",
+  "modified": "2026-04-03T17:03:06.176376+00:00",
+  "created_by": "identity--2685d117-160a-4be9-990b-ff79faccafd8",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T17:02:59.443726",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

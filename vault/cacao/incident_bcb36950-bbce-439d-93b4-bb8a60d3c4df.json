@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--d2467e59-0eab-464c-af8f-a6c812731dff",
+  "name": "SOC Response Playbook — Incident bcb36950-bbce-439d-93b4-bb8a60d3c4df",
+  "description": "Here is the analysis:\n\n**SUMMARY:** An RDP brute-force attack was detected originating from IP address 185.220.100.5.\n\n**TECHNIQUE:** T1059: Command Execution (most likely technique based on the alert type)\n\n**ACTION:** BLOCK_IP",
+  "created": "2026-04-03T17:04:08.476011+00:00",
+  "modified": "2026-04-03T17:04:08.476011+00:00",
+  "created_by": "identity--3a2760f8-a1e5-4301-92ff-b3a032ec9ffe",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T17:04:01.872759",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

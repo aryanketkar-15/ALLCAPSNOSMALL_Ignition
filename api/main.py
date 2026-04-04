@@ -122,7 +122,7 @@ class AlertRequest(BaseModel):
     source_ip: str
     dest_ip: str
     port: int
-    timestamp: str
+    timestamp: Optional[str] = None
     event_type: Optional[str] = None
     accessed_path: Optional[str] = None
     protocol: Optional[str] = None
@@ -214,6 +214,14 @@ async def classify_alert(request: AlertRequest):
         'port': request.port,
         'timestamp': request.timestamp,
     }, dataset='unsw')  # auto-detect dataset if possible
+
+    # Pass through optional fields so classifier & honeypot can see them
+    if request.event_type:
+        alert['event_type'] = request.event_type
+    if request.accessed_path:
+        alert['accessed_path'] = request.accessed_path
+    if request.protocol:
+        alert['protocol'] = request.protocol
 
     # Step 2: IOC Extraction
     import pandas as pd

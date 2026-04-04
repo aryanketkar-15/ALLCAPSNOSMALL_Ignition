@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--3bf3e3c0-9a35-440a-90e1-cf4af7de334f",
+  "name": "SOC Response Playbook — Incident 53434ce5-c5a0-4409-a804-01c20386eb80",
+  "description": "Here is the analysis:\n\nSUMMARY: A critical C2 beacon was detected, indicating a high-severity threat.\n\nTECHNIQUE: T1047 Beaconing\n\nACTION: BLOCK_IP",
+  "created": "2026-04-03T13:07:46.340668+00:00",
+  "modified": "2026-04-03T13:07:46.340668+00:00",
+  "created_by": "identity--1f6136a9-782d-4a79-a529-eacf117587b9",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:07:29.669884",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP None",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T13:07:29.670916",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--c51b3aad-91b3-4b55-9501-7e80fe8c67aa",
+  "name": "SOC Response Playbook — Incident 34b5016b-6787-4848-bdc8-2a98e8d73ecc",
+  "description": "Here is the analysis:\n\nSUMMARY: An unknown Kerberos attack was detected from an IP address with high confidence.\n\nTECHNIQUE: T1003 Spearphishing (via Kerberos)\n\nACTION: BLOCK_IP",
+  "created": "2026-04-03T14:32:23.665619+00:00",
+  "modified": "2026-04-03T14:32:23.665619+00:00",
+  "created_by": "identity--a12bf59f-fee5-4ba9-a5fe-c5e6e7b742f8",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T14:32:17.027979",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 192.168.1.31",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T14:32:17.029979",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

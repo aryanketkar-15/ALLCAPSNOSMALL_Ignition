@@ -1,170 +1,173 @@
 <?xml version='1.0' encoding='utf-8'?>
-<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><key id="d3" for="edge" attr.name="protocol" attr.type="string"/>
-<key id="d2" for="edge" attr.name="weight" attr.type="long"/>
-<key id="d1" for="node" attr.name="critical_asset" attr.type="boolean"/>
-<key id="d0" for="node" attr.name="node_type" attr.type="string"/>
-<graph edgedefault="directed"><node id="INTERNET_GW">
-  <data key="d0">INTERNET_GATEWAY</data>
-  <data key="d1">False</data>
-</node>
-<node id="FIREWALL_1">
-  <data key="d0">SERVER</data>
-  <data key="d1">False</data>
-</node>
-<node id="WEB_SERVER">
-  <data key="d0">SERVER</data>
-  <data key="d1">False</data>
-</node>
-<node id="APP_SERVER">
-  <data key="d0">SERVER</data>
-  <data key="d1">False</data>
-</node>
-<node id="DB_PROD">
-  <data key="d0">DATABASE</data>
-  <data key="d1">True</data>
-</node>
-<node id="DOMAIN_CTRL">
-  <data key="d0">DOMAIN_CONTROLLER</data>
-  <data key="d1">True</data>
-</node>
-<node id="BACKUP_SERVER">
-  <data key="d0">SERVER</data>
-  <data key="d1">False</data>
-</node>
-<node id="SIEM_SERVER">
-  <data key="d0">SERVER</data>
-  <data key="d1">False</data>
-</node>
-<node id="JUMP_BOX">
-  <data key="d0">SERVER</data>
-  <data key="d1">False</data>
-</node>
-<node id="HONEYPOT_1">
-  <data key="d0">HONEYPOT</data>
-  <data key="d1">False</data>
-</node>
-<node id="HONEYPOT_2">
-  <data key="d0">HONEYPOT</data>
-  <data key="d1">False</data>
-</node>
-<node id="HR_SERVER">
-  <data key="d0">SERVER</data>
-  <data key="d1">False</data>
-</node>
-<node id="FINANCE_WS">
-  <data key="d0">WORKSTATION</data>
-  <data key="d1">False</data>
-</node>
-<node id="WS_1">
-  <data key="d0">WORKSTATION</data>
-  <data key="d1">False</data>
-</node>
-<node id="WS_2">
-  <data key="d0">WORKSTATION</data>
-  <data key="d1">False</data>
-</node>
-<node id="WS_3">
-  <data key="d0">WORKSTATION</data>
-  <data key="d1">False</data>
-</node>
-<node id="WS_4">
-  <data key="d0">WORKSTATION</data>
-  <data key="d1">False</data>
-</node>
-<node id="WS_5">
-  <data key="d0">WORKSTATION</data>
-  <data key="d1">False</data>
-</node>
-<edge source="INTERNET_GW" target="FIREWALL_1">
-  <data key="d2">4</data>
-  <data key="d3">SSH</data>
-</edge>
-<edge source="INTERNET_GW" target="HONEYPOT_1">
-  <data key="d2">3</data>
-  <data key="d3">RDP</data>
-</edge>
-<edge source="INTERNET_GW" target="HONEYPOT_2">
-  <data key="d2">4</data>
-  <data key="d3">SSH</data>
-</edge>
-<edge source="FIREWALL_1" target="WEB_SERVER">
-  <data key="d2">3</data>
-  <data key="d3">RDP</data>
-</edge>
-<edge source="WEB_SERVER" target="APP_SERVER">
-  <data key="d2">2</data>
-  <data key="d3">SMB</data>
-</edge>
-<edge source="APP_SERVER" target="DB_PROD">
-  <data key="d2">1</data>
-  <data key="d3">DB</data>
-</edge>
-<edge source="APP_SERVER" target="DOMAIN_CTRL">
-  <data key="d2">2</data>
-  <data key="d3">SMB</data>
-</edge>
-<edge source="APP_SERVER" target="BACKUP_SERVER">
-  <data key="d2">2</data>
-  <data key="d3">SMB</data>
-</edge>
-<edge source="DOMAIN_CTRL" target="WS_1">
-  <data key="d2">3</data>
-  <data key="d3">RDP</data>
-</edge>
-<edge source="DOMAIN_CTRL" target="WS_2">
-  <data key="d2">3</data>
-  <data key="d3">RDP</data>
-</edge>
-<edge source="DOMAIN_CTRL" target="WS_3">
-  <data key="d2">3</data>
-  <data key="d3">RDP</data>
-</edge>
-<edge source="DOMAIN_CTRL" target="WS_4">
-  <data key="d2">3</data>
-  <data key="d3">RDP</data>
-</edge>
-<edge source="DOMAIN_CTRL" target="WS_5">
-  <data key="d2">3</data>
-  <data key="d3">RDP</data>
-</edge>
-<edge source="DOMAIN_CTRL" target="HR_SERVER">
-  <data key="d2">3</data>
-  <data key="d3">RDP</data>
-</edge>
-<edge source="DOMAIN_CTRL" target="FINANCE_WS">
-  <data key="d2">3</data>
-  <data key="d3">RDP</data>
-</edge>
-<edge source="SIEM_SERVER" target="APP_SERVER">
-  <data key="d2">4</data>
-  <data key="d3">SSH</data>
-</edge>
-<edge source="JUMP_BOX" target="DOMAIN_CTRL">
-  <data key="d2">2</data>
-  <data key="d3">SMB</data>
-</edge>
-<edge source="JUMP_BOX" target="DB_PROD">
-  <data key="d2">1</data>
-  <data key="d3">DB</data>
-</edge>
-<edge source="WS_1" target="APP_SERVER">
-  <data key="d2">2</data>
-  <data key="d3">SMB</data>
-</edge>
-<edge source="WS_2" target="APP_SERVER">
-  <data key="d2">2</data>
-  <data key="d3">SMB</data>
-</edge>
-<edge source="WS_3" target="APP_SERVER">
-  <data key="d2">2</data>
-  <data key="d3">SMB</data>
-</edge>
-<edge source="WS_4" target="APP_SERVER">
-  <data key="d2">2</data>
-  <data key="d3">SMB</data>
-</edge>
-<edge source="WS_5" target="APP_SERVER">
-  <data key="d2">2</data>
-  <data key="d3">SMB</data>
-</edge>
-</graph></graphml>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d3" for="edge" attr.name="protocol" attr.type="string" />
+  <key id="d2" for="edge" attr.name="weight" attr.type="long" />
+  <key id="d1" for="node" attr.name="critical_asset" attr.type="boolean" />
+  <key id="d0" for="node" attr.name="node_type" attr.type="string" />
+  <graph edgedefault="directed">
+    <node id="INTERNET_GW">
+      <data key="d0">INTERNET_GATEWAY</data>
+      <data key="d1">False</data>
+    </node>
+    <node id="FIREWALL_1">
+      <data key="d0">SERVER</data>
+      <data key="d1">False</data>
+    </node>
+    <node id="WEB_SERVER">
+      <data key="d0">SERVER</data>
+      <data key="d1">False</data>
+    </node>
+    <node id="APP_SERVER">
+      <data key="d0">SERVER</data>
+      <data key="d1">False</data>
+    </node>
+    <node id="DB_PROD">
+      <data key="d0">DATABASE</data>
+      <data key="d1">True</data>
+    </node>
+    <node id="DOMAIN_CTRL">
+      <data key="d0">DOMAIN_CONTROLLER</data>
+      <data key="d1">True</data>
+    </node>
+    <node id="BACKUP_SERVER">
+      <data key="d0">SERVER</data>
+      <data key="d1">False</data>
+    </node>
+    <node id="SIEM_SERVER">
+      <data key="d0">SERVER</data>
+      <data key="d1">False</data>
+    </node>
+    <node id="JUMP_BOX">
+      <data key="d0">SERVER</data>
+      <data key="d1">False</data>
+    </node>
+    <node id="HONEYPOT_1">
+      <data key="d0">HONEYPOT</data>
+      <data key="d1">False</data>
+    </node>
+    <node id="HONEYPOT_2">
+      <data key="d0">HONEYPOT</data>
+      <data key="d1">False</data>
+    </node>
+    <node id="HR_SERVER">
+      <data key="d0">SERVER</data>
+      <data key="d1">False</data>
+    </node>
+    <node id="FINANCE_WS">
+      <data key="d0">WORKSTATION</data>
+      <data key="d1">False</data>
+    </node>
+    <node id="WS_1">
+      <data key="d0">WORKSTATION</data>
+      <data key="d1">False</data>
+    </node>
+    <node id="WS_2">
+      <data key="d0">WORKSTATION</data>
+      <data key="d1">False</data>
+    </node>
+    <node id="WS_3">
+      <data key="d0">WORKSTATION</data>
+      <data key="d1">False</data>
+    </node>
+    <node id="WS_4">
+      <data key="d0">WORKSTATION</data>
+      <data key="d1">False</data>
+    </node>
+    <node id="WS_5">
+      <data key="d0">WORKSTATION</data>
+      <data key="d1">False</data>
+    </node>
+    <edge source="INTERNET_GW" target="FIREWALL_1">
+      <data key="d2">4</data>
+      <data key="d3">SSH</data>
+    </edge>
+    <edge source="INTERNET_GW" target="HONEYPOT_1">
+      <data key="d2">3</data>
+      <data key="d3">RDP</data>
+    </edge>
+    <edge source="INTERNET_GW" target="HONEYPOT_2">
+      <data key="d2">4</data>
+      <data key="d3">SSH</data>
+    </edge>
+    <edge source="FIREWALL_1" target="WEB_SERVER">
+      <data key="d2">3</data>
+      <data key="d3">RDP</data>
+    </edge>
+    <edge source="WEB_SERVER" target="APP_SERVER">
+      <data key="d2">2</data>
+      <data key="d3">SMB</data>
+    </edge>
+    <edge source="APP_SERVER" target="DB_PROD">
+      <data key="d2">1</data>
+      <data key="d3">DB</data>
+    </edge>
+    <edge source="APP_SERVER" target="DOMAIN_CTRL">
+      <data key="d2">2</data>
+      <data key="d3">SMB</data>
+    </edge>
+    <edge source="APP_SERVER" target="BACKUP_SERVER">
+      <data key="d2">2</data>
+      <data key="d3">SMB</data>
+    </edge>
+    <edge source="DOMAIN_CTRL" target="WS_1">
+      <data key="d2">3</data>
+      <data key="d3">RDP</data>
+    </edge>
+    <edge source="DOMAIN_CTRL" target="WS_2">
+      <data key="d2">3</data>
+      <data key="d3">RDP</data>
+    </edge>
+    <edge source="DOMAIN_CTRL" target="WS_3">
+      <data key="d2">3</data>
+      <data key="d3">RDP</data>
+    </edge>
+    <edge source="DOMAIN_CTRL" target="WS_4">
+      <data key="d2">3</data>
+      <data key="d3">RDP</data>
+    </edge>
+    <edge source="DOMAIN_CTRL" target="WS_5">
+      <data key="d2">3</data>
+      <data key="d3">RDP</data>
+    </edge>
+    <edge source="DOMAIN_CTRL" target="HR_SERVER">
+      <data key="d2">3</data>
+      <data key="d3">RDP</data>
+    </edge>
+    <edge source="DOMAIN_CTRL" target="FINANCE_WS">
+      <data key="d2">3</data>
+      <data key="d3">RDP</data>
+    </edge>
+    <edge source="SIEM_SERVER" target="APP_SERVER">
+      <data key="d2">4</data>
+      <data key="d3">SSH</data>
+    </edge>
+    <edge source="JUMP_BOX" target="DOMAIN_CTRL">
+      <data key="d2">2</data>
+      <data key="d3">SMB</data>
+    </edge>
+    <edge source="JUMP_BOX" target="DB_PROD">
+      <data key="d2">1</data>
+      <data key="d3">DB</data>
+    </edge>
+    <edge source="WS_1" target="APP_SERVER">
+      <data key="d2">2</data>
+      <data key="d3">SMB</data>
+    </edge>
+    <edge source="WS_2" target="APP_SERVER">
+      <data key="d2">2</data>
+      <data key="d3">SMB</data>
+    </edge>
+    <edge source="WS_3" target="APP_SERVER">
+      <data key="d2">2</data>
+      <data key="d3">SMB</data>
+    </edge>
+    <edge source="WS_4" target="APP_SERVER">
+      <data key="d2">2</data>
+      <data key="d3">SMB</data>
+    </edge>
+    <edge source="WS_5" target="APP_SERVER">
+      <data key="d2">2</data>
+      <data key="d3">SMB</data>
+    </edge>
+  </graph>
+</graphml>

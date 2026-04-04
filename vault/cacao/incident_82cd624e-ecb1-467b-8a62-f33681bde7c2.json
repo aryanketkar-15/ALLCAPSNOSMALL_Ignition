@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--e7ced400-c427-4674-b89b-8b39227cea10",
+  "name": "SOC Response Playbook — Incident 82cd624e-ecb1-467b-8a62-f33681bde7c2",
+  "description": "Here's the analysis:\n\n**SUMMARY:** A high-severity Kerberos-based attack was detected.\n\n**TECHNIQUE:** T1190 Kerberos Exploitation (ID: T1190)\n\n**ACTION:** BLOCK_IP",
+  "created": "2026-04-03T13:24:01.049746+00:00",
+  "modified": "2026-04-03T13:24:01.049746+00:00",
+  "created_by": "identity--db868b17-4f17-4501-b086-381c05b529d5",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:23:54.117520",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP None",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T13:23:54.118530",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--7c1db668-2b1f-4b3d-a2ff-02d8476d6150",
+  "name": "SOC Response Playbook — Incident ff257723-4f10-4b2f-bd48-55e6e953d05e",
+  "description": "Here is the analysis:\n\n1. SUMMARY: A benign security alert was ingested into the Security Information and Event Management (SIEM) system.\n2. TECHNIQUE: T1065 Processing Core Command\n3. ACTION: INGEST_ALERT",
+  "created": "2026-04-03T13:02:20.847077+00:00",
+  "modified": "2026-04-03T13:02:20.847077+00:00",
+  "created_by": "identity--77ece033-5066-41e7-9d62-310b7e9670d5",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:02:08.553788",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

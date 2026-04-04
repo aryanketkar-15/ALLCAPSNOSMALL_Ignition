@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--93522bea-0087-444f-87d7-4274f712064e",
+  "name": "SOC Response Playbook — Incident 60588727-6dee-429a-8cc8-077737e5f7cd",
+  "description": "Here is the analysis:\n\n**SUMMARY:** A high-severity threat was detected and an attacker's IP address (91.108.56.100) was blocked.\n\n**TECHNIQUE:** T1043: Spearphishing-Related Tooling, ID flag: This technique involves using a tool to facilitate spear phishing attacks.\n\n**ACTION:** ISOLATE_HOST",
+  "created": "2026-04-03T17:05:08.236160+00:00",
+  "modified": "2026-04-03T17:05:08.236160+00:00",
+  "created_by": "identity--f26aadc0-a133-435a-824d-5dabb4af4254",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T17:05:00.979841",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 91.108.56.100",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T17:05:00.980841",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

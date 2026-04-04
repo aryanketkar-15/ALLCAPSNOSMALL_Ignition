@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--600f324b-22e0-4798-a114-2fc635c209e0",
+  "name": "SOC Response Playbook — Incident b66bd40d-3058-48f8-99c7-3c4c2916ef5d",
+  "description": "Here is the analysis:\n\nSUMMARY: A critical threat was detected on the network, resulting in a credential dump.\n\nTECHNIQUE: T1003 Credential Dump\n\nACTION: BLOCK_IP",
+  "created": "2026-04-03T18:47:46.062011+00:00",
+  "modified": "2026-04-03T18:47:46.062011+00:00",
+  "created_by": "identity--f8b94669-90ee-48f8-ad7e-3ede542993ae",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T18:47:38.148264",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 192.168.1.35",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T18:47:38.149265",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

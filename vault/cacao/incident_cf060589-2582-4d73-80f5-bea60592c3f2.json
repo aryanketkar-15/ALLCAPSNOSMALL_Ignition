@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--0cfdee3a-adf3-4de1-b0b2-580927531bb8",
+  "name": "SOC Response Playbook — Incident cf060589-2582-4d73-80f5-bea60592c3f2",
+  "description": "Here is the analysis:\n\nSUMMARY: A benign file copy event was detected from IP address 192.168.1.50.\n\nTECHNIQUE: T1005 Data Tampering (with a low confidence level due to unknown top features).\n\nACTION: NO_ACTIONS_NEEDED",
+  "created": "2026-04-03T18:44:56.191686+00:00",
+  "modified": "2026-04-03T18:44:56.191686+00:00",
+  "created_by": "identity--cc36864e-f864-487a-9154-d1b094be1c2e",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T18:44:49.201171",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

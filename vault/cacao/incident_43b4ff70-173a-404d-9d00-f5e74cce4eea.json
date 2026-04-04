@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--35fc1fde-6aef-499c-b6f8-df8e5dae1d27",
+  "name": "SOC Response Playbook — Incident 43b4ff70-173a-404d-9d00-f5e74cce4eea",
+  "description": "Here is the analysis:\n\n1. SUMMARY: A low-severity port scan was detected from IP address 203.0.113.50.\n2. TECHNIQUE: The most likely MITRE ATT&CK technique is T1090 Port Scanning, with ID flag T1090.\n3. ACTION: ISOLATE_HOST",
+  "created": "2026-04-03T13:32:34.761087+00:00",
+  "modified": "2026-04-03T13:32:34.761087+00:00",
+  "created_by": "identity--89d0f0c6-6ee9-4dd2-ae6e-a2061235bfb1",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:32:26.787983",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

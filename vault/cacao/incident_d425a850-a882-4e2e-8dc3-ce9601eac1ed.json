@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--7a9bcdbd-e04d-47e9-9f0e-0eaf04baa20e",
+  "name": "SOC Response Playbook — Incident d425a850-a882-4e2e-8dc3-ce9601eac1ed",
+  "description": "Here's the analysis:\n\n**SUMMARY**: The Security Operations Centre detected an HTTP OPTIONS request from an unknown source.\n\n**TECHNIQUE**: T1102 HTTP Options\n\n**ACTION**: QUARANTINE_LOGS",
+  "created": "2026-04-03T13:04:56.613677+00:00",
+  "modified": "2026-04-03T13:04:56.613677+00:00",
+  "created_by": "identity--f38fe6ff-c945-4e4b-a9e2-a6898b537a83",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:04:43.682567",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--0198ba2a-55cb-4587-99a7-ec1924a826cd",
+  "name": "SOC Response Playbook — Incident 3acf70f7-02ae-4915-aa7b-d9c8904508b5",
+  "description": "Here's the analysis:\n\n**SUMMARY**: A high-severity threat was detected and an unknown process spawned from a compromised host at IP address 192.168.1.32.\n\n**TECHNIQUE**: The most likely MITRE ATT&CK technique is T1059: Command Execution.\n\n**ACTION**: BLOCK_IP",
+  "created": "2026-04-03T14:32:11.950940+00:00",
+  "modified": "2026-04-03T14:32:11.950940+00:00",
+  "created_by": "identity--f3aafa32-0b7b-4ae5-9042-f90e2b97da21",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T14:32:03.914435",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 192.168.1.32",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T14:32:03.915441",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

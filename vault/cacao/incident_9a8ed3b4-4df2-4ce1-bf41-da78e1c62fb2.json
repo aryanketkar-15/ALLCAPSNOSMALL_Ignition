@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--aef2c34d-f864-4d55-80b1-dec460df37d7",
+  "name": "SOC Response Playbook — Incident 9a8ed3b4-4df2-4ce1-bf41-da78e1c62fb2",
+  "description": "Here is the analysis:\n\n**SUMMARY**: An unknown SMB lateral movement was detected from an IP address (192.168.1.33) with high confidence.\n\n**TECHNIQUE**: T1003.006: Exploitation of SMB Share\n\n**ACTION**: BLOCK_IP",
+  "created": "2026-04-03T18:46:19.437755+00:00",
+  "modified": "2026-04-03T18:46:19.437755+00:00",
+  "created_by": "identity--5b44e4c8-0bc6-452c-b344-2b387f255e3a",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T18:46:12.253529",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP 192.168.1.33",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T18:46:12.254530",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}

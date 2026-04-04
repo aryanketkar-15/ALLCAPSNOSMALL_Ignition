@@ -1,0 +1,31 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--e2153d43-8ef1-47f0-b935-e981ca7de0f4",
+  "name": "SOC Response Playbook — Incident 62c6e94c-0698-4fd8-bf88-4b5ef356d3f6",
+  "description": "Here is the analysis:\n\n**SUMMARY**: A low-severity port scan was detected from an unknown source IP.\n\n**TECHNIQUE**: T1090 Port Scanning, with ID flag: T1090\n\n**ACTION**: BLOCK_IP",
+  "created": "2026-04-03T13:04:16.944152+00:00",
+  "modified": "2026-04-03T13:04:16.944152+00:00",
+  "created_by": "identity--c8e42f7e-d506-4428-8be5-bfa552b448b9",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:03:59.951677",
+      "on_completion": "end--1"
+    },
+    "end--1": {
+      "type": "end"
+    }
+  }
+}

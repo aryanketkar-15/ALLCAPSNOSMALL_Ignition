@@ -1,0 +1,38 @@
+{
+  "type": "playbook",
+  "spec_version": "cacao-2.0",
+  "id": "playbook--999af663-b467-4649-bb18-6b5c65bb036c",
+  "name": "SOC Response Playbook — Incident 31cc57db-d9b4-4f7a-88d5-916d706b7127",
+  "description": "Here is the analysis:\n\n**SUMMARY:** A high-severity threat was detected and a critical IP was blocked.\n\n**TECHNIQUE:** T1499 Disguised Communications (specifically, C2 beaconing)\n\n**ACTION:** BLOCK_IP",
+  "created": "2026-04-03T13:24:28.034377+00:00",
+  "modified": "2026-04-03T13:24:28.034377+00:00",
+  "created_by": "identity--195e4b3b-52b8-44ef-a648-3b47b5ca15e6",
+  "playbook_types": [
+    "investigation",
+    "remediation"
+  ],
+  "workflow_start": "start--1",
+  "workflow": {
+    "start--1": {
+      "type": "start",
+      "on_completion": "action--1"
+    },
+    "action--1": {
+      "type": "action",
+      "name": "Alert Ingestion",
+      "description": "System received new raw SIEM log",
+      "executed_at": "2026-04-03T13:24:19.470373",
+      "on_completion": "action--2"
+    },
+    "action--2": {
+      "type": "action",
+      "name": "Blocked IP None",
+      "description": "High severity threat detected",
+      "executed_at": "2026-04-03T13:24:19.471382",
+      "on_completion": "end--2"
+    },
+    "end--2": {
+      "type": "end"
+    }
+  }
+}
